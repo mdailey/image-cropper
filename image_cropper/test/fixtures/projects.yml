@@ -1,0 +1,8 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: 'Gudetama'
+  description: 'I am an lazy egg'
+  crop_points: 4
+  isactive: false
+  user_id: 2

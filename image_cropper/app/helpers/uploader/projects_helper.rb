@@ -1,0 +1,2 @@
+module Uploader::ProjectsHelper
+end

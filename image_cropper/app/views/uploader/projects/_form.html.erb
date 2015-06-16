@@ -1,0 +1,41 @@
+<%= form_for([:uploader, @project]) do |f| %>
+  <div class="form-group">
+    <%= f.label :name %>&nbsp;&nbsp;<em>Not allow to use space or any special characters</em><br>
+    <%= f.text_field :name, :class => "form-control width-300", :placeholder => "Project name", :pattern => "[a-zA-Z0-9]+", :title => "Not allow to use space or any special characters", :required => true, :autofocus => true %>
+  </div>
+  <div class="form-group">
+    <%= f.label :description %><br>
+    <%= f.text_area :description, :class => "form-control width-600", :placeholder => "Description" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :images %>&nbsp;&nbsp;<em>Please upload with .zip or any image file</em><br>
+    <%= f.file_field :images %>
+    <% if params[:id] %>
+      <br/>
+      <table class="table table-striped">
+        <tbody>
+          <% @project.project_images.all.each do |project_image| %>
+            <tr>
+              <td class="width-100"><%= image_tag "/system/#{@project.name}/#{project_image.image}", :height => 50 %></td>
+              <td  class="width-200"><%= project_image.image %></td>
+              <td><%= link_to 'Destroy', uploader_project_project_image_path(@project, project_image), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+  <div class="form-group">
+    <%= f.label :crop_points %>&nbsp;&nbsp;<em>Please specify crop points around 1-10</em><br>
+    <%= f.number_field :crop_points, :class => "form-control width-200", :min => 1, :max => 10 %>
+  </div>
+  <div class="form-group">
+    <%= f.label :isactive %><br>
+    <%= f.check_box :isactive %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Submit", :class => "btn btn-primary" %>
+    &nbsp;&nbsp;
+    <%= link_to 'Cancel', uploader_projects_path, :class => "btn btn-primary", :type => "button" %>
+  </div>
+<% end %>

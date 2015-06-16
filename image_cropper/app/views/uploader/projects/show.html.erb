@@ -1,0 +1,42 @@
+<div class="row">
+  <div class="col-md-12">
+    <h2>Project Information</h2>
+    <hr/>
+    <div class="row">
+      <div class="col-md-2"><strong>Project Name: </strong></div>
+      <div id="project_name" class="col-md-10"><%= @project.name %></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><strong>Description: </strong></div>
+      <div id="project_description" class="col-md-10"><%= @project.description %></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><strong>Crop Points: </strong></div>
+      <div id="project_crop_points" class="col-md-10"><%= @project.crop_points %></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><strong>Active: </strong></div>
+      <div id="project_isactive" class="col-md-10"><%= @project.isactive %></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><strong>Project Owner: </strong></div>
+      <div id="project_user" class="col-md-10"><%= @project.user.name %></div>
+    </div>
+  </div>
+</div>
+<br/>
+<table class="table table-striped">
+  <tbody>
+    <% @project.project_images.all.each do |project_image| %>
+      <tr>
+        <td class="width-100"><%= image_tag "/system/#{@project.name}/#{project_image.image}", :height => 50 %></td>
+        <td><%= project_image.image %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% if current_user.id == @project.user_id %>
+  <%= link_to 'Edit', edit_uploader_project_path(@project), :class => "btn btn-primary", :type => "button" %>
+  &nbsp;&nbsp;
+<% end %>
+<%= link_to 'Back', uploader_projects_path, :class => "btn btn-primary", :type => "button" %>
