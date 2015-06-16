@@ -2,7 +2,7 @@
 
 # Run Rails application tests
 cd image_cropper
-ls
+gem install bundler
 echo 'finish runnint image cropper'
 bundle install --without production
 #mkdir -p features/reports
