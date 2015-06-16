@@ -2,9 +2,9 @@
 
 # Run Rails application tests
 cd image_cropper
-gem install bundler
+#gem install bundler
 echo 'finish runnint image cropper'
-bundle install --without production
+#bundle install --without production
 #mkdir -p features/reports
 #bundle exec rake db:reset || exit 2
 #bundle exec rake db:create:all || exit 3
