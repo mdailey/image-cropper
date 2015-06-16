@@ -1,5 +1,20 @@
 #!/bin/bash
 
+set -e
+
+if [ `basename \`pwd\`` = "scripts" ]; then
+  cd ..
+fi
+
+if [ `basename \`pwd\`` = "test" ]; then
+  cd ..
+fi
+
+if [ ! -d "image_cropper/" ]; then
+  echo "$0: error: must be run at the top of the project tree"
+  exit -1
+fi
+
 # Run Rails application tests
 cd image_cropper
 bundle install --without production
