@@ -6,9 +6,11 @@ def submit_login_form
 end
 
 def set_default_role
-  FactoryGirl.create :role_admin
-  FactoryGirl.create :role_uploader
-  FactoryGirl.create :role_cropper
+  if User.all.size <= 0
+    FactoryGirl.create :role_admin
+    FactoryGirl.create :role_uploader
+    FactoryGirl.create :role_cropper
+  end
 end
 
 Given(/^I am an admin$/) do
