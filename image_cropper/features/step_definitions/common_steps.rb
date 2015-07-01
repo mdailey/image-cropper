@@ -37,6 +37,8 @@ When(/^I visit (.*)$/) do |page|
       visit root_path
     when 'the project page'
       visit uploader_projects_path
+    when 'the user page'
+      visit admin_users_path
     else
       raise 'Unexpected page description'
   end

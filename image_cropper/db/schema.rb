@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150603073755) do
+ActiveRecord::Schema.define(version: 20150701021238) do
 
   create_table "project_images", force: :cascade do |t|
     t.integer  "project_id", limit: 4
@@ -19,6 +19,16 @@ ActiveRecord::Schema.define(version: 20150603073755) do
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
+
+  create_table "project_users", force: :cascade do |t|
+    t.integer  "project_id", limit: 4
+    t.integer  "user_id",    limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "project_users", ["project_id"], name: "index_project_users_on_project_id", using: :btree
+  add_index "project_users", ["user_id"], name: "index_project_users_on_user_id", using: :btree
 
   create_table "projects", force: :cascade do |t|
     t.string   "name",        limit: 255
@@ -50,12 +60,15 @@ ActiveRecord::Schema.define(version: 20150603073755) do
     t.datetime "created_at",                                         null: false
     t.datetime "updated_at",                                         null: false
     t.string   "name",                   limit: 255
-    t.integer  "role_id",                limit: 4,   default: 3
     t.boolean  "is_active",              limit: 1,   default: false
+    t.integer  "role_id",                limit: 4,   default: 3
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
 
+  add_foreign_key "project_users", "projects"
+  add_foreign_key "project_users", "users"
+  add_foreign_key "users", "roles"
 end

@@ -12,6 +12,12 @@ Rails.application.routes.draw do
 
   devise_for :users
 
+  devise_scope :user do
+    post "users/password" => "devise/passwords#create", as: "password"
+    get "users/password/new" => "devise/passwords#new", as: "new_password"
+    get "users/password/edit" => "devise/passwords#edit", as: "edit_password"
+  end
+
   #delete 'projects/:project_id/project_images/:id' => 'project_images#destroy', as: :project_image
 
   get 'site/index'

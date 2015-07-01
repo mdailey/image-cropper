@@ -36,10 +36,3 @@ end
 When(/^I click the edit link in the project list$/) do
   find(:xpath, "//*[@id='edit_project_#{@project.id}']").click
 end
-
-Then(/^I should see the project information in the project form$/) do
-  expect(page).to have_selector('form input#project_name', text: @project.name)
-  expect(page).to have_selector('form textarea#project_description', text: @project.description)
-  expect(page).to have_selector('form input#project_crop_points', text: @project.crop_points)
-  expect(page).to have_selector('form input#project_isactive', text: @project.isactive)
-end

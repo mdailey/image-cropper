@@ -1,4 +1,4 @@
-<h2>Project Lists</h2>
+<h2>User Lists</h2>
 <hr/>
 <% if @users.size == 0 %>
   <div class="text-center">
@@ -13,7 +13,7 @@
       <th class="text-center">Email</th>
       <th class="text-center">Role</th>
       <th class="text-center"></th>
-      <th colspan="3"></th>
+      <th colspan="2"></th>
     </tr>
   </thead>
   <tbody>
@@ -23,15 +23,14 @@
         <td class="text-center"><%= user.email %></td>
         <td class="text-center"><%= user.role.name %></td>
         <td class="text-center">
-          <% if user.is_active %>
-            <%= link_to [:admin,user] do %>
-              <i class="fa fa-check"></i>
+          <%= link_to admin_user_path(user, user: {is_active: !user.is_active}), id: "activate_user_#{user.id}", method: :put, data: { confirm: 'Are you sure to activate/deactivate this user?' } do %>
+            <% if user.is_active %>
+                <i class="fa fa-check"></i>
+            <% else %>
+              <i class="fa fa-times"></i>
             <% end %>
-          <% else %>
-            <i class="fa fa-times"></i>
-          <% end%>
+          <% end %>
         </td>
-        <td><%= link_to 'Show', [:admin,user] %></td>
         <td><%= link_to 'Edit', edit_admin_user_path(user), :id => "edit_user_#{user.id}" %></td>
       </tr>
     <% end %>

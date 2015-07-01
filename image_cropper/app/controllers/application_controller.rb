@@ -29,6 +29,15 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  rescue_from ActionController::UnknownFormat, with: :raise_not_found
+  def raise_not_found
+    if request.referer == "http://lcalhost:3000/users/password/new.user"
+      redirect_to(root_path, :success => "Reset ")
+    else
+      redirect_to(root_path, :error => "Yo")
+    end
+  end
+
   protected
   def configure_permitted_parameters
     devise_parameter_sanitizer.for(:sign_up) { |u| u.permit(:name, :email, :password) }
