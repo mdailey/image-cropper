@@ -55,3 +55,26 @@ And(/^I should see a user "(.*)"$/) do |text|
       raise 'Unexpected status description'
   end
 end
+
+When(/^I click the assign link in the user list$/) do
+  find(:xpath, "//*[@id='assign_user_#{@new_user.id}']").click
+end
+
+Then(/^I should see the user information$/) do
+  expect(page).to have_selector('div#divName')
+  expect(page).to have_selector('div#divEmail')
+end
+
+And(/^I should see the project list$/) do
+  expect(page).to have_selector('#tblProject')
+end
+
+When(/^I click checkbox to assign project$/) do
+  check("project-#{@project.id}")
+end
+
+Then(/^the project should be assigned$/) do
+  sleep(0.2)
+  expect(ProjectUser.first.user_id).to eq(@new_user.id)
+  expect(ProjectUser.first.project_id).to eq(@project.id)
+end

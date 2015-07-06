@@ -2,7 +2,7 @@
 <hr/>
 <% if @users.size == 0 %>
   <div class="text-center">
-    <em>No User Data</em>
+    <em>No user data</em>
   </div>
   <br/>
 <% else %>
@@ -13,7 +13,7 @@
       <th class="text-center">Email</th>
       <th class="text-center">Role</th>
       <th class="text-center"></th>
-      <th colspan="2"></th>
+      <th colspan="3"></th>
     </tr>
   </thead>
   <tbody>
@@ -29,6 +29,11 @@
             <% else %>
               <i class="fa fa-times"></i>
             <% end %>
+          <% end %>
+        </td>
+        <td>
+          <% if user.role_id == 3 %>
+            <%= link_to 'Assign', admin_user_path(user), :id => "assign_user_#{user.id}" %>
           <% end %>
         </td>
         <td><%= link_to 'Edit', edit_admin_user_path(user), :id => "edit_user_#{user.id}" %></td>

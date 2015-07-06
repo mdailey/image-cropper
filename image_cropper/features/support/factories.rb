@@ -46,4 +46,8 @@ FactoryGirl.define do
     description 'I am an lazy egg...'
     crop_points 4
   end
+
+  factory :project_user do
+  end
+
 end

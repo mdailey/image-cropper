@@ -1,5 +1,5 @@
 Given(/^there is 1 project$/) do
-  @project = FactoryGirl.create :project, user_id: @user.id
+  @project = FactoryGirl.create :project, user_id: @user.id, isactive: true
 end
 
 Then(/^I should see a project form$/) do

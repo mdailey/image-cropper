@@ -4,7 +4,7 @@
   <%= devise_error_messages! %>
   <%= f.hidden_field :reset_password_token %>
   <div class="form-group">
-    <%= f.label :password, "New password", :class => "form-control width-400" %><br />
+    <%= f.label :password, "New password" %><br />
     <% if @minimum_password_length %>
     <em>(<%= @minimum_password_length %> characters minimum)</em>
     <% end %><br />

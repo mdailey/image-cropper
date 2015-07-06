@@ -1,10 +1,14 @@
 class Admin::UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin
-  before_action :set_user, only: [:edit, :update]
+  before_action :set_user, only: [:show, :edit, :update]
+  before_action :set_projects, only: [:show]
 
   def index
-    @users = User.where("id <> ?", current_user.id).order(:name)
+    @users = User.where("id <> ?", current_user.id).order(:role_id, :name)
+  end
+
+  def show
   end
 
   def new
@@ -43,6 +47,10 @@ class Admin::UsersController < ApplicationController
   private
   def set_user
     @user = User.find(params[:id])
+  end
+
+  def set_projects
+    @projects = Project.where("isactive = ?",  true).order(:name)
   end
 
   def user_params

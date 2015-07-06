@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
 
   namespace :admin do
-    resources :users
+    resources :users do
+      resources :project_users
+    end
   end
 
   namespace :uploader do
