@@ -1,0 +1,126 @@
+<script type="text/paperscript" canvas="canvas-1">
+  var raster = new Raster($("#canvas-1").attr("data-project-image"));
+  var canvas = $("#canvas-1");
+  var project_id = $("#canvas-1").attr("data-project-id");
+  var project_image_id = $("#canvas-1").attr("data-project-image-id");
+  var crop_num = $("#canvas-1").attr("data-crop-number") == ""? 1 : parseInt($("#canvas-1").attr("data-crop-number")) +1;
+  var url = $("#canvas-1").attr("data-crop-url");
+  var limit = $("#canvas-1").attr("data-crop-limit");
+  var point_num = 1;
+  var points = [];
+  var click_point = [];
+  var myPath = new Path()
+
+  function onMouseUp(e) {
+    if (point_num <= limit || limit == 99) {
+      click_point = [];
+      var myCircle = new Path.Circle({ center: e.point, radius: 3 });
+      myCircle.strokeColor = 'black';
+      myCircle.fillColor = 'white';
+      myPath.strokeColor = 'black';
+      myPath.add(new Point(e.point));
+      points.push({x: e.point.x, y: e.point.y});//point_num += 1;
+      click_point.push({x: e.point.x, y: e.point.y});
+    } else {
+      alert("You cannot");
+    }
+  }
+
+  $('body').keyup(function(event) {
+    if(event.which == 13) {
+      for (var i = 0; i < points.length; i++) {
+        $.ajax({
+           type: "POST",
+           url: url,
+           data: { project_crop_image: { project_id: project_id, project_image_id: project_image_id, x: points[i].x, y: points[i].y, crop_number: crop_num } },
+           complete: function () { }
+        });
+      }
+      points = [];
+      myPath.strokeColor = 'black';
+      myPath.closed = true;
+
+      point_num = 0;
+  		crop_num += 1;
+      myPath = new Path();
+    }
+  });
+
+  function redraw() {
+    $.ajax({
+       type: "GET",
+       url: url,
+       dataType: "json",
+       contentType: "application/json",
+       success: function(data) {
+        for (var i = 0; i < data.length; i++) {
+          if(i == 0) {
+            myPath = new Path();
+          } else {
+            if(data[i-1].crop_number != data[i].crop_number) {
+              myPath.closed = true;
+              myPath = new Path();
+            }
+          }
+          myPath.strokeColor = 'black';
+          myPath.add(new Point(data[i].x,data[i].y));
+        }
+        myPath.closed = true;
+        myPath = new Path();
+      }
+    });
+  }
+
+  raster.on('load', function() {
+    canvas.width(raster.width);
+    canvas.height(raster.height);
+    raster.position = [raster.width/2, raster.height/2];
+    view.setViewSize(canvas.width(), canvas.height());
+    redraw();
+  });
+
+  $.contextMenu({
+        selector: '#canvas-1',
+        callback: function(key, options) {
+            if(key == "delete"){
+              $.post(url+"/1?x=" + click_point[0].x + "&y=" + click_point[0].y, { _method: 'delete' }, null, "script");
+              window.location = url;
+            }
+        },
+        items: {
+            "delete": {name: "Delete", icon: "delete"}
+        }
+  });
+</script>
+
+<div class="row">
+  <div class="col-md-12">
+    <h2><%= @project.name %></h2>
+    <hr/>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <canvas id="canvas-1"
+          data-project-id="<%= @project.id %>"
+          data-project-image-id="<%= @project_image.id %>"
+          data-project-image="<%= "/system/#{@project.name}/#{@project_image.image}" %>"
+          data-crop-number="<%= @project_crop_images.maximum("crop_number") %>"
+          data-crop-url="<%= cropper_project_project_image_project_crop_images_path(@project.id, @project_image.id) %>"
+          data-crop-limit="<%= @project.crop_points %>"
+          style="border: 5px groove #333">
+        </canvas>
+        <br/><br/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <%= link_to ' << ', cropper_project_project_image_project_crop_images_path(@project, params[:project_image_id].to_i-1), :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => !(params[:project_image_id].to_i > @project_image_min) %>
+        &nbsp;&nbsp;
+        <%= link_to ' >> ', cropper_project_project_image_project_crop_images_path(@project, params[:project_image_id].to_i+1), :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => !(params[:project_image_id].to_i < @project_image_max) %>
+      </div>
+    </div>
+  </div>
+</div>
+<br/>
+<%= link_to 'Back', :back, :class => "btn btn-primary", :type => "button" %>
+&nbsp;&nbsp;
+<%= link_to 'Back to project page', cropper_projects_path, :class => "btn btn-primary", :type => "button" %>

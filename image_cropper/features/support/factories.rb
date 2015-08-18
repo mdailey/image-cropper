@@ -42,9 +42,13 @@ FactoryGirl.define do
   end
 
   factory :project do
-    name 'Gudetama'
-    description 'I am an lazy egg...'
+    name 'Test'
+    description 'I am now testing.'
     crop_points 4
+  end
+
+  factory :project_image do
+    image "doraemon1.jpg"
   end
 
   factory :project_user do

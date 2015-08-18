@@ -16,22 +16,4 @@
     <%= @user.email %>
   </div>
 </div>
-<br/>
-<% if @projects.size == 0 %>
-  <div class="text-center">
-    <em>No project data</em>
-  </div>
-  <br/>
-<% else %>
-<table id ="tblProject" class="table table-striped">
-  <tbody>
-    <% @projects.each do |project| %>
-      <tr>
-        <% @project_user = project.project_users.find_by_user_id(@user.id) %>
-        <td class="width-90">  <%= check_box_tag "project-#{project.id}", project.id, @project_user, class: "project", id: "project-#{project.id}", data: {remote: !@project_user.nil?? admin_user_project_user_path(@user.id, @project_user.id, format: :json) : admin_user_project_users_path(@user.id, project_user: {user_id: @user.id, project_id: project.id}, format: :json)} %></td>
-        <td class="project_name"><%= project.name %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-<% end %>
+<%= link_to 'Back', :back, :class => "btn btn-primary", :type => "button" %>

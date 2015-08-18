@@ -1,5 +1,13 @@
 Rails.application.routes.draw do
 
+  namespace :cropper do
+    resources :projects do
+      resources :project_images do
+        resources :project_crop_images
+      end
+    end
+  end
+
   namespace :admin do
     resources :users do
       resources :project_users
@@ -8,6 +16,7 @@ Rails.application.routes.draw do
 
   namespace :uploader do
    resources :projects do
+     resources :project_users
      resources :project_images
    end
   end

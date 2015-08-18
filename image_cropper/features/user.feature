@@ -80,26 +80,3 @@ Feature: User
     And I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
-
-  @javascript
-  Scenario: Assign project a user
-
-  An admin should be able to assign project to a user
-
-    Given I am an admin
-    And I am signed in
-    And there is 1 user
-    And I "activate" a user
-    And there is 1 project
-    When I visit the user page
-    Then I should see the user in the list
-    When I click the assign link in the user list
-    Then I should see the user information
-    And I should see the project list
-    When I click checkbox to assign project
-    Then the project should be assigned
-    And I should see a "current user" link
-    When I click the "current user" link
-    And I should see a "Sign Out" link
-    When I click the "Sign Out" link
-    Then I should see a login form

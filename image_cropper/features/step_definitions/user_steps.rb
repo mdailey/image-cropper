@@ -2,6 +2,10 @@ Given(/^there is 1 user$/) do
   @new_user = FactoryGirl.create :cropper
 end
 
+Given(/^there is 1 user assigned to project$/) do
+  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@new_user)? @new_user.id : @user.id
+end
+
 Then(/^I should see a user form$/) do
   expect(page).to have_selector('form input#user_name')
   expect(page).to have_selector('form input#user_email')
@@ -69,12 +73,20 @@ And(/^I should see the project list$/) do
   expect(page).to have_selector('#tblProject')
 end
 
-When(/^I click checkbox to assign project$/) do
-  check("project-#{@project.id}")
+When(/^I click checkbox to (.*) project$/) do |text|
+  if (text == "assign")
+    check("user-#{@new_user.id}")
+  elsif (text == "unassign")
+    uncheck("user-#{@new_user.id}")
+  end
 end
 
-Then(/^the project should be assigned$/) do
+Then(/^the project should be (.*)$/) do |text|
   sleep(0.2)
-  expect(ProjectUser.first.user_id).to eq(@new_user.id)
-  expect(ProjectUser.first.project_id).to eq(@project.id)
+  if (text == "assigned")
+    expect(ProjectUser.first.user_id).to eq(@new_user.id)
+    expect(ProjectUser.first.project_id).to eq(@project.id)
+  elsif (text == "unassigned")
+    expect(ProjectUser.all.size).to eq(0)
+  end
 end

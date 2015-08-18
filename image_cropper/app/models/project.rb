@@ -1,6 +1,7 @@
 class Project < ActiveRecord::Base
   belongs_to :user
   has_many :project_images, dependent: :destroy
+  has_many :project_crop_images, dependent: :destroy
   has_many :project_users, dependent: :destroy
   attr_accessor :images
   validates_presence_of :name, :crop_points

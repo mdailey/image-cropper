@@ -39,6 +39,9 @@ gem 'clerk'
 # Zipfile
 gem 'rubyzip'
 
+# Context Menu
+gem 'jquery_context_menu-rails'
+
 # Deployment
 group :development do
   gem 'capistrano', '~> 3.2.1'

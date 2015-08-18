@@ -33,7 +33,7 @@
         </td>
         <td>
           <% if user.role_id == 3 %>
-            <%= link_to 'Assign', admin_user_path(user), :id => "assign_user_#{user.id}" %>
+            <%= link_to 'Assign', admin_user_path(user), :id => "assign_user_#{user.id}", target: "_top" %>
           <% end %>
         </td>
         <td><%= link_to 'Edit', edit_admin_user_path(user), :id => "edit_user_#{user.id}" %></td>

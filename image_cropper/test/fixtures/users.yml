@@ -24,8 +24,17 @@ uploader:
 
 cropper:
   id: 3
-  name: 'Cropper'
-  email: cropper@hotmail.com
+  name: 'Cropper1'
+  email: cropper1@hotmail.com
+  # "secret"
+  encrypted_password: "$2a$10$ZU0x7nDXA1EKbUAjwKTCwegV/yfddZkvfKWEa9/arb5pBQuy/1oFu"
+  role_id: 3
+  is_active: true
+
+cropper1:
+  id: 4
+  name: 'Cropper2'
+  email: cropper2@hotmail.com
   # "secret"
   encrypted_password: "$2a$10$ZU0x7nDXA1EKbUAjwKTCwegV/yfddZkvfKWEa9/arb5pBQuy/1oFu"
   role_id: 3

@@ -49,7 +49,7 @@ test: &test
 #
 production:
   <<: *default
-  database: image_cropper
+  database: image_cropper_development
 
 cucumber:
   <<: *test

@@ -27,7 +27,8 @@
   </div>
   <div class="form-group">
     <%= f.label :crop_points %>&nbsp;&nbsp;<em>Please specify crop points around 1-10</em><br>
-    <%= f.number_field :crop_points, :class => "form-control width-200", :min => 1, :max => 10 %>
+    <% @options = [["1", "1"], ["2", "2"], ["4", "4"], ["N", "99"]] %>
+    <%= f.select :crop_points, [["1 Point", "1"], ["2 Points", "2"], ["4 Points", "4"], ["N Points", "99"]], {}, {:class => "form-control width-200"} %>
   </div>
   <div class="form-group">
     <%= f.label :isactive %><br>

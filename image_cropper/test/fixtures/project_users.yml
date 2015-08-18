@@ -1,9 +1,5 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  project_id: 
-  user_id: 
-
-two:
-  project_id: 
-  user_id: 
+  project_id: 1
+  user_id: 3

@@ -1,9 +1,6 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  project: 
-  image: MyString
-
-two:
-  project: 
-  image: MyString
+  id: 1
+  project_id: 1
+  image: "/public/doraemon1.jpg"

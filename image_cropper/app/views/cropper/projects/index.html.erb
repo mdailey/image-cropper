@@ -1,0 +1,29 @@
+<h2>Project Lists</h2>
+<hr/>
+<% if @projects.size == 0 %>
+  <div class="text-center">
+    <em>No project data</em>
+  </div>
+  <br/>
+<% else %>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th class="width-200">Name</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @projects.each do |project| %>
+      <tr>
+        <td class="project_name"><%= link_to "Project-#{project.id}: #{project.name}", cropper_project_project_image_path(project, project.project_images.first) %></td>
+        <td class="text-right">
+          <%= link_to 'Show', cropper_project_project_image_path(project, project.project_images.first), :class => "btn btn-primary width-80", :type => "button", :target => "_top", id: "show_project_#{project.id}" %>
+          &nbsp;&nbsp;
+          <%= link_to 'Assign', cropper_project_project_image_project_crop_images_path(project, project.project_images.first), :class => "btn btn-primary width-80", :type => "button" , :target => "_top",  id: "assign_project_#{project.id}" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>

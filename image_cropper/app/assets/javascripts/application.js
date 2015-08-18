@@ -14,4 +14,6 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require bootstrap.min
+//= require paper-full.min
+//= require jquery.contextMenu
 //= require_tree .

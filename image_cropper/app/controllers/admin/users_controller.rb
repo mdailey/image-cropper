@@ -55,8 +55,8 @@ class Admin::UsersController < ApplicationController
 
   def user_params
     if !params[:id]
-      @password = (0...8).map { ('a'..'z').to_a[rand(26)] }.join
-      params[:user][:password] = @password
+      #@password = 'admin_1234'#(0...8).map { ('a'..'z').to_a[rand(26)] }.join
+      params[:user][:password] = 'admin_1234'
       params.require(:user).permit(:name, :email, :password, :is_active, :role_id)
     else
       params.require(:user).permit(:name, :email, :password, :is_active, :role_id)

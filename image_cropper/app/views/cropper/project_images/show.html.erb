@@ -1,0 +1,67 @@
+<script type="text/paperscript" canvas="canvas-1">
+  var raster = new Raster($("#canvas-1").attr("data-project-image"));
+  var canvas = $("#canvas-1");
+  var project_id = $("#canvas-1").attr("data-project-id");
+  var url = $("#canvas-1").attr("data-project-url");
+  var myPath = new Path()
+
+  function redraw() {
+    $.ajax({
+       type: "GET",
+       url: url,
+       dataType: "json",
+       contentType: "application/json",
+       success: function(data) {
+        for (var i = 0; i < data.length; i++) {
+          if(i == 0) {
+            myPath = new Path();
+          } else {
+            if(data[i-1].crop_number != data[i].crop_number) {
+              myPath.closed = true;
+              myPath = new Path();
+            }
+          }
+          myPath.strokeColor = 'black';
+          myPath.add(new Point(data[i].x,data[i].y));
+        }
+        myPath.closed = true;
+      }
+    });
+  }
+
+  raster.on('load', function() {
+    canvas.width(raster.width);
+    canvas.height(raster.height);
+    raster.position = [raster.width/2, raster.height/2];
+    view.setViewSize(canvas.width(), canvas.height());
+    redraw();
+  });
+</script>
+
+<div class="row">
+  <div class="col-md-12">
+    <h2><%= @project.name %></h2>
+    <hr/>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <canvas id="canvas-1"
+          data-project-image="<%= "/system/#{@project.name}/#{@project_image.image}" %>"
+          data-crop-url="<%= cropper_project_project_image_path(@project.id, @project_image.id) %>"
+          style="border: 5px groove #333">
+        </canvas>
+        <br/><br/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <%= link_to ' << ', cropper_project_project_image_path(@project, params[:id].to_i-1), :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => !(params[:id].to_i > @project_image_min) %>
+        &nbsp;&nbsp;
+        <%= link_to ' >> ', cropper_project_project_image_path(@project, params[:id].to_i+1), :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => !(params[:id].to_i < @project_image_max) %>
+      </div>
+    </div>
+  </div>
+</div>
+<br/>
+<%= link_to 'Back', :back, :class => "btn btn-primary", :type => "button" %>
+&nbsp;&nbsp;
+<%= link_to 'Back to project page', cropper_projects_path, :class => "btn btn-primary", :type => "button" %>

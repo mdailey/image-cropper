@@ -11,7 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150701021238) do
+ActiveRecord::Schema.define(version: 20150708035920) do
+
+  create_table "project_crop_images", force: :cascade do |t|
+    t.integer  "project_id",       limit: 4
+    t.integer  "project_image_id", limit: 4
+    t.integer  "crop_number",      limit: 4
+    t.integer  "user_id",          limit: 4
+    t.decimal  "x",                          precision: 10
+    t.decimal  "y",                          precision: 10
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+  end
+
+  add_index "project_crop_images", ["user_id"], name: "index_project_crop_images_on_user_id", using: :btree
 
   create_table "project_images", force: :cascade do |t|
     t.integer  "project_id", limit: 4
@@ -68,6 +81,7 @@ ActiveRecord::Schema.define(version: 20150701021238) do
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
 
+  add_foreign_key "project_crop_images", "users"
   add_foreign_key "project_users", "projects"
   add_foreign_key "project_users", "users"
   add_foreign_key "users", "roles"

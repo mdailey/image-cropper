@@ -1,0 +1,2 @@
+module Cropper::ProjectCropImagesHelper
+end
