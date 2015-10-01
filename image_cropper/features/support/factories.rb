@@ -54,4 +54,16 @@ FactoryGirl.define do
   factory :project_user do
   end
 
+  factory :project_crop_image do
+    #crop_number: 1
+  end
+
+  factory :project_crop_image_cord do
+    #crop_number: 1
+  end
+
+  factory :tag do
+    name "cat"
+  end
+
 end

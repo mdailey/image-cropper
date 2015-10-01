@@ -2,8 +2,12 @@ Given(/^there is 1 user$/) do
   @new_user = FactoryGirl.create :cropper
 end
 
+Given(/^there is 1 tag$/) do
+  @tag = FactoryGirl.create :tag
+end
+
 Given(/^there is 1 user assigned to project$/) do
-  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@new_user)? @new_user.id : @user.id
+  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@new_user)? @new_user.id : @user.id, tag_id: @tag.id
 end
 
 Then(/^I should see a user form$/) do

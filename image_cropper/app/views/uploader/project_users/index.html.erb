@@ -30,9 +30,33 @@
         <% @project_user = @project.project_users.find_by_user_id(user.id) %>
         <td class="width-90"><%= check_box_tag "user-#{user.id}", user.id, @project_user, class: "user", id: "user-#{user.id}", data: {remote: !@project_user.nil?? uploader_project_project_user_path(@project.id, @project_user.id, format: :json) : uploader_project_project_users_path(@project.id, project_user: {user_id: user.id, project_id: @project.id}, format: :json)} %></td>
         <td class="user_name"><%= user.name %></td>
+        <% if @project_user %>
+          <td><%= select_tag :tag, options_for_select(Tag.order(:name).map { |tag| [tag.name, tag.id] }, @project_user.tag_id), prompt: "Please Select", class: "form-control width-200 tag", url: uploader_project_project_user_path(@project.id, @project_user.id, format: :json), onchange: "update_project_user(this)" %></td>
+        <% else %>
+          <td></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
 </table>
 <% end %>
-<%= link_to 'Back', :back, :class => "btn btn-primary", :type => "button" %>
+<%= link_to 'Back', uploader_projects_path, :class => "btn btn-primary", :type => "button" %>
+
+<script>
+function update_project_user(e) {
+  url = $(e).attr('url');
+  tag = $(e).val();
+  $.ajax({
+    type: 'put',
+    url: url,
+    data: {
+      project_user: {
+        tag_id: tag
+      }
+    },
+    success: function(textStatus, jqXHR) {
+      window.location = window.location.pathname;
+    }
+  });
+}
+</script>

@@ -9,11 +9,10 @@ $ ->
         url: url
         success: (textStatus, jqXHR) ->
           window.location = window.location.pathname
-          #window.setAlert 'success', 'Setting was successfully updated.'
-        error: (jqXHR, textStatus, errorThrown) ->
-          #window.setAlert 'danger', 'Settings cannot be updated' + jqXHR.responseText + '.'
       return
     else
       $.post(url, { _method: 'delete' }, null, "script");
       window.location = window.location.pathname
   return
+
+  

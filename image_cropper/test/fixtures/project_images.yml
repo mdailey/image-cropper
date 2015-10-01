@@ -3,4 +3,4 @@
 one:
   id: 1
   project_id: 1
-  image: "/public/doraemon1.jpg"
+  image: "doraemon1.jpg"

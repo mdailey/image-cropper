@@ -73,6 +73,7 @@ Feature: Project
     And there is 1 user
     And I "activate" a user
     And there is 1 project
+    And there is 1 tag
     And there is 1 user assigned to project
     When I visit the project page
     Then I should see the project in the list
@@ -96,6 +97,29 @@ Feature: Project
     And there is 1 project
     And there is 1 project image
     When I visit the project page
+    Then I should see the project in the list
+    When I click the delete link in the project list
+    Then the project should be deleted
+    And I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form
+
+  @wip
+  @javascript
+  Scenario: Search cropped image by tag
+
+  An uploader should be able to search cropped image by tag
+
+    Given I am an uploader
+    And I am signed in
+    And there is 1 project
+    And there is 1 project image
+    And there is 1 tag
+    And there is 1 user assigned to project
+    And there is 1 cropped image
+    When I visit the crop page
     Then I should see the project in the list
     When I click the delete link in the project list
     Then the project should be deleted

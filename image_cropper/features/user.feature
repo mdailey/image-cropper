@@ -61,6 +61,7 @@ Feature: User
     When I click the "Sign Out" link
     Then I should see a login form
 
+  #@wip
   @javascript
   Scenario: Deactivate a user
 

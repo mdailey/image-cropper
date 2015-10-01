@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
-
   namespace :cropper do
     resources :projects do
       resources :project_images do
-        resources :project_crop_images
+        resources :project_crop_images #do
+          #resources :project_crop_image_cords
+        #end
       end
     end
   end
@@ -18,6 +19,8 @@ Rails.application.routes.draw do
    resources :projects do
      resources :project_users
      resources :project_images
+     resources :project_crop_images
+     #get "/uploader/projects/:project_id/project_crop_images" => "uploader/project_crop_images#index"
    end
   end
 

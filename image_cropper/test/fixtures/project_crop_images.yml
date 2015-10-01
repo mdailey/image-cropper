@@ -2,36 +2,6 @@
 
 one:
   id: 1
-  project_id: 1
   project_image_id: 1
-  crop_number: 1
+  image: "20150922205514.jpg"
   user_id: 3
-  x: 9
-  'y': 9
-
-two:
-  id: 2
-  project_id: 1
-  project_image_id: 1
-  crop_number: 1
-  user_id: 3
-  x: 10
-  'y': 10
-
-three:
-  id: 3
-  project_id: 1
-  project_image_id: 1
-  crop_number: 1
-  user_id: 3
-  x: 11
-  'y': 11
-
-four:
-  id: 4
-  project_id: 1
-  project_image_id: 1
-  crop_number: 1
-  user_id: 3
-  x: 12
-  'y': 12

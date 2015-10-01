@@ -2,8 +2,8 @@
 
 one:
   id: 1
-  name: 'Gudetama'
-  description: 'I am an lazy egg'
+  name: 'Doraemon'
+  description: ''
   crop_points: 4
   isactive: false
   user_id: 2

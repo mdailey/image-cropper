@@ -13,18 +13,15 @@
        contentType: "application/json",
        success: function(data) {
         for (var i = 0; i < data.length; i++) {
-          if(i == 0) {
-            myPath = new Path();
-          } else {
-            if(data[i-1].crop_number != data[i].crop_number) {
-              myPath.closed = true;
-              myPath = new Path();
-            }
+          myPath = new Path();
+          for (var ii = 0; ii < data[i]["cords"].length; ii++) {
+            myPath.fillColor = "red";
+            myPath.opacity = 0.5;
+            myPath.strokeColor = "black";
+            myPath.add(new Point(data[i]["cords"][ii].x,data[i]["cords"][ii].y));
           }
-          myPath.strokeColor = 'black';
-          myPath.add(new Point(data[i].x,data[i].y));
+          myPath.closed = true;
         }
-        myPath.closed = true;
       }
     });
   }

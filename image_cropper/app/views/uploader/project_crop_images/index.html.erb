@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-md-12">
+    <h2>Project Crop Images</h2>
+    <hr/>
+    <div class="row">
+      <div class="col-md-2"><strong>Project Name: </strong></div>
+      <div id="project_name" class="col-md-10"><%= @project.name %></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><strong>Description: </strong></div>
+      <div id="project_description" class="col-md-10"><%= @project.description %></div>
+    </div>
+  </div>
+</div>
+<br/><br/>
+<table class="table table-striped">
+  <tbody>
+    <% @project.project_images.each do |project_image| %>
+      <% ProjectCropImage.where(project_image_id: project_image.id).each do |project_crop_image| %>
+        <tr>
+          <td class="width-100"><%= image_tag "/system/#{@project.name}/#{project_crop_image.user_id}/#{project_crop_image.image}", :height => 50 %></td>
+          <td class="width-150"><%= @project.project_users.where(project_id: @project.id, user_id: project_crop_image.user_id).first.tag.name %></td>
+          <td><%= project_crop_image.user.name %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

@@ -10,3 +10,5 @@ User.create([{name: 'Admin', email: 'ait.cropper@gmail.com', password: 'ta_28033
 User.create([{name: 'Uploader', email: 'tama_opps@hotmail.com', password: 'ta_280332', role_id: 2, is_active: true}])
 User.create([{name: 'Cropper1', email: 'suwanna.x@gmail.com', password: 'ta_280332', role_id: 3, is_active: true}])
 User.create([{name: 'Cropper2', email: 'tama.opps@gmail.com', password: 'ta_280332', role_id: 3, is_active: true}])
+
+Tag.create([{name: "Cat"}])

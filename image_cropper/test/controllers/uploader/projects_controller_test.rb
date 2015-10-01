@@ -42,6 +42,17 @@ class Uploader::ProjectsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should authorize get create" do
+    get :create, project: {name: "Doraemon", isactive: false, crop_points: 4}
+    assert_redirected_to new_user_session_path
+  end
+
+  test "should get create" do
+    sign_in users(:uploader)
+    get :create, project: {name: "Doraemon", isactive: false, crop_points: 4}
+    assert_response :success
+  end
+
   test "should authorize update" do
     patch :update, id: @project.id, project: {}
     assert_redirected_to new_user_session_path

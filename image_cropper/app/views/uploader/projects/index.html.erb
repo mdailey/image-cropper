@@ -13,7 +13,7 @@
       <th class="text-center">Crop points</th>
       <th class="text-center">Isactive</th>
       <th class="text-center">Owner</th>
-      <th colspan="4"></th>
+      <th colspan="5"></th>
     </tr>
   </thead>
   <tbody>
@@ -31,6 +31,7 @@
         <td class="text-center"><%= project.user.name %></td>
         <td><%= link_to 'Show', [:uploader,project] %></td>
         <td><%= link_to 'Assign', [:uploader,project,'project_users'], :id => "assign_project_#{project.id}", target: "_top" %></td>
+        <td><%= link_to 'Crop', [:uploader,project,'project_crop_images'], :id => "project_crop_images_#{project.id}", target: "_top" %></td>
         <% if current_user.id == project.user_id || current_user.role_id == 1 %>
           <td><%= link_to 'Edit', edit_uploader_project_path(project), :id => "edit_project_#{project.id}" %></td>
           <td><%= link_to 'Destroy', [:uploader,project], method: :delete, data: { confirm: 'Are you sure?' }, :id => "delete_project_#{project.id}" %></td>

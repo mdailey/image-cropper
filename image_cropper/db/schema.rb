@@ -11,17 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150708035920) do
+ActiveRecord::Schema.define(version: 20150922035422) do
+
+  create_table "project_crop_image_cords", force: :cascade do |t|
+    t.integer "project_crop_image_id", limit: 4
+    t.float   "x",                     limit: 24
+    t.float   "y",                     limit: 24
+  end
+
+  add_index "project_crop_image_cords", ["project_crop_image_id"], name: "index_project_crop_image_cords_on_project_crop_image_id", using: :btree
 
   create_table "project_crop_images", force: :cascade do |t|
-    t.integer  "project_id",       limit: 4
-    t.integer  "project_image_id", limit: 4
-    t.integer  "crop_number",      limit: 4
-    t.integer  "user_id",          limit: 4
-    t.decimal  "x",                          precision: 10
-    t.decimal  "y",                          precision: 10
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.integer "project_image_id", limit: 4
+    t.integer "user_id",          limit: 4
+    t.string  "image",            limit: 255
   end
 
   add_index "project_crop_images", ["user_id"], name: "index_project_crop_images_on_user_id", using: :btree
@@ -38,9 +41,11 @@ ActiveRecord::Schema.define(version: 20150708035920) do
     t.integer  "user_id",    limit: 4
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
+    t.integer  "tag_id",     limit: 4
   end
 
   add_index "project_users", ["project_id"], name: "index_project_users_on_project_id", using: :btree
+  add_index "project_users", ["tag_id"], name: "index_project_users_on_tag_id", using: :btree
   add_index "project_users", ["user_id"], name: "index_project_users_on_user_id", using: :btree
 
   create_table "projects", force: :cascade do |t|
@@ -57,6 +62,10 @@ ActiveRecord::Schema.define(version: 20150708035920) do
     t.string   "name",       limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "name", limit: 255
   end
 
   create_table "users", force: :cascade do |t|
@@ -81,6 +90,7 @@ ActiveRecord::Schema.define(version: 20150708035920) do
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
 
+  add_foreign_key "project_crop_image_cords", "project_crop_images"
   add_foreign_key "project_crop_images", "users"
   add_foreign_key "project_users", "projects"
   add_foreign_key "project_users", "users"
