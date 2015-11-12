@@ -35,7 +35,7 @@
     <tbody>
       <% @project.project_images.all.each do |project_image| %>
         <tr>
-          <td class="width-100"><%= image_tag "/system/#{@project.name}/#{project_image.image}", :height => 50 %></td>
+          <td class="width-100"><%= image_tag "/system/projects/#{@project.name}/#{project_image.image}", :height => 50 %></td>
           <td><%= project_image.image %></td>
         </tr>
       <% end %>

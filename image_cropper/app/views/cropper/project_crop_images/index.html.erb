@@ -101,7 +101,7 @@
         <canvas id="canvas-1"
           data-project-id="<%= @project.id %>"
           data-project-image-id="<%= @project_image.id %>"
-          data-project-image="<%= "/system/#{@project.name}/#{@project_image.image}" %>"
+          data-project-image="<%= "/system/projects/#{@project.name}/#{@project_image.image}" %>"
           data-crop-url="<%= cropper_project_project_image_project_crop_images_path(@project.id, @project_image.id) %>"
           data-crop-limit="<%= @project.crop_points %>"
           style="border: 5px groove #333">

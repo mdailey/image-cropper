@@ -9,14 +9,14 @@ Given(/^there is 1 cropped image$/) do
 end
 
 def create_mock_project_image_folder
-  file_path = "#{Rails.root.to_s}/public/system/#{@project.name}"
+  file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
   system("mkdir -p #{file_path}")
   file_name = "#{Rails.root.to_s}/public/doraemon1.jpg"
   system("cp #{file_name} #{file_path}/doraemon1.jpg")
 end
 
 def delete_mock_project_image_folder
-  file_path = "#{Rails.root.to_s}/public/system/#{@project.name}"
+  file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
   system("rm -r #{file_path}")
 end
 
@@ -38,7 +38,7 @@ end
 Then(/^I should see an image of assigned project$/) do
   expect(page).to have_css 'canvas#canvas-1'
   image_path = page.evaluate_script("$('canvas#canvas-1').attr('data-project-image')")
-  expect(image_path.to_s).to eq "/system/#{@project.name}/#{@project_image.image}"
+  expect(image_path.to_s).to eq "/system/projects/#{@project.name}/#{@project_image.image}"
 end
 
 When(/^I click on an image for cropping$/) do

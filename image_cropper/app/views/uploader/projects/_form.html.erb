@@ -1,6 +1,6 @@
 <%= form_for([:uploader, @project]) do |f| %>
   <div class="form-group">
-    <%= f.label :name %>&nbsp;&nbsp;<em>Not allow to use space or any special characters</em><br>
+    <%= f.label :name %>><br>
     <%= f.text_field :name, :class => "form-control width-300", :placeholder => "Project name", :pattern => "[a-zA-Z0-9]+", :title => "Not allow to use space or any special characters", :required => true, :autofocus => true %>
   </div>
   <div class="form-group">
@@ -16,7 +16,7 @@
         <tbody>
           <% @project.project_images.all.each do |project_image| %>
             <tr>
-              <td class="width-100"><%= image_tag "/system/#{@project.name}/#{project_image.image}", :height => 50 %></td>
+              <td class="width-100"><%= image_tag "/system/projects/#{@project.name}/#{project_image.image}", :height => 50 %></td>
               <td  class="width-200"><%= project_image.image %></td>
               <td><%= link_to 'Destroy', uploader_project_project_image_path(@project, project_image), method: :delete, data: { confirm: 'Are you sure?' } %></td>
             </tr>

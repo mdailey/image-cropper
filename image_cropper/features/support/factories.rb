@@ -42,8 +42,8 @@ FactoryGirl.define do
   end
 
   factory :project do
-    name 'Test'
-    description 'I am now testing.'
+    name 'Doraemon'
+    description ''
     crop_points 4
   end
 
@@ -63,7 +63,6 @@ FactoryGirl.define do
   end
 
   factory :tag do
-    name "cat"
   end
 
 end

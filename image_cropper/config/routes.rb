@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   end
 
   namespace :uploader do
+   resources :tags
    resources :projects do
      resources :project_users
      resources :project_images

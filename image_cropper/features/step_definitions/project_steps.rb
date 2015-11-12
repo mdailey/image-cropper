@@ -15,7 +15,7 @@ Then(/^I should see a project form$/) do
 end
 
 When(/^I submit the project information$/) do
-  fill_in 'Name', with: 'Test'
+  fill_in 'Name', with: 'Giant' if @project.nil?
   fill_in 'Description', with: 'I am now testing.'
   select('4 Points', :from => 'project[crop_points]')
   attach_file("project_images", "#{Rails.root.to_s}/public/doraemon1.jpg")

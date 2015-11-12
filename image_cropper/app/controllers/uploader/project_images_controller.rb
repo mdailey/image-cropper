@@ -22,7 +22,7 @@ class Uploader::ProjectImagesController < ApplicationController
   end
 
   def destroy_image
-    file_path = "#{Rails.root.to_s}/public/system/#{@project.name}"
+    file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
     system("rm #{file_path}/#{@project_image.image}")
   end
 end

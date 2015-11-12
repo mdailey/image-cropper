@@ -42,6 +42,8 @@ When(/^I visit (.*)$/) do |page|
     when 'the assigned project page'
       create_mock_project_image_folder()
       visit cropper_projects_path
+    when 'the tag page'
+      visit uploader_tags_path
     else
       raise 'Unexpected page description'
   end

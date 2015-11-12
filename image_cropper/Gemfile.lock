@@ -235,6 +235,8 @@ GEM
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
       websocket-driver (>= 0.2.0)
+    polyamorous (1.2.0)
+      activerecord (>= 3.0)
     procto (0.0.2)
     pry (0.10.1)
       coderay (~> 1.1.0)
@@ -278,6 +280,12 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rainbow (2.0.0)
     rake (10.4.2)
+    ransack (1.7.0)
+      actionpack (>= 3.0)
+      activerecord (>= 3.0)
+      activesupport (>= 3.0)
+      i18n
+      polyamorous (~> 1.2)
     rdoc (4.2.0)
       json (~> 1.4)
     redcard (1.1.0)
@@ -417,6 +425,7 @@ DEPENDENCIES
   poltergeist
   pry
   rails (= 4.2.1)
+  ransack
   rspec-expectations
   rspec-rails
   rubyzip
@@ -429,3 +438,6 @@ DEPENDENCIES
   spring
   turbolinks
   uglifier (>= 1.3.0)
+
+BUNDLED WITH
+   1.10.6

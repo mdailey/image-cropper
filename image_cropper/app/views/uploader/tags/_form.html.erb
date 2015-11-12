@@ -1,0 +1,11 @@
+<%= form_for([:uploader, @tag]) do |f| %>
+  <div class="form-group">
+    <%= f.label :name %><br>
+    <%= f.text_field :name, :class => "form-control width-300", :placeholder => "Tag name", :pattern => "[a-zA-Z0-9]+", :title => "Not allow to use space or any special characters", :required => true, :autofocus => true %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Submit", :class => "btn btn-primary" %>
+    &nbsp;&nbsp;
+    <%= link_to 'Cancel', uploader_tags_path, :class => "btn btn-primary", :type => "button" %>
+  </div>
+<% end %>

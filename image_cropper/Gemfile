@@ -42,6 +42,9 @@ gem 'rubyzip'
 # Context Menu
 gem 'jquery_context_menu-rails'
 
+# Search
+gem 'ransack'
+
 # Deployment
 group :development do
   gem 'capistrano', '~> 3.2.1'
