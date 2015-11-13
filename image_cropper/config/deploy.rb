@@ -1,9 +1,10 @@
 # config valid only for current version of Capistrano
 lock '3.4.0'
 
-set :application, 'my_app_name'
+set :application, 'image-cropper'
 set :repo_url, 'git@vgl-ait.org:ImageCropper'
-
+set :repo_tree, 'image_cropper'
+set :deploy_to, '/home/deploy/image_cropper'
 set :rbenv_ruby, '2.1.5'
 
 # Default branch is :master
