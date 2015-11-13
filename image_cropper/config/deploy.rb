@@ -2,9 +2,9 @@
 lock '3.4.0'
 
 set :application, 'my_app_name'
-set :repo_url, 'git@example.com:me/my_repo.git'
+set :repo_url, 'git@vgl-ait.org:ImageCropper'
 
-set :rbenv_ruby, '2.1.5-p273'
+set :rbenv_ruby, '2.1.5'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
