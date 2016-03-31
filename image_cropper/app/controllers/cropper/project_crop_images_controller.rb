@@ -99,6 +99,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
       @filename = "#{Time.now.strftime("%Y%m%d%H%M%S")}.#{@project_crop_image.image.split(".")[1]}"
       system("python image_cropper.py -i #{@file_path}/#{@project_image.image} -o #{@output_path}/#{@filename} -x #{@x_cords} -y #{@y_cords}")
       system("cp #{@output_path}/#{@filename} #{Rails.root.to_s}/public/system/categories/#{@project_user.tag.name}/#{@filename}")
+      puts "python image_cropper.py -i #{@file_path}/#{@project_image.image} -o #{@output_path}/#{@filename} -x #{@x_cords} -y #{@y_cords}"
     end
   end
 

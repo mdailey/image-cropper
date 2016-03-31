@@ -5,7 +5,7 @@ class Uploader::ProjectUsersController < ApplicationController
   before_action :set_project_user, only: [:update, :destroy]
 
   def index
-    @users = User.where("role_id=?",3).order(:name)
+    @users = User.order(:name)#.where("role_id=?",3).order(:name)
   end
 
   def create
