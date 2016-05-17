@@ -42,10 +42,10 @@ Then(/^I should see an image of assigned project$/) do
 end
 
 When(/^I click on an image for cropping$/) do
-  page.evaluate_script "paper.tool.emit('mouseup', { point: {x: #{70}, y: #{433}}, event: {buttons: 1} })"
-  page.evaluate_script "paper.tool.emit('mouseup', { point: {x: #{71}, y: #{252}}, event: {buttons: 1}  })"
-  page.evaluate_script "paper.tool.emit('mouseup', { point: {x: #{182}, y: #{259}}, event: {buttons: 1}  })"
-  page.evaluate_script "paper.tool.emit('mouseup', { point: {x: #{190}, y: #{431}}, event: {buttons: 1}  })"
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{70}, y: #{433}}, event: {buttons: 1} })"
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{71}, y: #{252}}, event: {buttons: 1}  })"
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{182}, y: #{259}}, event: {buttons: 1}  })"
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{190}, y: #{431}}, event: {buttons: 1}  })"
   page.evaluate_script "$('body').trigger($.Event( 'keyup', { which: 13 } ))"
 end
 

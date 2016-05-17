@@ -20,6 +20,10 @@ body > .container {
   padding-top: 60px;
 }
 
+.text-bold {
+  font-weight: bold;
+}
+
 .btn {
   color: #fff !important;
 }

@@ -45,18 +45,19 @@
 <br/>
 <h2>Users in Project</h2>
 <hr/>
+<%= link_to "Add more user", [:uploader,@project,'project_users'], class: "btn btn-primary", target: "_blank" %>
 <% if @project.project_users.size == 0 %>
   <div class="text-center">
-    <em>No user in this project</em>
+    <p>No user in this project</p>
   </div>
   <br/>
 <% else %>
   <table class="table table-striped">
     <thead>
       <tr>
-        <td class="width-50">No</td>
-        <td>Firstname Lastname</td>
-        <td>Email</td>
+        <td class="width-50 text-bold">No</td>
+        <td class="text-bold">Firstname Lastname</td>
+        <td class="text-bold">Email</td>
       </tr>
     </thead>
     <tbody>

@@ -1,39 +1,4 @@
-<script type="text/paperscript" canvas="canvas-1">
-  var raster = new Raster($("#canvas-1").attr("data-project-image"));
-  var canvas = $("#canvas-1");
-  var project_id = $("#canvas-1").attr("data-project-id");
-  var url = $("#canvas-1").attr("data-project-url");
-  var myPath = new Path()
-
-  function redraw() {
-    $.ajax({
-       type: "GET",
-       url: url,
-       dataType: "json",
-       contentType: "application/json",
-       success: function(data) {
-        for (var i = 0; i < data.length; i++) {
-          myPath = new Path();
-          for (var ii = 0; ii < data[i]["cords"].length; ii++) {
-            myPath.fillColor = "red";
-            myPath.opacity = 0.5;
-            myPath.strokeColor = "black";
-            myPath.add(new Point(data[i]["cords"][ii].x,data[i]["cords"][ii].y));
-          }
-          myPath.closed = true;
-        }
-      }
-    });
-  }
-
-  raster.on('load', function() {
-    canvas.width(raster.width);
-    canvas.height(raster.height);
-    raster.position = [raster.width/2, raster.height/2];
-    view.setViewSize(canvas.width(), canvas.height());
-    redraw();
-  });
-</script>
+<%= javascript_include_tag "show_crop", type: 'text/paperscript', canvas: 'canvas-1' %>
 
 <div class="row">
   <div class="col-md-12">
