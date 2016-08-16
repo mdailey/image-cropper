@@ -81,4 +81,3 @@ group :test do
   gem 'simplecov-rcov', :require => false
   gem 'metric_fu'
 end
-

@@ -1,6 +1,7 @@
 
 # config valid only for current version of Capistrano
-lock '3.4.0'
+#lock '3.4.0'
+lock '3.2.1'
 
 set :application, 'image-cropper'
 set :repo_url, 'git@vgl-ait.org:ImageCropper'
@@ -12,6 +13,7 @@ set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', '
 set :keep_releases, 5
 set :passenger_restart_command, 'touch tmp/restart.txt'
 set :passenger_restart_options, -> { "" }
+set :bundle_gemfile, -> { release_path.join('Gemfile') }
 
 namespace :deploy do
 
