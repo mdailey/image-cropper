@@ -11,6 +11,7 @@ class Uploader::TagsController < ApplicationController
 
   def show
     tempfile = Tempfile.new("#{Time.now.strftime("%Y%m%d%H%M%S")}.zip")
+    Dir.exist?(@tag_path) || Dir.mkdir(@tag_path)
     Dir.chdir(@tag_path)
     Zip::File.open(tempfile.path, Zip::File::CREATE) do |zip_file|
       if File.directory?("#{@tag_path}/#{@tag.name}")
