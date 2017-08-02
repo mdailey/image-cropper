@@ -1,6 +1,4 @@
 class User < ActiveRecord::Base
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
   include SentientUser
   has_many :users
   has_many :project_users, dependent: :destroy

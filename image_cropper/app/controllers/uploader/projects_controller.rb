@@ -74,6 +74,7 @@ class Uploader::ProjectsController < ApplicationController
   end
 
   private
+
   def set_project
     @project = Project.find(params[:id])
     @project_name = @project.name
@@ -118,7 +119,7 @@ class Uploader::ProjectsController < ApplicationController
       file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
       @project.project_images.destroy
       if File.directory?(file_path)
-        system("rm -r #{file_path}")
+        system("rm -rf #{file_path}")
       end
     end
   end

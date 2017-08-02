@@ -13,6 +13,7 @@ class Uploader::ProjectImagesController < ApplicationController
   end
 
   private
+
   def set_project
     @project = Project.find(params[:project_id])
   end
@@ -25,4 +26,5 @@ class Uploader::ProjectImagesController < ApplicationController
     file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
     system("rm #{file_path}/#{@project_image.image}")
   end
+
 end

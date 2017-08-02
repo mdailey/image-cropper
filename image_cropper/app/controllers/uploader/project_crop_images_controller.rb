@@ -5,7 +5,6 @@ class Uploader::ProjectCropImagesController < ApplicationController
   after_action :remove_crop_image, only: [:destroy]
 
   def index
-    #may be use gem 'mapster'
   end
 
   def destroy
@@ -17,6 +16,7 @@ class Uploader::ProjectCropImagesController < ApplicationController
   end
 
   private
+
   def set_project
     @project = Project.find(params[:project_id])
   end
@@ -25,4 +25,5 @@ class Uploader::ProjectCropImagesController < ApplicationController
     @file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}/#{@project_crop_image.user_id.to_s}/#{@project_crop_image.image}"
     system("rm #{@file_path}")
   end
+
 end
