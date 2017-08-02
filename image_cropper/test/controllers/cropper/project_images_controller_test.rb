@@ -21,6 +21,13 @@ class Cropper::ProjectImagesControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should return invalid format" do
+    sign_in users(:cropper)
+    project_image = project_images(:one)
+    get :show, project_id: project_image.project_id, id: project_image.id, format: 'png'
+    assert_response :unsupported_media_type
+  end
+
   private
   def initialize_project
     @project = projects(:one)

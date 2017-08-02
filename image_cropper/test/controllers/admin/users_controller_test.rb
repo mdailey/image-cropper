@@ -9,9 +9,15 @@ class Admin::UsersControllerTest < ActionController::TestCase
     @user = nil
   end
 
-  test "should authorize get index" do
+  test "should authenticate get index" do
     get :index
     assert_redirected_to new_user_session_path
+  end
+
+  test "should authorize get index" do
+    sign_in users(:cropper)
+    get :index
+    assert_response :unauthorized
   end
 
   test "should get index" do

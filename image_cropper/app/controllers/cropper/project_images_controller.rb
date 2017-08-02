@@ -16,4 +16,5 @@ class Cropper::ProjectImagesController < ApplicationController
       format.json { render json: @project_crop_image_cords }
     end
   end
+
 end
