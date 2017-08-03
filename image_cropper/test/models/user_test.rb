@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
+
   test "should be valid" do
     User.all.each do |u|
       assert u.valid?
