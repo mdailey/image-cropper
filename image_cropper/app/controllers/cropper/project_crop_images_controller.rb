@@ -56,6 +56,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
   end
 
   private
+
   def set_project
     @project = Project.find(params[:project_id])
   end

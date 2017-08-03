@@ -9,7 +9,7 @@ class Cropper::ProjectsControllerTest < ActionController::TestCase
     @project = nil
   end
 
-  test "should authorize get index" do
+  test "should authenticate get index" do
     get :index
     assert_redirected_to new_user_session_path
   end
@@ -21,6 +21,7 @@ class Cropper::ProjectsControllerTest < ActionController::TestCase
   end
 
   private
+
   def initialize_project
     @project = projects(:one)
   end

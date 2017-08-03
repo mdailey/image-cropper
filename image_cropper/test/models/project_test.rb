@@ -17,7 +17,13 @@ class ProjectTest < ActiveSupport::TestCase
   test "should validate presence of name" do
     p = Project.new crop_points: 1
     assert !p.valid?
-    assert_equal ["can't be blank"], p.errors[:name]
+    assert_equal ["can't be blank", "only allows letters and numbers"], p.errors[:name]
+  end
+
+  test "should validate project name" do
+    p = Project.new name: '../../../etc/'
+    assert !p.valid?
+    assert_equal ["only allows letters and numbers"], p.errors[:name]
   end
 
 end

@@ -3,32 +3,33 @@ class Uploader::ProjectsController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_uploader
   before_action :set_project, only: [:show, :edit, :update, :destroy]
-  after_action :manage_directory, only: [:create, :update]
 
   def index
     @projects = Project.order(:name)
-    if params[:id]
-      @project = Project.find(params[:id])
-      @project_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
-      tempfile = Tempfile.new("#{Time.now.strftime("%Y%m%d%H%M%S")}.zip")
-      Dir.chdir(@project_path)
-      Zip::File.open(tempfile.path, Zip::File::CREATE) do |zip_file|
-        if File.directory?("#{@project_path}")
-          Dir.foreach("#{@project_path}") do |item|
-            zip_file.add("#{@project.name}/original/#{item}", "#{@project_path}/#{item}") if !File.directory?(item)
-          end
-          Dir.glob("*/*").each do |item|
-            zip_file.add("#{@project.name}/crops/#{item.split("/")[1]}", "#{@project_path}/#{item}")
-          end
-        end
-      end
-      respond_to do |format|
-        format.zip  { send_file tempfile.path }
-      end
-    end
   end
 
   def show
+    respond_to do |format|
+      format.zip do
+        @project_path = File.join(Rails.application.config.projects_dir, @project.name)
+        tempfile = Tempfile.new("#{Time.now.strftime("%Y%m%d%H%M%S")}.zip")
+        Dir.exist?(@project_path) || Dir.mkdir(@project_path)
+        Dir.chdir(@project_path)
+        Zip::File.open(tempfile.path, Zip::File::CREATE) do |zip_file|
+          if File.directory?("#{@project_path}")
+            Dir.foreach("#{@project_path}") do |item|
+              zip_file.add("#{@project.name}/original/#{item}", "#{@project_path}/#{item}") if !File.directory?(item)
+            end
+            Dir.glob("*/*").each do |item|
+              zip_file.add("#{@project.name}/crops/#{item.split("/")[1]}", "#{@project_path}/#{item}")
+            end
+          end
+        end
+        Dir.chdir(Rails.application.config.projects_dir)
+        send_file tempfile.path
+      end
+      format.html
+    end
   end
 
   def new
@@ -43,6 +44,7 @@ class Uploader::ProjectsController < ApplicationController
 
     respond_to do |format|
       if @project.save
+        manage_directory
         format.html { redirect_to [:uploader,@project], notice: 'Project was successfully created.' }
         format.json { render :show, status: :created, location: [:uploader,@project] }
       else
@@ -55,6 +57,7 @@ class Uploader::ProjectsController < ApplicationController
   def update
     respond_to do |format|
       if @project.update(project_params)
+        manage_directory
         format.html { redirect_to [:uploader,@project], notice: 'Project was successfully updated.' }
         format.json { render :show, status: :ok, location: [:uploader,@project] }
       else
@@ -82,14 +85,15 @@ class Uploader::ProjectsController < ApplicationController
 
   def manage_directory
     if !params[:id]
-      file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
-      system("mkdir -p #{file_path}")
+      file_path = File.join(Rails.application.config.projects_dir, @project.name)
+      Dir.mkdir(file_path) unless Dir.exist?(file_path)
       unzip_images(file_path)
     else
-      old_file_path = "#{Rails.root.to_s}/public/system/projects/#{@project_name}"
-      current_file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
-      if File.directory?(old_file_path)
-        system("mv #{old_file_path} #{current_file_path}") if (old_file_path != current_file_path)
+      old_file_path = File.join(Rails.application.config.projects_dir, @project_name)
+      current_file_path = File.join(Rails.application.config.projects_dir, @project.name)
+      if old_file_path != current_file_path and File.directory?(old_file_path)
+        system("rm -rf #{current_file_path}")
+        system("mv #{old_file_path} #{current_file_path}")
       end
       unzip_images(current_file_path)
     end
@@ -127,4 +131,5 @@ class Uploader::ProjectsController < ApplicationController
   def project_params
     params.require(:project).permit(:name, :description, :images, :crop_points, :isactive)
   end
+
 end

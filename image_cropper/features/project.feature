@@ -105,3 +105,16 @@ Feature: Project
     Then I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
+
+  Scenario: Download project files
+
+  An uploader should be able to download files for a project
+
+    Given I am an uploader
+    And I am signed in
+    And there is 1 project
+    And there is 1 project image
+    When I visit the project page
+    Then I should see the project in the list
+    When I click the download link in the project list
+    Then I should see a zip file

@@ -6,5 +6,7 @@ class Project < ActiveRecord::Base
   attr_accessor :images
   validates_presence_of :name, :crop_points
   validates_uniqueness_of :name
+  validates :name, format: { with: /\A[a-zA-Z0-9]+\z/,
+                                    message: "only allows letters and numbers" }
   track_who_does_it :creator_foreign_key => "user_id", :updater_foreign_key => "user_id"
 end

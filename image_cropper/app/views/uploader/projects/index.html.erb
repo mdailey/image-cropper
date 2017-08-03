@@ -32,7 +32,7 @@
         <td><%= link_to 'Show', [:uploader,project] %></td>
         <td><%= link_to 'Assign', [:uploader,project,'project_users'], id: "assign_project_#{project.id}", target: "_top" %></td>
         <td><%= link_to 'Crop', [:uploader,project,'project_crop_images'], id: "project_crop_images_#{project.id}", target: "_top" %></td>
-        <td><%= link_to 'Download', uploader_projects_path(id: project.id, format: :zip) %></td>
+        <td><%= link_to 'Download', uploader_project_path(id: project.id, format: :zip) %></td>
         <% if current_user.id == project.user_id || current_user.role_id == 1 %>
           <td><%= link_to 'Edit', edit_uploader_project_path(project), :id => "edit_project_#{project.id}" %></td>
           <td><%= link_to 'Destroy', [:uploader,project], method: :delete, data: { confirm: 'Are you sure?' }, :id => "delete_project_#{project.id}" %></td>
