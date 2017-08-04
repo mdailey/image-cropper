@@ -5,7 +5,7 @@ class Uploader::ProjectUsersController < ApplicationController
   before_action :set_project_user, only: [:update, :destroy]
 
   def index
-    @users = User.order(:name)#.where("role_id=?",3).order(:name)
+    @users = @project.project_users.collect(&:user).sort_by(&:name)
   end
 
   def create
@@ -16,7 +16,7 @@ class Uploader::ProjectUsersController < ApplicationController
         format.json { render json: { success: true }, status: :accepted, location: uploader_project_project_users_path(params[:project_id]) }
       else
         format.html { render :new }
-        format.json { render json: [:uploader,project_user_params[:user_id]].errors, status: :unprocessable_entity }
+        format.json { render json: @project_user.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -24,11 +24,11 @@ class Uploader::ProjectUsersController < ApplicationController
   def update
     respond_to do |format|
       if @project_user.update(project_user_params)
-        format.html { redirect_to uploader_project_project_users_path(params[:project_id]), notice: 'Tag was successfully assigned to this user' }
+        format.html { redirect_to uploader_project_project_users_path(params[:project_id]), notice: 'User was successfully updated for the project' }
         format.json { render json: { success: true }, status: :accepted, location: uploader_project_project_users_path(params[:project_id]) }
       else
-        format.html { render :new }
-        format.json { render json: [:uploader,project_user_params[:user_id]].errors, status: :unprocessable_entity }
+        format.html { render :edit }
+        format.json { render json: @project_user.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -42,6 +42,7 @@ class Uploader::ProjectUsersController < ApplicationController
   end
 
   private
+
   def set_project
     @project = Project.find(params[:project_id])
   end
