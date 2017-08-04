@@ -4,7 +4,6 @@ class Cropper::ProjectCropImagesController < ApplicationController
   before_action :set_project_user
   before_action :set_project_image
   before_action :set_project_crop_images
-  after_action :crop_image, only: [:create]
 
   def index
     flash[:danger] = "The maximum of cropping point of this project is #{@project.crop_points==99? "N Points" : @project.crop_points}. "
@@ -20,17 +19,18 @@ class Cropper::ProjectCropImagesController < ApplicationController
   def create
     @project_crop_image = ProjectCropImage.new(project_crop_image_params)
     @project_crop_image_cords = []
-    @project_crop_image.save
+    saved = @project_crop_image.save
     params[:cords].to_a.each_with_index do |cord|
       @project_crop_image_cords.push(save_cords(@project_crop_image.id, cord[1]["x"], cord[1]["y"]))
     end
     respond_to do |format|
-      if ProjectCropImageCord.create(@project_crop_image_cords)
+      if saved and ProjectCropImageCord.create(@project_crop_image_cords)
+        crop_image
         format.html { redirect_to cropper_project_project_image_project_crop_images_path(@project, @project_image) }
         format.json { render json: { success: true }, status: :accepted, location:  cropper_project_project_image_project_crop_images_path(@project, @project_image) }
       else
         format.html { render :index }
-        format.json { render json: cropper_project_project_image_project_crop_images_path(@project, @project_image).errors, status: :unprocessable_entity }
+        format.json { render json: @project_crop_image.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -103,6 +103,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
   end
 
   def project_crop_image_params
-    params.require(:project_crop_image).permit(:project_image_id, :image) #, :cords)
+    params.require(:project_crop_image).permit(:project_image_id, :image)
   end
+
 end

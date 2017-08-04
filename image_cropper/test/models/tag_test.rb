@@ -18,6 +18,13 @@ class TagTest < ActiveSupport::TestCase
     old = tags(:one)
     r = Tag.new
     assert !r.valid?
-    assert_equal ["can't be blank"], r.errors[:name]
+    assert_equal ["can't be blank", "only allows letters and numbers"], r.errors[:name]
   end
+
+  test "should validate format of name" do
+    tag = Tag.new name: 'Test tag'
+    assert !tag.valid?
+    assert_equal ["only allows letters and numbers"], tag.errors[:name]
+  end
+
 end

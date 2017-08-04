@@ -9,24 +9,6 @@ class Uploader::ProjectsControllerTest < ActionController::TestCase
     @project = nil
   end
 
-  def setup_files
-    dummy_image = File.join(Rails.root.to_s, 'public', 'doraemon1.jpg')
-    Project.all.each do |project|
-      dir = File.join(Rails.application.config.projects_dir, project.name)
-      Dir.mkdir(dir) unless Dir.exist?(dir)
-      project.project_images.each do |image|
-        file = File.join(dir, image.image)
-        system("cp '#{dummy_image}' '#{file}'") unless File.exist?(file)
-        image.project_crop_images.each do |crop|
-          user_dir = File.join(dir, crop.user_id.to_s)
-          Dir.mkdir(user_dir) unless Dir.exist?(user_dir)
-          file = File.join(user_dir, crop.image)
-          system("cp '#{dummy_image}' '#{file}'") unless File.exist?(file)
-        end
-      end
-    end
-  end
-
   test "should authenticate get index" do
     get :index
     assert_redirected_to new_user_session_path
@@ -62,7 +44,7 @@ class Uploader::ProjectsControllerTest < ActionController::TestCase
   end
 
   test "should show zip" do
-    setup_files
+    setup_project_crop_image_files
     sign_in users(:uploader)
     get :show, id: @project.id, format: :zip
     assert_response :success
@@ -124,7 +106,7 @@ class Uploader::ProjectsControllerTest < ActionController::TestCase
   end
 
   test "should update" do
-    setup_files
+    setup_project_crop_image_files
     sign_in users(:uploader)
     patch :update, id: @project.id, project: {name: 'Gudetama1'}
     assert_redirected_to uploader_project_path(assigns(:project))
@@ -143,6 +125,7 @@ class Uploader::ProjectsControllerTest < ActionController::TestCase
   end
 
   test "should destroy" do
+    setup_project_crop_image_files
     sign_in users(:uploader)
     delete :destroy, id: @project.id
     assert_redirected_to uploader_projects_path

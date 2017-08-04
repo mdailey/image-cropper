@@ -4,6 +4,7 @@ class ProjectCropImage < ActiveRecord::Base
   belongs_to :user
   has_many :project_crop_image_cords, dependent: :destroy
   track_who_does_it :creator_foreign_key => "user_id", :updater_foreign_key => "user_id"
+  validates_presence_of :project_image_id, :image
 
   def image_cords
     cords = {}
