@@ -12,7 +12,7 @@ Feature: Crop
     And there is 1 project
     And there is 1 project image
     And there is 1 tag
-    And there is 1 user assigned to project
+    And there is 1 user assigned to the project
     When I visit the assigned project page
     Then I should see the assigned project in the list
     And I should see a "current user" link
@@ -31,7 +31,7 @@ Feature: Crop
     And there is 1 project
     And there is 1 project image
     And there is 1 tag
-    And there is 1 user assigned to project
+    And there is 1 user assigned to the project
     When I visit the assigned project page
     Then I should see the assigned project in the list
     When I click the show link in the assigned project list
@@ -52,7 +52,7 @@ Feature: Crop
     And there is 1 project
     And there is 1 project image
     And there is 1 tag
-    And there is 1 user assigned to project
+    And there is 1 user assigned to the project
     When I visit the assigned project page
     Then I should see the assigned project in the list
     When I click the assign link in the assigned project list

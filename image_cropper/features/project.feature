@@ -49,7 +49,7 @@ Feature: Project
     Given I am an admin
     And I am signed in
     And there is 1 user
-    And I "activate" a user
+    And I "activate" the user
     And there is 1 project
     When I visit the project page
     Then I should see the project in the list
@@ -71,10 +71,10 @@ Feature: Project
     Given I am an admin
     And I am signed in
     And there is 1 user
-    And I "activate" a user
+    And I "activate" the user
     And there is 1 project
     And there is 1 tag
-    And there is 1 user assigned to project
+    And there is 1 user assigned to the project
     When I visit the project page
     Then I should see the project in the list
     When I click the assign link in the project list
@@ -106,6 +106,7 @@ Feature: Project
     When I click the "Sign Out" link
     Then I should see a login form
 
+  @wip
   Scenario: Download project files
 
   An uploader should be able to download files for a project

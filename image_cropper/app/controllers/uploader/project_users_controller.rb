@@ -5,7 +5,7 @@ class Uploader::ProjectUsersController < ApplicationController
   before_action :set_project_user, only: [:update, :destroy]
 
   def index
-    @users = @project.project_users.collect(&:user).sort_by(&:name)
+    @users = User.all.sort_by(&:name)
   end
 
   def create

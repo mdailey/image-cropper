@@ -49,7 +49,7 @@ Feature: User
     Given I am an admin
     And I am signed in
     And there is 1 user
-    And I "deactivate" a user
+    And I "deactivate" the user
     When I visit the user page
     Then I should see the user in the list
     When I click the activate link in the user list
@@ -69,7 +69,7 @@ Feature: User
     Given I am an admin
     And I am signed in
     And there is 1 user
-    And I "activate" a user
+    And I "activate" the user
     When I visit the user page
     Then I should see the user in the list
     When I click the activate link in the user list

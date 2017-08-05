@@ -2,7 +2,7 @@ Given(/^there is 1 user$/) do
   @new_user = FactoryGirl.create :cropper
 end
 
-Given(/^there is 1 user assigned to project$/) do
+Given(/^there is 1 user assigned to the project$/) do
   @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@new_user)? @new_user.id : @user.id, tag_id: @tag.id
 end
 
@@ -21,7 +21,7 @@ When(/^I submit the user information$/) do
 end
 
 Then(/^I should see the user in the list$/) do
-  @new_user = @new_user.nil?? User.last : @new_user
+  @new_user ||= User.last
   rows = find("table").all('tr')
   rows.map { |r| r.all('td.user_name').map { |c|
     #expect(c.text.strip).to eq(@new_user.name)
@@ -37,7 +37,7 @@ When(/^I click the activate link in the user list$/) do
   page.evaluate_script('window.confirm = function() { return true; }')
 end
 
-And(/^I "(.*)" a user$/) do |text|
+And(/^I "(.*)" the user$/) do |text|
   case text
     when 'activate'
       @new_user.update(is_active: true)
