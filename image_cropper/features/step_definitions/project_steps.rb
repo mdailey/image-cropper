@@ -47,10 +47,19 @@ When(/^I click the assign link in the project list$/) do
 end
 
 When(/^I click the delete link in the project list$/) do
+  expect(page).to have_css('tr', text: /#{@project.name}/)
   find(:xpath, "//*[@id='delete_project_#{@project.id}']").click
   page.evaluate_script('window.confirm = function() { return true; }')
 end
 
-Then(/^The project should be deleted$/) do
-  expect(Project.all.size).to eq(0)
+Then(/^the project should be deleted from the project list$/) do
+  expect(page).not_to have_css('tr', text: /#{@project.name}/)
+end
+
+When(/^I click the download link in the project list$/) do
+  page.find('tr', text: /#{@project.name}/).find('a', text: /Download/).click
+end
+
+Then(/^I should see a zip file$/) do
+  expect(page.response_headers['Content-Type']).to eq("application/octet-stream")
 end

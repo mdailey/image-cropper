@@ -48,14 +48,14 @@ Feature: Project
 
     Given I am an admin
     And I am signed in
-    And there is 1 user
+    And there is 1 cropper
     And I "activate" the user
     And there is 1 project
     When I visit the project page
     Then I should see the project in the list
     When I click the assign link in the project list
     Then I should see the user in the list
-    When I click checkbox to assign project
+    When I click the checkbox to assign the user to the project
     Then the project should be assigned
     And I should see a "current user" link
     When I click the "current user" link
@@ -64,13 +64,13 @@ Feature: Project
     Then I should see a login form
 
   @javascript
-  Scenario: Unassign project a user
+  Scenario: Unassign user from project
 
-  An admin/uploader should be able to unassign project to a user
+  An admin/uploader should be able to unassign a user from a project
 
     Given I am an admin
     And I am signed in
-    And there is 1 user
+    And there is 1 cropper
     And I "activate" the user
     And there is 1 project
     And there is 1 tag
@@ -78,15 +78,16 @@ Feature: Project
     When I visit the project page
     Then I should see the project in the list
     When I click the assign link in the project list
-    Then I should see the user in the list
-    When I click checkbox to unassign project
-    Then the project should be unassigned
+    Then I should see the user assigned in the list
+    When I click the checkbox to unassign the user from the project
+    Then I should see the user unassigned in the list
     And I should see a "current user" link
     When I click the "current user" link
     And I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
 
+  @wip
   @javascript
   Scenario: Delete a project
 
@@ -99,14 +100,13 @@ Feature: Project
     When I visit the project page
     Then I should see the project in the list
     When I click the delete link in the project list
-    Then the project should be deleted
+    Then the project should be deleted from the project list
     And I should see a "current user" link
     When I click the "current user" link
     Then I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
 
-  @wip
   Scenario: Download project files
 
   An uploader should be able to download files for a project
@@ -119,3 +119,9 @@ Feature: Project
     Then I should see the project in the list
     When I click the download link in the project list
     Then I should see a zip file
+    When I visit the project page
+    Then I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form

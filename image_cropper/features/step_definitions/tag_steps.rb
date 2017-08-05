@@ -32,7 +32,3 @@ When(/^I click the delete link in the tag list$/) do
   find(:xpath, "//*[@id='delete_tag_#{@tag.id}']").click
   page.evaluate_script('window.confirm = function() { return true; }')
 end
-
-Then(/^The project should be deleted$/) do
-  expect(Tag.all.size).to eq(0)
-end

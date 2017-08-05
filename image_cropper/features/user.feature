@@ -28,7 +28,7 @@ Feature: User
 
     Given I am an admin
     And I am signed in
-    And there is 1 user
+    And there is 1 cropper
     When I visit the user page
     Then I should see the user in the list
     When I click the edit link in the user list
@@ -48,7 +48,7 @@ Feature: User
 
     Given I am an admin
     And I am signed in
-    And there is 1 user
+    And there is 1 cropper
     And I "deactivate" the user
     When I visit the user page
     Then I should see the user in the list
@@ -68,7 +68,7 @@ Feature: User
 
     Given I am an admin
     And I am signed in
-    And there is 1 user
+    And there is 1 cropper
     And I "activate" the user
     When I visit the user page
     Then I should see the user in the list

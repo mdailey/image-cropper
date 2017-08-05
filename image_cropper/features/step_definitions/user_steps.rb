@@ -1,9 +1,10 @@
-Given(/^there is 1 user$/) do
-  @new_user = FactoryGirl.create :cropper
+
+Given(/^there is 1 cropper$/) do
+  @cropper = FactoryGirl.create :cropper
 end
 
 Given(/^there is 1 user assigned to the project$/) do
-  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@new_user)? @new_user.id : @user.id, tag_id: @tag.id
+  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@cropper)? @cropper.id : @user.id, tag_id: @tag.id
 end
 
 Then(/^I should see a user form$/) do
@@ -20,48 +21,50 @@ When(/^I submit the user information$/) do
   click_button 'Submit'
 end
 
-Then(/^I should see the user in the list$/) do
-  @new_user ||= User.last
-  rows = find("table").all('tr')
-  rows.map { |r| r.all('td.user_name').map { |c|
-    #expect(c.text.strip).to eq(@new_user.name)
-  } }
+Then(/^I should see the user( assigned| unassigned)? in the list$/) do |assigned|
+  @cropper ||= User.last
+  row = find('tr', text: /#{@cropper.name}/)
+  if assigned.blank? or assigned == ' unassigned'
+    expect(row).not_to have_css('input[type="checkbox"][checked="checked"]')
+  else
+    expect(row).to have_css('input[type="checkbox"][checked="checked"]')
+  end
 end
 
 When(/^I click the edit link in the user list$/) do
-  find(:xpath, "//*[@id='edit_user_#{@new_user.id}']").click
+  find(:xpath, "//*[@id='edit_user_#{@cropper.id}']").click
 end
 
 When(/^I click the activate link in the user list$/) do
-  find(:xpath, "//*[@id='activate_user_#{@new_user.id}']").click
+  find(:xpath, "//*[@id='activate_user_#{@cropper.id}']").click
   page.evaluate_script('window.confirm = function() { return true; }')
 end
 
 And(/^I "(.*)" the user$/) do |text|
   case text
     when 'activate'
-      @new_user.update(is_active: true)
+      @cropper.update(is_active: true)
     when 'deactivate'
-      @new_user.update(is_active: false)
+      @cropper.update(is_active: false)
     else
       raise 'Unexpected status description'
   end
 end
 
 And(/^I should see a user "(.*)"$/) do |text|
-  @new_user = User.last
+  @cropper = User.last
   case text
     when 'activated'
-      expect(@new_user.is_active).to eq(true)
+      expect(@cropper.is_active).to eq(true)
     when 'deactivated'
-      expect(@new_user.is_active).to eq(false)
+      expect(@cropper.is_active).to eq(false)
     else
       raise 'Unexpected status description'
   end
 end
 
 When(/^I click the assign link in the user list$/) do
-  find(:xpath, "//*[@id='assign_user_#{@new_user.id}']").click
+  find(:xpath, "//*[@id='assign_user_#{@cropper.id}']").click
 end
 
 Then(/^I should see the user information$/) do
@@ -73,20 +76,20 @@ And(/^I should see the project list$/) do
   expect(page).to have_selector('#tblProject')
 end
 
-When(/^I click checkbox to (.*) project$/) do |text|
+When(/^I click the checkbox to (.*) the user (to|from) the project$/) do |text, tofrom|
+  row = find('tr', text: /#{@cropper.name}/)
   if (text == "assign")
-    check("user-#{@new_user.id}")
+    page.evaluate_script("$(\"#user-#{@cropper.id}\").attr('checked', true)")
   elsif (text == "unassign")
-    uncheck("user-#{@new_user.id}")
+    page.evaluate_script("$(\"#user-#{@cropper.id}\").attr('checked', false)")
   end
 end
 
-Then(/^the project should be (.*)$/) do |text|
-  sleep(0.2)
+Then(/^the project should be (assigned|unassigned)$/) do |text|
+  row = find('tr', text: /#{@cropper.name}/)
   if (text == "assigned")
-    expect(ProjectUser.first.user_id).to eq(@new_user.id)
-    expect(ProjectUser.first.project_id).to eq(@project.id)
+    expect(row).to have_css('input[type="checkbox"][checked="checked"]')
   elsif (text == "unassigned")
-    expect(ProjectUser.all.size).to eq(0)
+    expect(row).not_to have_css('input[type="checkbox"][checked="checked"]')
   end
 end
