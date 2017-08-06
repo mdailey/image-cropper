@@ -6,12 +6,13 @@ class Cropper::ProjectCropImagesController < ApplicationController
   before_action :set_project_crop_images
 
   def index
-    flash[:danger] = "The maximum of cropping point of this project is #{@project.crop_points==99? "N Points" : @project.crop_points}. "
-    flash[:danger] += "And your cropped object is #{@project_user.tag.name}."
     @project_image_min = @project.project_images.first.id
     @project_image_max = @project.project_images.last.id
     respond_to do |format|
-      format.html { render :index }
+      format.html do
+        flash[:notice] = "Please select objects of type #{@project_user.tag.name} with a maximum of #{@project.crop_points == 99 ? "any number" : @project.crop_points} points. "
+        flash[:notice] += "Press ENTER after you're finished with an object. Right click and select Delete to remove a selection."
+      end
       format.json { render json: @project_crop_image_cords }
     end
   end

@@ -7,6 +7,10 @@ Given(/^there is 1 user assigned to the project$/) do
   @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@cropper)? @cropper.id : @user.id, tag_id: @tag.id
 end
 
+Given(/^I am assigned to the project$/) do
+  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: @cropper.id, tag_id: @tag.id
+end
+
 Then(/^I should see a user form$/) do
   expect(page).to have_selector('form input#user_name')
   expect(page).to have_selector('form input#user_email')

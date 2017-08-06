@@ -1,18 +1,20 @@
+
 Feature: Crop
 
-  In order to crop images of project, I need cropped page
+  In order to allow croppers to do their work, I need
+  a cropping page.
 
   @javascript
   Scenario: Show assigned projects
 
-  An cropper should be able to see assigned project
+  A cropper should be able to see his or her assigned project
 
     Given I am a cropper
     And I am signed in
     And there is 1 project
     And there is 1 project image
     And there is 1 tag
-    And there is 1 user assigned to the project
+    And I am assigned to the project
     When I visit the assigned project page
     Then I should see the assigned project in the list
     And I should see a "current user" link
@@ -31,10 +33,10 @@ Feature: Crop
     And there is 1 project
     And there is 1 project image
     And there is 1 tag
-    And there is 1 user assigned to the project
+    And I am assigned to the project
     When I visit the assigned project page
     Then I should see the assigned project in the list
-    When I click the show link in the assigned project list
+    When I click the crop images link in the assigned project list
     Then I should see an image of assigned project
     And I should see a "current user" link
     When I click the "current user" link
@@ -52,10 +54,10 @@ Feature: Crop
     And there is 1 project
     And there is 1 project image
     And there is 1 tag
-    And there is 1 user assigned to the project
+    And I am assigned to the project
     When I visit the assigned project page
     Then I should see the assigned project in the list
-    When I click the assign link in the assigned project list
+    When I click the crop images link in the assigned project list
     Then I should see an image of assigned project
     When I click on an image for cropping
     Then I should see cropped points on an image

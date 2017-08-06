@@ -21,17 +21,10 @@ def delete_mock_project_image_folder
 end
 
 Then(/^I should see the assigned project in the list$/) do
-  rows = find("table").all('tr')
-  rows.map { |r| r.all('td.project_name').map { |c|
-    expect(c.text.strip).to eq("Project-#{@project_user.project.id}: #{@project_user.project.name}")
-  } }
+  expect(page).to have_css('tr', text: /#{@project_user.project.name}/)
 end
 
-When(/^I click the show link in the assigned project list$/) do
-  find(:xpath, "//*[@id='show_project_#{@project.id}']").click
-end
-
-When(/^I click the assign link in the assigned project list$/) do
+When(/^I click the crop images link in the assigned project list$/) do
   find(:xpath, "//*[@id='assign_project_#{@project.id}']").click
 end
 

@@ -24,6 +24,7 @@ end
 Given(/^I am a cropper$/) do
   set_default_role
   @user = FactoryGirl.create :cropper
+  @cropper = @user
 end
 
 Given(/^I am signed in$/) do
