@@ -1,2 +1,12 @@
-<h1>Site#index</h1>
-<p>Find me in app/views/site/index.html.erb</p>
+<h1>Welcome to the Image Cropper!</h1>
+
+<% if current_user.role.name == 'admin' %>
+  <p>As admin, you can manage users and create and manage projects.</p>
+  <p>Uploader accounts can create and manage projects, including assigning croppers to projects.</p>
+  <p>Cropper accounts can only crop images.</p>
+<% elsif current_user.role.name == 'uploader' %>
+  <p>As an uploader, you can create and  manage projects, including assigning croppers to projects.</p>
+  <p>Cropper accounts can only crop images.</p>
+<% else %>
+  <p>You are a cropper. You should be assigned to projects by an uploader. Then you can crop images.</p>
+<% end %>
