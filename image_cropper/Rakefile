@@ -7,5 +7,7 @@ Rails.application.load_tasks
 
 if ENV['RAILS_ENV'] != 'production' and ENV['RAILS_ENV'] != 'staging'
   require 'ci/reporter/rake/minitest'
+  require 'ci/reporter/rake/cucumber'
   task :test => 'ci:setup:minitest'
+  task :cucumber => 'ci:setup:cucumber'
 end

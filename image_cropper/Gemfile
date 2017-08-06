@@ -52,16 +52,15 @@ group :test do
   gem 'capybara'
   gem 'cucumber-rails', require: false
   gem 'database_cleaner'
+  gem 'factory_girl_rails'
   gem 'ci_reporter_minitest'
   gem 'ci_reporter_cucumber'
-  gem 'factory_girl_rails'
-  gem 'poltergeist'
-  gem 'selenium-webdriver'
-  gem 'pry'
-  gem 'rspec-expectations'
   gem 'launchy'
-  gem "show_me_the_cookies"
   gem 'simplecov', :require => false
   gem 'simplecov-rcov', :require => false
+  gem 'poltergeist'
+  gem 'pry'
+  gem 'rspec-expectations'
+  gem 'show_me_the_cookies'
   gem 'metric_fu'
 end

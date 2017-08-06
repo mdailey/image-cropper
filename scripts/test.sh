@@ -20,5 +20,5 @@ mysql $TESTDB -u $USER --password=${PASS} -e "$CMD"
 
 # Run tests
 RAILS_ENV=test bundle exec rake test
-RAILS_ENV=test xvfb-run -a bundle exec cucumber --profile default --format junit --out features/reports/ --format json -o features/reports/FEATURES.json
+RAILS_ENV=test xvfb-run -a bundle exec rake cucumber
 
