@@ -1,3 +1,4 @@
+require 'zip'
 class Uploader::TagsController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_uploader
