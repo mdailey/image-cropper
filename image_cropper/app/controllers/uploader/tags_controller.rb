@@ -76,6 +76,7 @@ class Uploader::TagsController < ApplicationController
 
   def manage_directory
     dir = Rails.application.config.categories_dir
+    Dir.mkdir(dir) unless Dir.exist?(dir)
     if !params[:id]
       file_path = File.join(dir, @tag.name)
       Dir.mkdir file_path unless Dir.exist? file_path
