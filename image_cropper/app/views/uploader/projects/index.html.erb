@@ -1,4 +1,4 @@
-<h2>Project Lists</h2>
+<h2>Project List</h2>
 <hr/>
 <% if @projects.size == 0 %>
   <div class="text-center">
@@ -10,8 +10,8 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th class="text-center">Crop points</th>
-      <th class="text-center">Isactive</th>
+      <th class="text-center">Points per crop</th>
+      <th class="text-center">Active?</th>
       <th class="text-center">Owner</th>
       <th colspan="6"></th>
     </tr>
@@ -29,10 +29,10 @@
           <% end%>
         </td>
         <td class="text-center"><%= project.user.name %></td>
-        <td><%= link_to 'Show', [:uploader,project] %></td>
-        <td><%= link_to 'Assign', [:uploader,project,'project_users'], id: "assign_project_#{project.id}", target: "_top" %></td>
-        <td><%= link_to 'Crop', [:uploader,project,'project_crop_images'], id: "project_crop_images_#{project.id}", target: "_top" %></td>
-        <td><%= link_to 'Download', uploader_project_path(id: project.id, format: :zip) %></td>
+        <td><%= link_to 'Show details', [:uploader,project] %></td>
+        <td><%= link_to 'Assign users', [:uploader,project,'project_users'], id: "assign_project_#{project.id}", target: "_top" %></td>
+        <td><%= link_to 'Show cropped images', [:uploader,project,'project_crop_images'], id: "project_crop_images_#{project.id}", target: "_top" %></td>
+        <td><%= link_to 'Download images', uploader_project_path(id: project.id, format: :zip) %></td>
         <% if current_user.id == project.user_id || current_user.role_id == 1 %>
           <td><%= link_to 'Edit', edit_uploader_project_path(project), :id => "edit_project_#{project.id}" %></td>
           <td><%= link_to 'Destroy', [:uploader,project], method: :delete, data: { confirm: 'Are you sure?' }, :id => "delete_project_#{project.id}" %></td>

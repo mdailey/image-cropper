@@ -18,4 +18,8 @@ class Project < ActiveRecord::Base
     self.tag_ids = ids.split(',')
   end
 
+  def pretty_tags
+    self.tags.collect(&:name).sort.to_sentence
+  end
+
 end

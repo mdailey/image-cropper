@@ -4,11 +4,11 @@ Given(/^there is 1 cropper$/) do
 end
 
 Given(/^there is 1 user assigned to the project$/) do
-  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@cropper)? @cropper.id : @user.id, tag_id: @tag.id
+  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@cropper ? @cropper.id : @user.id)
 end
 
 Given(/^I am assigned to the project$/) do
-  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: @cropper.id, tag_id: @tag.id
+  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: @cropper.id
 end
 
 Then(/^I should see a user form$/) do

@@ -40,7 +40,7 @@ When(/^I visit (.*)$/) do |page|
       visit uploader_projects_path
     when 'the user page'
       visit admin_users_path
-    when 'the assigned project page'
+    when 'the assigned projects page'
       create_mock_project_image_folder()
       visit cropper_projects_path
     when 'the tag page'

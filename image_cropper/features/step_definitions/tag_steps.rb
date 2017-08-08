@@ -1,4 +1,5 @@
-Given(/^there is 1 tag$/) do
+
+Given(/^there is 1 unassigned tag$/) do
   @tag = FactoryGirl.create :tag, name: 'abc'
 end
 

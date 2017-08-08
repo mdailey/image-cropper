@@ -10,7 +10,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
     @project_image_max = @project.project_images.last.id
     respond_to do |format|
       format.html do
-        flash[:notice] = "Please select objects of type #{@project_user.tag.name} with a maximum of #{@project.crop_points == 99 ? "any number" : @project.crop_points} points. "
+        flash[:notice] = "Please select objects of type #{@project.pretty_tags} with a maximum of #{@project.crop_points == 99 ? "any number" : @project.crop_points} points. "
         flash[:notice] += "Press ENTER after you're finished with an object. Right click and select Delete to remove a selection."
       end
       format.json { render json: @project_crop_image_cords }
@@ -19,6 +19,9 @@ class Cropper::ProjectCropImagesController < ApplicationController
 
   def create
     @project_crop_image = ProjectCropImage.new(project_crop_image_params)
+    if @project_crop_image.tag_id.nil? and @project.tags.length == 1
+      @project_crop_image.tag = @project.tags.first
+    end
     @project_crop_image_cords = []
     saved = @project_crop_image.save
     params[:cords].to_a.each_with_index do |cord|
@@ -104,7 +107,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
   end
 
   def project_crop_image_params
-    params.require(:project_crop_image).permit(:project_image_id, :image)
+    params.require(:project_crop_image).permit(:project_image_id, :image, :tag_id)
   end
 
 end

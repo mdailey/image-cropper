@@ -1,4 +1,4 @@
-<h2>Tag Lists</h2>
+<h2>Tag List</h2>
 <hr/>
 <% if @tags.size == 0 %>
   <div class="text-center">
@@ -17,7 +17,6 @@
     <% @tags.each do |tag| %>
       <tr>
         <td class="tag_name"><%= tag.name %></td>
-        <td class="width-200 text-center"><%= link_to 'Download', [:uploader,tag, format: :zip] %></td>
         <td class="width-200 text-center"><%= link_to 'Edit', edit_uploader_tag_path(tag), :id => "edit_tag_#{tag.id}" %></td>
         <td class="width-200 text-center"><%= link_to 'Destroy', [:uploader,tag], method: :delete, data: { confirm: 'Are you sure?' }, :id => "delete_tag_#{tag.id}" %></td>
       </tr>

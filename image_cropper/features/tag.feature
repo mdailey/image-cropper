@@ -28,7 +28,7 @@ Feature: Tag
 
     Given I am an uploader
     And I am signed in
-    And there is 1 tag
+    And there is 1 unassigned tag
     When I visit the tag page
     Then I should see the tag in the list
     When I click the edit link in the tag list
@@ -49,7 +49,7 @@ Feature: Tag
     Given I am an uploader
     And I am signed in
     And there is 1 project
-    And there is 1 tag
+    And there is 1 unassigned tag
     When I visit the project page
     Then I should see the project in the list
     When I click the edit link in the project list
@@ -85,4 +85,3 @@ Feature: Tag
     And I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
-

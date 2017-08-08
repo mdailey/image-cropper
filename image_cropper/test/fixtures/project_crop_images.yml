@@ -5,3 +5,4 @@ one:
   project_image_id: 1
   image: "20150922205514.jpg"
   user_id: 3
+  tag_id: 1

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170807211310) do
+ActiveRecord::Schema.define(version: 20170808072706) do
 
   create_table "project_crop_image_cords", force: :cascade do |t|
     t.integer "project_crop_image_id", limit: 4
@@ -25,8 +25,10 @@ ActiveRecord::Schema.define(version: 20170807211310) do
     t.integer "project_image_id", limit: 4
     t.integer "user_id",          limit: 4
     t.string  "image",            limit: 255
+    t.integer "tag_id",           limit: 4
   end
 
+  add_index "project_crop_images", ["tag_id"], name: "index_project_crop_images_on_tag_id", using: :btree
   add_index "project_crop_images", ["user_id"], name: "index_project_crop_images_on_user_id", using: :btree
 
   create_table "project_images", force: :cascade do |t|
@@ -51,11 +53,9 @@ ActiveRecord::Schema.define(version: 20170807211310) do
     t.integer  "user_id",    limit: 4
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
-    t.integer  "tag_id",     limit: 4
   end
 
   add_index "project_users", ["project_id"], name: "index_project_users_on_project_id", using: :btree
-  add_index "project_users", ["tag_id"], name: "index_project_users_on_tag_id", using: :btree
   add_index "project_users", ["user_id"], name: "index_project_users_on_user_id", using: :btree
 
   create_table "projects", force: :cascade do |t|
@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(version: 20170807211310) do
   add_index "users", ["role_id"], name: "index_users_on_role_id", using: :btree
 
   add_foreign_key "project_crop_image_cords", "project_crop_images"
+  add_foreign_key "project_crop_images", "tags"
   add_foreign_key "project_crop_images", "users"
   add_foreign_key "project_tags", "projects"
   add_foreign_key "project_tags", "tags"

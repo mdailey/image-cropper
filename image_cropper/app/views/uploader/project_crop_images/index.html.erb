@@ -19,7 +19,7 @@
       <% ProjectCropImage.where(project_image_id: project_image.id).each do |project_crop_image| %>
         <tr>
           <td class="width-300"><%= image_tag "/system/projects/#{@project.name}/#{project_crop_image.user_id}/#{project_crop_image.image}", :height => 80 %></td>
-          <td class="width-200"><%= @project.project_users.where(project_id: @project.id, user_id: project_crop_image.user_id).first.tag.name %></td>
+          <td class="width-200"><%= project_crop_image.tag.name %></td>
           <td><%= project_crop_image.user.name %></td>
           <td><%= link_to 'Destroy', [:uploader, @project, project_crop_image], method: :delete, data: { confirm: 'Are you sure?' }, :id => "delete_project_#{project_crop_image.id}" %></td>
         </tr>

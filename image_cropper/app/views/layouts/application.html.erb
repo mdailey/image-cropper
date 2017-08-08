@@ -23,10 +23,10 @@
             <%= nav_link 'Home', root_path %>
             <% if user_signed_in? %>
               <% if current_user.role_id == 1 || current_user.role_id == 2 %>
-                <%= nav_link 'Project', uploader_projects_path %>
-                <%= nav_link 'Tag', uploader_tags_path %>
+                <%= nav_link 'Projects', uploader_projects_path %>
+                <%= nav_link 'Tags', uploader_tags_path %>
               <% elsif current_user.role_id == 3 %>
-                  <%= nav_link 'Project', cropper_projects_path %>
+                  <%= nav_link 'Projects', cropper_projects_path %>
               <% end %>
               <% if current_user.role_id == 1 %>
                 <%= nav_link 'User Management', admin_users_path %>

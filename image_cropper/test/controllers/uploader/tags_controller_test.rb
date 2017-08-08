@@ -9,15 +9,6 @@ class Uploader::TagsControllerTest < ActionController::TestCase
     @tag = nil
   end
 
-  def setup_files
-    dummy_image = File.join(Rails.root.to_s, 'public', 'doraemon1.jpg')
-    Tag.all.each do |tag|
-      dir = File.join(Rails.application.config.categories_dir, tag.name)
-      Dir.mkdir(dir) unless Dir.exist?(dir)
-      system("cp '#{dummy_image}' '#{dir}'")
-    end
-  end
-
   test "should authenticate get index" do
     get :index
     assert_redirected_to new_user_session_path
@@ -39,19 +30,6 @@ class Uploader::TagsControllerTest < ActionController::TestCase
     sign_in users(:uploader)
     get :index, format: :json
     assert_response :success
-  end
-
-  test "should authenticate show" do
-    get :show, id: @tag.id
-    assert_redirected_to new_user_session_path
-  end
-
-  test "should show" do
-    setup_files
-    sign_in users(:uploader)
-    get :show, id: @tag.id, format: :zip
-    assert_response :success
-    assert_equal 'application/octet-stream', @response.content_type
   end
 
   test "should authenticate get new" do
@@ -100,14 +78,12 @@ class Uploader::TagsControllerTest < ActionController::TestCase
   end
 
   test "should update" do
-    setup_files
     sign_in users(:uploader)
     patch :update, id: @tag.id, tag: {name: "meow"}
     assert_redirected_to uploader_tags_path
   end
 
   test "should validate on update" do
-    setup_files
     sign_in users(:uploader)
     patch :update, id: @tag.id, tag: {name: tags(:two).name}, format: :json
     assert_response :unprocessable_entity
@@ -125,7 +101,6 @@ class Uploader::TagsControllerTest < ActionController::TestCase
   end
 
   test "should destroy" do
-    setup_files
     sign_in users(:uploader)
     delete :destroy, id: @tag.id
     assert_redirected_to uploader_tags_path

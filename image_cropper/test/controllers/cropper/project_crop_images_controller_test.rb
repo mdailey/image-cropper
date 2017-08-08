@@ -29,7 +29,10 @@ class Cropper::ProjectCropImagesControllerTest < ActionController::TestCase
   test "should create" do
     setup_project_crop_image_files
     sign_in users(:cropper)
-    post :create, project_id: @project, project_image_id: @project_image, project_crop_image: {project_image_id: @project_image.id, image: "20150922205514.jpg"}, cords: {"0"=>{"x"=>"78.51666259765625", "y"=>"339"}, "1"=>{"x"=>"78.51666259765625", "y"=>"271"}, "2"=>{"x"=>"183.51666259765625", "y"=>"268"}, "3"=>{"x"=>"186.51666259765625", "y"=>"340"}}, format: :json
+    post :create, project_id: @project, project_image_id: @project_image,
+                  project_crop_image: { project_image_id: @project_image.id, image: "20150922205514.jpg",
+                                        tag_id: Tag.first.id },
+                  cords: {"0"=>{"x"=>"78.51666259765625", "y"=>"339"}, "1"=>{"x"=>"78.51666259765625", "y"=>"271"}, "2"=>{"x"=>"183.51666259765625", "y"=>"268"}, "3"=>{"x"=>"186.51666259765625", "y"=>"340"}}, format: :json
     assert_response :accepted
   end
 

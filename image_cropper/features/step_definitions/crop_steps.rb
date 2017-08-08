@@ -28,13 +28,13 @@ When(/^I click the crop images link in the assigned project list$/) do
   find(:xpath, "//*[@id='assign_project_#{@project.id}']").click
 end
 
-Then(/^I should see an image of assigned project$/) do
+Then(/^I should see an image from the assigned project$/) do
   expect(page).to have_css 'canvas#canvas-1'
   image_path = page.evaluate_script("$('canvas#canvas-1').attr('data-project-image')")
   expect(image_path.to_s).to eq "/system/projects/#{@project.name}/#{@project_image.image}"
 end
 
-When(/^I click on an image for cropping$/) do
+When(/^I select an object on the image to be cropped$/) do
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{70}, y: #{433}}, event: {buttons: 1} })"
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{71}, y: #{252}}, event: {buttons: 1}  })"
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{182}, y: #{259}}, event: {buttons: 1}  })"
@@ -42,7 +42,7 @@ When(/^I click on an image for cropping$/) do
   page.evaluate_script "$('body').trigger($.Event( 'keyup', { which: 13 } ))"
 end
 
-Then(/^I should see cropped points on an image$/) do
+Then(/^I should see the object selected on the image$/) do
   sleep(0.5)
   expect(ProjectCropImage.all.size).to eq(1)
   expect(ProjectCropImageCord.all.size).to eq(4)
