@@ -129,7 +129,7 @@ class Uploader::ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:name, :description, :images, :crop_points, :isactive)
+    params.require(:project).permit(:name, :description, :images, :crop_points, :isactive, :tag_tokens)
   end
 
 end

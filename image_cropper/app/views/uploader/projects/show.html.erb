@@ -11,6 +11,10 @@
       <div id="project_description" class="col-md-10"><%= @project.description %></div>
     </div>
     <div class="row">
+      <div class="col-md-2"><strong>Tags:</strong></div>
+      <div id="project_tags" class="col-md-10"><%= @project.tags.collect(&:name).sort.join(', ') %></div>
+    </div>
+    <div class="row">
       <div class="col-md-2"><strong>Crop Points: </strong></div>
       <div id="project_crop_points" class="col-md-10"><%= @project.crop_points %></div>
     </div>

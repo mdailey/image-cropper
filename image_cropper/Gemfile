@@ -14,9 +14,12 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'spring',        group: :development
 gem 'rake', '< 11.0'
 
-# Bootstrap UI
+# UI
 gem 'bootstrap3-rails'
 gem 'font-awesome-rails'
+gem 'jquery-turbolinks'
+#gem 'rails-jquery-tokeninput'
+gem 'jquery-tokeninput-rails'
 
 # User modeling
 gem 'devise'

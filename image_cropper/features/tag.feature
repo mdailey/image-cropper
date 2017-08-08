@@ -40,3 +40,49 @@ Feature: Tag
     And I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
+
+  @javascript
+  Scenario: Add a tag to a project
+
+  An uploader should be able to associate tags with a project
+
+    Given I am an uploader
+    And I am signed in
+    And there is 1 project
+    And there is 1 tag
+    When I visit the project page
+    Then I should see the project in the list
+    When I click the edit link in the project list
+    Then I should see a tag list for the project
+    And the tag list for the project should be empty
+    When I add the tag to the project
+    Then I should see the tag in the tag list for the project
+    And I should see a "current user" link
+    When I click the "current user" link
+    And I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form
+
+  @javascript
+  Scenario: Delete a tag from a project
+
+  An uploader should be able to remove tags associated with a project
+
+    Given I am an uploader
+    And I am signed in
+    And there is 1 project
+    And the project has 1 tag
+    When I visit the project page
+    Then I should see the project in the list
+    When I click the edit link in the project list
+    Then I should see a tag list for the project
+    And the tag list for the project should not be empty
+    And I should see the tag in the tag tokeninput list for the project
+    When I delete the tag from the project
+    Then the tag list for the project should be empty
+    And I should see a "current user" link
+    When I click the "current user" link
+    And I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form
+

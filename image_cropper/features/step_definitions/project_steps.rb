@@ -64,3 +64,43 @@ end
 Then(/^I should see a zip file$/) do
   expect(page.response_headers['Content-Type']).to eq("application/octet-stream")
 end
+
+Then(/^I should see a tag list for the project$/) do
+  expect(page).to have_css('div', text: /Tags/)
+end
+
+Then(/^the tag list for the project should (not )?be empty$/) do |neg|
+  css = 'li.token-input-token'
+  if neg.blank?
+    expect(page).not_to have_css(css)
+  else
+    expect(page).to have_css(css)
+  end
+end
+
+When(/^I add the tag to the project$/) do
+  fill_token_input 'project_tag_tokens', with: @tag.name
+  click_button('Submit')
+end
+
+Then(/^I should see the tag in the tag list for the project$/) do
+  expect(page).to have_css('div#project_tags', text: /#{@tag.name}/)
+end
+
+Then(/^I should see the tag(s)? in the tag tokeninput list for the project$/) do |plural|
+  @project.tags.each do |tag|
+    expect(page).to have_css('li.token-input-token', text: /#{tag.name}/)
+  end
+end
+
+Given(/^the project has (\d+) tag(s)?$/) do |num, plural|
+  [0..num.to_i-1].each do |i|
+    tag = FactoryGirl.create :tag
+    @project.tags << tag
+  end
+  @project.save
+end
+
+When(/^I delete the tag from the project$/) do
+  delete_token_input 'project_tag_tokens', with: @project.tags.first.name
+end

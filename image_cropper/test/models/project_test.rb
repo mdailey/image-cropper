@@ -26,4 +26,10 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal ["only allows letters and numbers"], p.errors[:name]
   end
 
+  test "should return tag tokens" do
+    p = projects(:one)
+    p.tag_tokens = Tag.all.collect(&:id).join(',')
+    assert_equal Tag.all.collect(&:name).sort, p.tags.collect(&:name).sort
+  end
+
 end

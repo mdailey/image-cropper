@@ -35,6 +35,12 @@ class Uploader::TagsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should get index json" do
+    sign_in users(:uploader)
+    get :index, format: :json
+    assert_response :success
+  end
+
   test "should authenticate show" do
     get :show, id: @tag.id
     assert_redirected_to new_user_session_path

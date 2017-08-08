@@ -7,7 +7,13 @@ class Uploader::TagsController < ApplicationController
   after_action :destroy_directory, only: [:destroy]
 
   def index
-    @tags = Tag.order(:name)
+    @tags = Tag.where("name like ?", "%#{params[:q]}%").order(:name)
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: @tags
+      end
+    end
   end
 
   def show

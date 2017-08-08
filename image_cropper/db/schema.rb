@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150922035422) do
+ActiveRecord::Schema.define(version: 20170807211310) do
 
   create_table "project_crop_image_cords", force: :cascade do |t|
     t.integer "project_crop_image_id", limit: 4
@@ -35,6 +35,16 @@ ActiveRecord::Schema.define(version: 20150922035422) do
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
+
+  create_table "project_tags", force: :cascade do |t|
+    t.integer  "project_id", limit: 4
+    t.integer  "tag_id",     limit: 4
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "project_tags", ["project_id"], name: "index_project_tags_on_project_id", using: :btree
+  add_index "project_tags", ["tag_id"], name: "index_project_tags_on_tag_id", using: :btree
 
   create_table "project_users", force: :cascade do |t|
     t.integer  "project_id", limit: 4
@@ -92,6 +102,8 @@ ActiveRecord::Schema.define(version: 20150922035422) do
 
   add_foreign_key "project_crop_image_cords", "project_crop_images"
   add_foreign_key "project_crop_images", "users"
+  add_foreign_key "project_tags", "projects"
+  add_foreign_key "project_tags", "tags"
   add_foreign_key "project_users", "projects"
   add_foreign_key "project_users", "users"
   add_foreign_key "users", "roles"

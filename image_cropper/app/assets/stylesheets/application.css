@@ -14,8 +14,10 @@
  *= require_self
  *= require bootstrap.min
  *= require font-awesome
+ *= require token-input
  //= require jquery.contextMenu
  */
+
 body > .container {
   padding-top: 60px;
 }

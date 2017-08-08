@@ -11,9 +11,11 @@
 // about supported directives.
 //
 //= require jquery
+//= require jquery.turbolinks
 //= require jquery_ujs
-//= require turbolinks
 //= require bootstrap.min
 //= require paper-full.min
 //= require jquery.contextMenu
+//= require jquery.tokeninput
+//= require turbolinks
 //= require_tree .
