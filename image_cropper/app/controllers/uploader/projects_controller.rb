@@ -104,8 +104,12 @@ class Uploader::ProjectsController < ApplicationController
       if(File.extname("#{project_params[:images].original_filename}") == ".zip")
         Zip::File.open("#{project_params[:images].path}") do |zipfile|
           zipfile.each do |file|
-            ProjectImage.create(project_id: @project.id, image: file)
-            zipfile.extract(file, "#{file_path}/#{file}") unless File.exist?("#{file_path}/#{file}")
+            this_file_path = "#{file_path}/#{file}"
+            zipfile.extract(file, this_file_path) unless File.exist?(this_file_path)
+            mimetype = FileMagic.open(:mime) { |fm| fm.file(this_file_path) }
+            if mimetype.start_with? 'image'
+              ProjectImage.create(project_id: @project.id, image: file)
+            end
           end
         end
       else

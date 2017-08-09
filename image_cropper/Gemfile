@@ -27,8 +27,9 @@ gem 'devise'
 # User Stamp
 gem 'clerk'
 
-# Deal with zip files
+# Deal with files
 gem 'rubyzip'
+gem 'ruby-filemagic'
 
 # Context Menus
 gem 'jquery_context_menu-rails'

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt-get install libmagic-dev
+
 USER="ImageCropper"
 PASS="ImageCropper"
 DEVDB="\`image_cropper_development\`"

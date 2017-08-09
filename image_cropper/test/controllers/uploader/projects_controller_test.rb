@@ -131,6 +131,14 @@ class Uploader::ProjectsControllerTest < ActionController::TestCase
     assert_redirected_to uploader_projects_path
   end
 
+  test "should only extract images from zip" do
+    sign_in users(:uploader)
+    # Upload zip file with 2 images inside a subdirectory
+    post :create, project: {name: "TestSubdir", isactive: false, crop_points: 4, images: fixture_file_upload('images.zip')}
+    assert_redirected_to uploader_project_path(assigns(:project))
+    assert_equal 2, assigns(:project).project_images.length
+  end
+
   private
 
   def initialize_project
