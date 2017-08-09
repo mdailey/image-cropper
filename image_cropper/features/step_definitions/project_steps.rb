@@ -1,6 +1,8 @@
 Given(/^there is 1 project$/) do
   @project = Project.find_by_name 'Doraemon'
   @project ||= FactoryGirl.create :project, user_id: @user.id, isactive: true
+  @project.isactive = true
+  @project.save
 end
 
 Given(/^there is 1 project image$/) do
