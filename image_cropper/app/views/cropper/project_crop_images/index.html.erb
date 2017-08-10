@@ -1,5 +1,5 @@
 
-<%= javascript_include_tag "crop", type: 'text/paperscript', canvas: 'canvas-1' %>
+<%= javascript_include_tag "crop", type: 'text/paperscript', canvas: 'canvas-1', style: 'border:10px solid black' %>
 
 <div class="row">
   <div class="col-md-12">
@@ -28,7 +28,7 @@
       data-project-image="<%= "/system/projects/#{@project.name}/#{@project_image.image}" %>"
       data-crop-url="<%= cropper_project_project_image_project_crop_images_path(@project.id, @project_image.id) %>"
       data-crop-limit="<%= @project.crop_points %>"
-      style="border: 5px groove #333">
+      style="border: 0px">
     </canvas>
   </div>
 </div>
