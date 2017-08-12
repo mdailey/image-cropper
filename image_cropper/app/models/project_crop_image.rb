@@ -4,8 +4,19 @@ class ProjectCropImage < ActiveRecord::Base
   belongs_to :user
   belongs_to :tag
   has_many :project_crop_image_cords, dependent: :destroy
+  has_one :project, through: :project_image
   track_who_does_it :creator_foreign_key => "user_id", :updater_foreign_key => "user_id"
-  validates_presence_of :project_image_id, :image, :tag
+  validates_presence_of :project_image, :image, :tag
+
+  validate :number_of_coords_must_be_consistent
+
+  def number_of_coords_must_be_consistent
+    return unless self.project
+    num_expected = self.project.crop_points
+    if num_expected < 99 and num_expected != self.project_crop_image_cords.size
+      self.errors.add(:project_crop_image_cords, "should be of size #{num_expected}")
+    end
+  end
 
   def image_cords
     cords = {}

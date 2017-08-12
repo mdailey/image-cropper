@@ -22,14 +22,11 @@ class Cropper::ProjectCropImagesController < ApplicationController
     if @project_crop_image.tag_id.nil? and @project.tags.length == 1
       @project_crop_image.tag = @project.tags.first
     end
-    @project_crop_image_cords = []
-    saved = @project_crop_image.save
-    logger.info "Got project crop image #{@project_crop_image.inspect}"
     params[:cords].to_a.each_with_index do |cord|
-      @project_crop_image_cords.push(save_cords(@project_crop_image.id, cord[1]["x"], cord[1]["y"]))
+      @project_crop_image.project_crop_image_cords.push(ProjectCropImageCord.new x: cord[1]["x"].to_f, y: cord[1]["y"].to_f)
     end
     respond_to do |format|
-      if saved and ProjectCropImageCord.create(@project_crop_image_cords)
+      if @project_crop_image.save
         crop_image
         format.html { redirect_to cropper_project_project_image_project_crop_images_path(@project, @project_image) }
         format.json { render json: { success: true }, status: :accepted, location:  cropper_project_project_image_project_crop_images_path(@project, @project_image) }
@@ -82,16 +79,6 @@ class Cropper::ProjectCropImagesController < ApplicationController
     @project_crop_images.all.each do |pci|
       @project_crop_image_cords.push(pci.image_cords)
     end
-  end
-
-  def save_cords(project_crop_image_id, x, y)
-    logger.info "Save coord #{project_crop_image_id}, #{x}, #{y}"
-    logger.info "ProjectCropImage count: #{ProjectCropImage.count}"
-    crop_hash = {}
-    crop_hash[:project_crop_image_id] = project_crop_image_id
-    crop_hash[:x] = x.to_f
-    crop_hash[:y] = y.to_f
-    return crop_hash
   end
 
   def crop_image
