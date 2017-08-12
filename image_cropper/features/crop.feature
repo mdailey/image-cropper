@@ -66,3 +66,27 @@ Feature: Crop
     Then I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
+
+  @javascript
+  Scenario: Remove a selected object after cropping it
+
+  A cropper should be able to delete a cropped image
+
+    Given I am a cropper
+    And I am signed in
+    And there is 1 project
+    And the project has 1 tag
+    And there is 1 project image
+    And I am assigned to the project
+    When I visit the assigned projects page
+    Then I should see the assigned project in the list
+    When I click the crop images link in the assigned project list
+    Then I should see an image from the assigned project
+    When I crop 2 patches then delete 1 patch
+    Then there should be 1 patch left
+    And I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form
+

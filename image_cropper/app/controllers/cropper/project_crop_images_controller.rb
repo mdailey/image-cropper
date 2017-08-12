@@ -24,6 +24,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
     end
     @project_crop_image_cords = []
     saved = @project_crop_image.save
+    logger.info "Got project crop image #{@project_crop_image.inspect}"
     params[:cords].to_a.each_with_index do |cord|
       @project_crop_image_cords.push(save_cords(@project_crop_image.id, cord[1]["x"], cord[1]["y"]))
     end
@@ -51,7 +52,9 @@ class Cropper::ProjectCropImagesController < ApplicationController
         @max_y = @project_crop_image_cords.maximum(:y)
         if (@min_x..@max_x).include?(params[:x].to_f) && (@min_y..@max_y).include?(params[:y].to_f)
           project_crop_image.destroy
-          system("rm -r #{Rails.root.to_s}/public/system/projects/#{@project.name}/#{current_user.id.to_s}/#{project_crop_image.image}")
+          path = Rails.application.config.projects_dir
+          filename = "#{path}/#{@project.name}/#{current_user.id.to_s}/#{project_crop_image.image}"
+          system("rm #{filename}")
         end
       end
       format.html { redirect_to  cropper_project_project_image_project_crop_images_path(@project, @project_image) }
@@ -82,6 +85,8 @@ class Cropper::ProjectCropImagesController < ApplicationController
   end
 
   def save_cords(project_crop_image_id, x, y)
+    logger.info "Save coord #{project_crop_image_id}, #{x}, #{y}"
+    logger.info "ProjectCropImage count: #{ProjectCropImage.count}"
     crop_hash = {}
     crop_hash[:project_crop_image_id] = project_crop_image_id
     crop_hash[:x] = x.to_f
@@ -101,8 +106,9 @@ class Cropper::ProjectCropImagesController < ApplicationController
       end
       system("mkdir -p #{@output_path}")
       Dir.chdir("#{Rails.root.to_s}/public")
-      @filename = "#{Time.now.strftime("%Y%m%d%H%M%S")}.#{@project_crop_image.image.split(".")[1]}"
-      system("python image_cropper.py -i #{@file_path}/#{@project_image.image} -o #{@output_path}/#{@filename} -x #{@x_cords} -y #{@y_cords}")
+      #@filename = "#{Time.now.strftime("%Y%m%d%H%M%S")}.#{@project_crop_image.image.split("\.")[1]}"
+      filepath = "#{@output_path}/#{@project_crop_image.image}"
+      system("python image_cropper.py -i #{@file_path}/#{@project_image.image} -o #{filepath} -x #{@x_cords} -y #{@y_cords}")
     end
   end
 
