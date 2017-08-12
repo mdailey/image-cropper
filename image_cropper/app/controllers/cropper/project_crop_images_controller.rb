@@ -45,12 +45,12 @@ class Cropper::ProjectCropImagesController < ApplicationController
     @project_crop_images = ProjectCropImage.where("project_image_id=? and user_id=?", @project_image.id, current_user.id)
     respond_to do |format|
       @project_crop_images.each do |project_crop_image|
-        @project_crop_image_cords = ProjectCropImageCord.where(project_crop_image_id: project_crop_image.id)
+        @project_crop_image_cords = project_crop_image.project_crop_image_cords
         @min_x = @project_crop_image_cords.minimum(:x)
         @max_x = @project_crop_image_cords.maximum(:x)
         @min_y = @project_crop_image_cords.minimum(:y)
         @max_y = @project_crop_image_cords.maximum(:y)
-        if (@min_x..@max_x).include?(params[:x].to_f) && (@min_y..@max_y).include?(params[:y].to_f)
+        if @min_x and @max_x and @min_y and @max_y and (@min_x..@max_x).include?(params[:x].to_f) && (@min_y..@max_y).include?(params[:y].to_f)
           project_crop_image.destroy
           path = Rails.application.config.projects_dir
           filename = "#{path}/#{@project.name}/#{current_user.id.to_s}/#{project_crop_image.image}"
