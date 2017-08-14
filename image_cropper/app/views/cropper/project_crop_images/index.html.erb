@@ -9,10 +9,10 @@
 
 <div class="row">
   <div class="col-md-1 text-center">
-      <%= link_to ' << ', cropper_project_project_image_project_crop_images_path(@project, params[:project_image_id].to_i-1), :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => !(params[:project_image_id].to_i > @project_image_min) %>
+      <%= link_to ' << ', previous_image_link(@project_image), :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => !(params[:project_image_id].to_i > @project_image_min) %>
   </div>
   <div class="col-md-1 text-center">
-    <%= link_to ' >> ', cropper_project_project_image_project_crop_images_path(@project, params[:project_image_id].to_i+1), :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => !(params[:project_image_id].to_i < @project_image_max) %>
+    <%= link_to ' >> ', next_image_link(@project_image), :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => !(params[:project_image_id].to_i < @project_image_max) %>
   </div>
   <div class="col-md-2 text-center">
     <%= link_to 'Back to project page', cropper_projects_path, :class => "btn btn-primary", :type => "button" %>

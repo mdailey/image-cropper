@@ -1,7 +1,9 @@
+
 # Declare variables for cropping
+
 point_num = 1
-x_cords = []
-y_cords = []
+x_coords = []
+y_coords = []
 points = []
 click_point = []
 myPath = new Path
@@ -12,6 +14,7 @@ url = $('#canvas-1').attr('data-crop-url')
 limit = $('#canvas-1').attr('data-crop-limit')
 
 # Get data from database and draw on image
+
 redraw = () ->
   $.ajax
     type: 'GET'
@@ -35,8 +38,8 @@ redraw = () ->
       return
   return
 
-
 # Load image
+
 raster = null
 
 load_image = () ->
@@ -53,7 +56,10 @@ load_image = () ->
 
 load_image()
 
-# Click event
+# Click event handler. Left click extends the current path.
+# Right click sets click_point in case use then selects "Delete"
+# from the context menu.
+
 tool = new Tool
 tool.onMouseDown = (e) ->
     if point_num <= limit or limit == 99
@@ -66,8 +72,8 @@ tool.onMouseDown = (e) ->
         myCircle.fillColor = 'white'
         myPath.strokeColor = 'black'
         myPath.add new Point(e.point)
-        x_cords.push e.point.x
-        y_cords.push e.point.y
+        x_coords.push e.point.x
+        y_coords.push e.point.y
         points.push
           x: e.point.x
           y: e.point.y
@@ -75,7 +81,8 @@ tool.onMouseDown = (e) ->
         x: e.point.x
         y: e.point.y
 
-# 'Enter' Event
+# <Enter> key event handler. Close the current path and POST to server.
+
 $('body').keyup (event) ->
   if event.which == 13
     $.ajax
@@ -87,22 +94,32 @@ $('body').keyup (event) ->
           image: Date.now().toString() + '.png'
         cords: points
       complete: ->
-    x_cords = []
-    y_cords = []
+    x_coords = []
+    y_coords = []
     points = []
     myPath.strokeColor = 'black'
     myPath.closed = true
+    myPath.fillColor = 'red'
+    myPath.opacity = 0.5
     point_num = 0
+    myPath.needsUpdate = true
+    view.update()
     myPath = new Path
   return
 
-# 'Right Click' Event
+# Context menu right click event
+
 $.contextMenu
   selector: '#canvas-1'
   callback: (key, options) ->
     if key == 'delete'
-      $.post url + '/1?x=' + click_point[0].x + '&y=' + click_point[0].y, { _method: 'delete' }, null, 'script'
-      window.location = url
+      $.ajax
+        type: 'DELETE'
+        url: url + '/1?x=' + click_point[0].x + '&y=' + click_point[0].y
+        dataType: 'json'
+        contentType: 'application/json'
+        success: (data) ->
+          location.reload()
     return
   items: 'delete':
     name: 'Delete'
