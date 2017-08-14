@@ -32,7 +32,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
         format.json { render json: { success: true }, status: :accepted, location:  cropper_project_project_image_project_crop_images_path(@project, @project_image) }
       else
         format.html { render :index }
-        format.json { render json: @project_crop_image.errors, status: :unprocessable_entity }
+        format.json { render json: { error: @project_crop_image.errors.full_messages }, status: :unprocessable_entity }
       end
     end
   end

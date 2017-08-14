@@ -7,6 +7,7 @@ y_coords = []
 points = []
 click_point = []
 myPath = new Path
+myCircle = null
 project_id = $('#canvas-1').attr('data-project-id')
 project_image = $('#canvas-1').attr('data-project-image')
 project_image_id = $('#canvas-1').attr('data-project-image-id')
@@ -65,6 +66,8 @@ tool.onMouseDown = (e) ->
     if point_num <= limit or limit == 99
       click_point = []
       if e.event.buttons == 1
+        if myCircle
+          myCircle.remove()
         myCircle = new (Path.Circle)(
           center: e.point
           radius: 3)
@@ -85,6 +88,8 @@ tool.onMouseDown = (e) ->
 
 $('body').keyup (event) ->
   if event.which == 13
+    if myCircle
+      myCircle.remove()
     $.ajax
       type: 'POST'
       url: url
@@ -93,19 +98,34 @@ $('body').keyup (event) ->
           project_image_id: project_image_id
           image: Date.now().toString() + '.png'
         cords: points
-      complete: ->
-    x_coords = []
-    y_coords = []
-    points = []
-    myPath.strokeColor = 'black'
-    myPath.closed = true
-    myPath.fillColor = 'red'
-    myPath.opacity = 0.5
-    point_num = 0
-    myPath.needsUpdate = true
-    view.update()
-    myPath = new Path
-  return
+        format: 'json'
+      error: (xhr, status, error) ->
+        errors = xhr.responseJSON.error
+        $('div#errors').remove()
+        $('div.messages').append(
+          '<div id="errors" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>Error:</p><ul></ul></div>')
+        for message of errors
+          $('#errors ul').append '<li>' + errors[message] + '</li>'
+        myPath.needsUpdate = true
+        myPath.remove()
+        myPath = new Path
+        x_coords = []
+        y_coords = []
+        points = []
+        point_num = 0
+        view.update()
+      success: ->
+        x_coords = []
+        y_coords = []
+        points = []
+        myPath.strokeColor = 'black'
+        myPath.closed = true
+        myPath.fillColor = 'red'
+        myPath.opacity = 0.5
+        point_num = 0
+        myPath.needsUpdate = true
+        view.update()
+        myPath = new Path
 
 # Context menu right click event
 
