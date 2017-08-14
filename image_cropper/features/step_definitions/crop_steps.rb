@@ -37,14 +37,18 @@ end
 
 When(/^I select an object on the image to be cropped$/) do
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{70}, y: #{433}}, event: {buttons: 1} })"
+  wait_for_ajax
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{71}, y: #{252}}, event: {buttons: 1}  })"
+  wait_for_ajax
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{182}, y: #{259}}, event: {buttons: 1}  })"
+  wait_for_ajax
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{190}, y: #{431}}, event: {buttons: 1}  })"
+  wait_for_ajax
   page.evaluate_script "$('body').trigger($.Event( 'keyup', { which: 13 } ))"
+  wait_for_ajax
 end
 
 Then(/^I should see the object selected on the image$/) do
-  sleep(0.5)
   expect(ProjectCropImage.all.size).to eq(1)
   expect(ProjectCropImageCord.all.size).to eq(4)
 end

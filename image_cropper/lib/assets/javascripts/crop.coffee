@@ -6,13 +6,27 @@ x_coords = []
 y_coords = []
 points = []
 click_point = []
-myPath = new Path
+myPath = null
 myCircle = null
 project_id = $('#canvas-1').attr('data-project-id')
 project_image = $('#canvas-1').attr('data-project-image')
 project_image_id = $('#canvas-1').attr('data-project-image-id')
 url = $('#canvas-1').attr('data-crop-url')
 limit = $('#canvas-1').attr('data-crop-limit')
+
+# Initialize myPath
+
+reset_path = () ->
+  myPath = new Path
+  myPath.opacity = 0.5
+  myPath.fillColor = 'red'
+  myPath.closed = true
+  x_coords = []
+  y_coords = []
+  points = []
+  point_num = 1
+
+reset_path()
 
 # Get data from database and draw on image
 
@@ -36,7 +50,7 @@ redraw = () ->
         myPath.closed = true
         myPath.needsUpdate = true
         i++
-      myPath = new Path
+      reset_path()
       view.update()
 
 # Load image
@@ -65,6 +79,7 @@ tool = new Tool
 tool.onMouseDown = (e) ->
     if point_num <= limit or limit == 99
       click_point = []
+      point_num++
       if e.event.buttons == 1
         if myCircle
           myCircle.remove()
@@ -90,6 +105,7 @@ $('body').keyup (event) ->
   if event.which == 13
     if myCircle
       myCircle.remove()
+      view.update()
     $.ajax
       type: 'POST'
       url: url
@@ -108,24 +124,10 @@ $('body').keyup (event) ->
           $('#errors ul').append '<li>' + errors[message] + '</li>'
         myPath.needsUpdate = true
         myPath.remove()
-        myPath = new Path
-        x_coords = []
-        y_coords = []
-        points = []
-        point_num = 0
         view.update()
+        reset_path()
       success: ->
-        x_coords = []
-        y_coords = []
-        points = []
-        myPath.strokeColor = 'black'
-        myPath.closed = true
-        myPath.fillColor = 'red'
-        myPath.opacity = 0.5
-        point_num = 0
-        myPath.needsUpdate = true
-        view.update()
-        myPath = new Path
+        reset_path()
 
 # Context menu right click event
 

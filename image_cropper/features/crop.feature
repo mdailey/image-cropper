@@ -26,7 +26,7 @@ Feature: Crop
   @javascript
   Scenario: Show images of assigned projects
 
-  An cropper should be able to see images of assigned project
+  A cropper should be able to see images of assigned project
 
     Given I am a cropper
     And I am signed in
@@ -44,10 +44,11 @@ Feature: Crop
     When I click the "Sign Out" link
     Then I should see a login form
 
+  @wip
   @javascript
-  Scenario: Crop an image of assigned projects
+  Scenario: Crop an image of assigned project
 
-  An cropper should be able to crop an image of assigned project
+  A cropper should be able to crop an image in an assigned project
 
     Given I am a cropper
     And I am signed in
