@@ -33,10 +33,10 @@ redraw = () ->
           myPath.add new Point(data[i]['cords'][ii].x, data[i]['cords'][ii].y)
           ii++
         myPath.closed = true
+        myPath.needsUpdate = true
         i++
       myPath = new Path
-      return
-  return
+      view.update()
 
 # Load image
 
