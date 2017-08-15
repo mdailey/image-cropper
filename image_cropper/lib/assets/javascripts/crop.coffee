@@ -30,6 +30,8 @@ reset_path = () ->
 
 reset_path()
 
+# Label a selected region
+
 label = (path, tag) ->
   border = new Path.Rectangle(path.bounds)
   border.strokeColor = 'black'
