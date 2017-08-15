@@ -6,8 +6,6 @@ class Cropper::ProjectCropImagesController < ApplicationController
   before_action :set_project_crop_images
 
   def index
-    @project_image_min = @project.project_images.first.id
-    @project_image_max = @project.project_images.last.id
     respond_to do |format|
       format.html do
         flash[:notice] = "Please select objects of type #{@project.pretty_tags} with a maximum of #{@project.crop_points == 99 ? "any number" : @project.crop_points} points. "

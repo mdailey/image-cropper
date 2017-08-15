@@ -13,6 +13,8 @@ project_image = $('#canvas-1').attr('data-project-image')
 project_image_id = $('#canvas-1').attr('data-project-image-id')
 url = $('#canvas-1').attr('data-crop-url')
 limit = $('#canvas-1').attr('data-crop-limit')
+tags = eval($('#canvas-1').attr('data-tags'))
+defaultTag = tags[0].name
 
 # Initialize myPath
 
@@ -27,6 +29,26 @@ reset_path = () ->
   point_num = 1
 
 reset_path()
+
+label = (path, tag) ->
+  border = new Path.Rectangle(path.bounds)
+  border.strokeColor = 'black'
+  border.opacity = 0.5
+  text = new PointText(new Point(path.bounds.x, path.bounds.y-6))
+  text.content = tag
+  text.characterStyle =
+    fontSize: 20
+    font: 'Arial'
+  rect = new Path.Rectangle(text.bounds)
+  rect.fillColor = "#ff0000"
+  rect.opacity = 0.5
+  rect.strokeColor = 'black'
+  text.fillColor = 'black'
+  text.insertAbove(rect)
+  text.needsUpdate = true
+  rect.needsUpdate = true
+  border.needsUpdate = true
+  view.update()
 
 # Get data from database and draw on image
 
@@ -48,6 +70,7 @@ redraw = () ->
           myPath.add new Point(data[i]['cords'][ii].x, data[i]['cords'][ii].y)
           ii++
         myPath.closed = true
+        label(myPath, data[i]['tag'])
         myPath.needsUpdate = true
         i++
       reset_path()
@@ -127,6 +150,7 @@ $('body').keyup (event) ->
         view.update()
         reset_path()
       success: ->
+        label(myPath, defaultTag)
         reset_path()
 
 # Context menu right click event

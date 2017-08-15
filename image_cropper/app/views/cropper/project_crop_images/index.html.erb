@@ -30,6 +30,7 @@
       data-project-image="<%= "/system/projects/#{@project.name}/#{@project_image.image}" %>"
       data-crop-url="<%= cropper_project_project_image_project_crop_images_path(@project.id, @project_image.id) %>"
       data-crop-limit="<%= @project.crop_points %>"
+      data-tags="<%= @project.tags.to_json %>"
       style="border: 0px">
     </canvas>
   </div>

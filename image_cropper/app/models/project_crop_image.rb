@@ -21,6 +21,7 @@ class ProjectCropImage < ActiveRecord::Base
   def image_cords
     cords = {}
     cords[:id] = self.id
+    cords[:tag] = self.tag.name
     image_cords = self.project_crop_image_cords
     cords[:cords] = []
     image_cords.each do |image_cord|
