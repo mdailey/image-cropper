@@ -145,17 +145,18 @@ class Uploader::ProjectsController < ApplicationController
   end
 
   def make_cnn_file(project_image)
-    file = Tempfile.new
+    outfile = Tempfile.new('foo')
     project_image.project_crop_images.each do |pci|
-      file.write "#{pci.cnn_data}\n"
+      outfile.write "#{pci.cnn_data}\n"
     end
-    file.close
-    if project_image.image =~ /\.[A-Za-z].*$/
-      filename = project_image.image.gsub(/\.[A-Za-z].*$/, '.txt')
+    outfile.close
+    filename = project_image.image.gsub(/\//, '-')
+    if filename =~ /\.[A-Za-z].*$/
+      filename.gsub!(/\.[A-Za-z].*$/, '.txt')
     else
-      filename = "#{project_image.image}.txt"
+      filename = "#{filename}.txt"
     end
-    return file, filename
+    return outfile, filename
   end
 
 end
