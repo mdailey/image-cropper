@@ -4,6 +4,7 @@ class Project < ActiveRecord::Base
   has_many :project_users, dependent: :destroy
   has_many :project_tags, dependent: :destroy
   has_many :tags, through: :project_tags
+  has_many :users, through: :project_users
 
   attr_accessor :images
   attr_reader :tag_tokens

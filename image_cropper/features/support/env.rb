@@ -58,6 +58,6 @@ end
 Cucumber::Rails::Database.javascript_strategy = :truncation
 
 # Selenium and Poltegeist seem to work OK to test paper.js events but Webkit does not
+
 require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
-#Capybara.javascript_driver = :selenium

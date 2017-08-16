@@ -1,4 +1,5 @@
 require 'zip'
+
 class Uploader::ProjectsController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_uploader
@@ -23,6 +24,10 @@ class Uploader::ProjectsController < ApplicationController
             Dir.glob("*/*").each do |item|
               zip_file.add("#{@project.name}/crops/#{item.split("/")[1]}", "#{@project_path}/#{item}")
             end
+          end
+          @project.project_images.each do |pi|
+            cnn_file, cnn_filename = make_cnn_file(pi)
+            zip_file.add("#{@project.name}/CNN/#{cnn_filename}", cnn_file.path)
           end
         end
         Dir.chdir(Rails.application.config.projects_dir)
@@ -108,16 +113,19 @@ class Uploader::ProjectsController < ApplicationController
             zipfile.extract(file, this_file_path) unless File.exist?(this_file_path)
             mimetype = FileMagic.open(:mime) { |fm| fm.file(this_file_path) }
             if mimetype.start_with? 'image'
-              ProjectImage.create(project_id: @project.id, image: file)
+              dims = Dimensions.dimensions(this_file_path)
+              ProjectImage.create(project_id: @project.id, image: file, w: dims[0], h: dims[1])
             end
           end
         end
       else
         file_name = project_params[:images].original_filename
-        ProjectImage.create(project_id: @project.id, image: file_name)
-        File.open("#{file_path}/#{file_name}", 'wb') do |file|
+        path = "#{file_path}/#{file_name}"
+        File.open(path, 'wb') do |file|
           file.write(project_params[:images].read)
         end
+        dims = Dimensions.dimensions(path)
+        ProjectImage.create(project_id: @project.id, image: file_name, w: dims[0], h: dims[1])
       end
     end
   end
@@ -134,6 +142,20 @@ class Uploader::ProjectsController < ApplicationController
 
   def project_params
     params.require(:project).permit(:name, :description, :images, :crop_points, :isactive, :tag_tokens)
+  end
+
+  def make_cnn_file(project_image)
+    file = Tempfile.new
+    project_image.project_crop_images.each do |pci|
+      file.write "#{pci.cnn_data}\n"
+    end
+    file.close
+    if project_image.image =~ /\.[A-Za-z].*$/
+      filename = project_image.image.gsub(/\.[A-Za-z].*$/, '.txt')
+    else
+      filename = "#{project_image.image}.txt"
+    end
+    return file, filename
   end
 
 end

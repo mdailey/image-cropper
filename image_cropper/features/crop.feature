@@ -44,7 +44,6 @@ Feature: Crop
     When I click the "Sign Out" link
     Then I should see a login form
 
-  @wip
   @javascript
   Scenario: Crop an image of assigned project
 

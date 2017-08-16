@@ -1,3 +1,4 @@
+
 Given(/^there is 1 project$/) do
   @project = Project.find_by_name 'Doraemon'
   @project ||= FactoryGirl.create :project, user_id: @user.id, isactive: true
@@ -96,7 +97,7 @@ Then(/^I should see the tag(s)? in the tag tokeninput list for the project$/) do
 end
 
 Given(/^the project has (\d+) tag(s)?$/) do |num, plural|
-  [0..num.to_i-1].each do |i|
+  (0..num.to_i-1).each do |i|
     tag = FactoryGirl.create :tag
     @project.tags << tag
   end
@@ -105,4 +106,72 @@ end
 
 When(/^I delete the tag from the project$/) do
   delete_token_input 'project_tag_tokens', with: @project.tags.first.name
+end
+
+Given(/^there are (\d+) crops for the project image$/) do |num|
+  num = num.to_i
+  @project_crop_images = []
+  x = 0
+  (0..num-1).each do |i|
+    pci = ProjectCropImage.new project_image_id: @project_image.id, user_id: @cropper.id, image: "#{i}.jpg", tag_id: @project.tags.first.id
+    coords = [{x: x, y: 0}, {x: x+300, y: 0}, {x: x+300, y: 300}, {x: x, y: 300}]
+    coords.each do |coord|
+      pci.project_crop_image_cords.push(ProjectCropImageCord.new x: coord[:x], y: coord[:y])
+    end
+    pci.save!
+    @project_crop_images.push pci
+    x = x + 100
+  end
+end
+
+Given(/^the project image files are synced$/) do
+  projects_path = Rails.application.config.projects_dir
+  test_image_path = File.join(Rails.root, 'public', 'doraemon1.jpg')
+  system("mkdir -p #{projects_path}")
+  Dir.chdir projects_path
+  system("rm -rf #{@project.name}")
+  system("mkdir #{@project.name}")
+  Dir.chdir @project.name
+  @project.users.each do |pu|
+    system("mkdir #{pu.id}")
+  end
+  @project.project_images.each do |pi|
+    system("cp #{test_image_path} #{pi.image}")
+    pi.project_crop_images.each do |pci|
+      uid = pci.user.id
+      file_path = File.join(projects_path, @project.name, uid.to_s, pci.image)
+      system("cp #{test_image_path} #{file_path}")
+    end
+  end
+  Dir.chdir Rails.root
+end
+
+Then(/^I should see the download link in the project list$/) do
+  expect(page).to have_css('tr', text: /#{@project.name}/)
+  anchor = find('tr', text: /#{@project.name}/).find('a', text: /Download/)
+  @download_link = anchor['href']
+end
+
+When(/^I open the downloaded ZIP file$/) do
+  cmd = "curl -s -c cookie.txt -d 'user[email]=#{@user.email}&user[password]=#{@user.password}' http://127.0.0.1:3001/users/sign_in > /dev/null"
+  system(cmd)
+  cmd = "curl -s -b cookie.txt http://127.0.0.1:3001#{@download_link} -o project.zip"
+  system(cmd)
+  found = false
+  Zip::File.open("project.zip") do |zipfile|
+    zipfile.each do |file|
+      expected = "#{@project.name}/CNN/#{@project_image.image.gsub(/\.jpg$/,'')}.txt"
+      if file.to_s == expected
+        found = true
+        @cnn_file_content = file.get_input_stream.read
+      end
+    end
+  end
+  system("rm -f cookie.txt project.zip")
+  expect(found).to be(true)
+end
+
+Then(/^I should see a CNN text file for the project image$/) do
+  expect(@cnn_file_content).not_to be(nil)
+  expect(@cnn_file_content.lines.count).to eql(@project_image.project_crop_images.size)
 end

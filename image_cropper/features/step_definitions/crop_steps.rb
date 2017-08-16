@@ -1,14 +1,4 @@
 
-Given(/^there is 1 cropped image$/) do
-  @project_crop_image = FactoryGirl.create :project_crop_image, project_image_id: @project_image.id, user_id: (@new_user)? @new_user.id : @user.id, image: "20150922205514.jpg"
-  cords = ([{x: 0, y: 0}, {x: 300, y: 0}, {x: 300, y: 300}, {x: 0, y: 300}]).to_json
-  @i = 0
-  while(@i < cords.length)
-    @project_crop_image_cords = FactoryGirl.create :project_crop_image_cord, project_crop_image_id: @project_crop_image.id, x: cords[@i]["x"].to_f, y: cords[@i]["y"].to_f
-    @i += 1
-  end
-end
-
 def create_mock_project_image_folder
   file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
   system("mkdir -p #{file_path}")

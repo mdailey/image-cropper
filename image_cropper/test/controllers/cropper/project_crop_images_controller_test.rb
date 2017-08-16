@@ -27,6 +27,12 @@ class Cropper::ProjectCropImagesControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should return invalid format" do
+    sign_in users(:cropper)
+    get :index, project_id: @project, project_image_id: @project_image, format: 'png'
+    assert_response :unsupported_media_type
+  end
+
   test "should authenticate create" do
     post :create, project_id: @project, project_image_id: @project_image, project_crop_image: {project_image_id: @project_image.id, image: "20150922205514.jpg"}, cords: {"0"=>{"x"=>"78.51666259765625", "y"=>"339"}, "1"=>{"x"=>"78.51666259765625", "y"=>"271"}, "2"=>{"x"=>"183.51666259765625", "y"=>"268"}, "3"=>{"x"=>"186.51666259765625", "y"=>"340"}}
     assert_redirected_to new_user_session_path

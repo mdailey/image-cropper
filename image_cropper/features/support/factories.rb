@@ -49,6 +49,8 @@ FactoryGirl.define do
 
   factory :project_image do
     image "doraemon1.jpg"
+    w 500
+    h 500
   end
 
   factory :project_user do

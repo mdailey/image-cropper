@@ -18,7 +18,6 @@ gem 'rake', '< 11.0'
 gem 'bootstrap3-rails'
 gem 'font-awesome-rails'
 gem 'jquery-turbolinks'
-#gem 'rails-jquery-tokeninput'
 gem 'jquery-tokeninput-rails'
 
 # User modeling
@@ -30,6 +29,7 @@ gem 'clerk'
 # Deal with files
 gem 'rubyzip'
 gem 'ruby-filemagic'
+gem 'dimensions'
 
 # Context Menus
 gem 'jquery_context_menu-rails'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170808072706) do
+ActiveRecord::Schema.define(version: 20170816220717) do
 
   create_table "project_crop_image_cords", force: :cascade do |t|
     t.integer "project_crop_image_id", limit: 4
@@ -36,6 +36,8 @@ ActiveRecord::Schema.define(version: 20170808072706) do
     t.string   "image",      limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+    t.integer  "w",          limit: 4,   null: false
+    t.integer  "h",          limit: 4,   null: false
   end
 
   create_table "project_tags", force: :cascade do |t|

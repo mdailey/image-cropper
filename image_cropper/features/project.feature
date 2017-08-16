@@ -1,6 +1,6 @@
 Feature: Project
 
-  In order to crop images of project, I need project
+  In order to organize image cropping, I need projects
 
   @javascript
   Scenario: Add a project
@@ -120,6 +120,30 @@ Feature: Project
     Then I should see a zip file
     When I visit the project page
     Then I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form
+
+  @server
+  @javascript
+  Scenario: Get CNN text files for project
+
+    Given I am an uploader
+    And I am signed in
+    And there is 1 project
+    And the project has 1 tag
+    And there is 1 project image
+    And there is 1 cropper
+    And there is 1 user assigned to the project
+    And there are 2 crops for the project image
+    And the project image files are synced
+    When I visit the project page
+    Then I should see the project in the list
+    And I should see the download link in the project list
+    When I open the downloaded ZIP file
+    Then I should see a CNN text file for the project image
+    And I should see a "current user" link
     When I click the "current user" link
     Then I should see a "Sign Out" link
     When I click the "Sign Out" link
