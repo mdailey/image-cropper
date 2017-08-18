@@ -125,8 +125,8 @@ Feature: Project
     When I click the "Sign Out" link
     Then I should see a login form
 
-  @server
   @javascript
+  @selenium
   Scenario: Get CNN text files for project
 
     Given I am an uploader

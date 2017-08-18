@@ -21,6 +21,18 @@ After('@server') do
   #DatabaseCleaner.clean
 end
 
+Before do
+  DatabaseCleaner.clean
+end
+
 After do
   page.driver.restart if defined?(page.driver.restart)
+end
+
+Before('@selenium') do
+  Capybara.current_driver = :selenium
+end
+
+After('@selenium') do
+  Capybara.use_default_driver
 end

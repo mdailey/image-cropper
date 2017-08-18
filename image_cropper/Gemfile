@@ -65,6 +65,7 @@ group :test do
   gem 'simplecov', :require => false
   gem 'simplecov-rcov', :require => false
   gem 'poltergeist'
+  gem 'selenium-webdriver'
   gem 'pry'
   gem 'rspec-expectations'
   gem 'show_me_the_cookies'

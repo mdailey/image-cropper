@@ -110,6 +110,12 @@ end
 
 Given(/^there are (\d+) crops for the project image$/) do |num|
   num = num.to_i
+  click_link @user.name
+  click_link "Sign Out"
+  save_user = @user
+  @user = @cropper
+  visit '/users/sign_in'
+  submit_login_form
   @project_crop_images = []
   x = 0
   (0..num-1).each do |i|
@@ -122,6 +128,11 @@ Given(/^there are (\d+) crops for the project image$/) do |num|
     @project_crop_images.push pci
     x = x + 100
   end
+  click_link @user.name
+  click_link "Sign Out"
+  @user = save_user
+  visit '/users/sign_in'
+  submit_login_form
 end
 
 Given(/^the project image files are synced$/) do
@@ -153,21 +164,27 @@ Then(/^I should see the download link in the project list$/) do
 end
 
 When(/^I open the downloaded ZIP file$/) do
-  cmd = "curl -s -c cookie.txt -d 'user[email]=#{@user.email}&user[password]=#{@user.password}' http://127.0.0.1:3001/users/sign_in > /dev/null"
-  system(cmd)
-  cmd = "curl -s -b cookie.txt http://127.0.0.1:3001#{@download_link} -o project.zip"
-  system(cmd)
+  system("rm -f #{Rails.root}/tmp/downloads/*")
+  within('tr', text: /#{@project.name}/) do
+    click_link('Download images')
+  end
+  Timeout.timeout(10) do
+    while Dir.glob("#{Rails.root}/tmp/downloads/*").size == 0
+      sleep 1
+    end
+  end
+  files = Dir.glob("#{Rails.root}/tmp/downloads/*")
+  expect(files.size).to eql(1)
   found = false
-  Zip::File.open("project.zip") do |zipfile|
-    zipfile.each do |file|
-      expected = "#{@project.name}/CNN/#{@project_image.image.gsub(/\.jpg$/,'')}.txt"
-      if file.to_s == expected
+  expected = "#{@project.name}/CNN/#{@project_image.image.gsub(/\.jpg$/,'')}.txt"
+  Zip::File.open(files[0]) do |zipfile|
+    zipfile.each do |thisfile|
+      if thisfile.to_s == expected
         found = true
-        @cnn_file_content = file.get_input_stream.read
+        @cnn_file_content = thisfile.get_input_stream.read
       end
     end
   end
-  system("rm -f cookie.txt project.zip")
   expect(found).to be(true)
 end
 
