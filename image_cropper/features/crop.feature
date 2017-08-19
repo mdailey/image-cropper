@@ -33,6 +33,7 @@ Feature: Crop
     And there is 1 project
     And the project has 1 tag
     And there is 1 project image
+    And the project image files are synced
     And I am assigned to the project
     When I visit the assigned projects page
     Then I should see the assigned project in the list
@@ -54,6 +55,7 @@ Feature: Crop
     And there is 1 project
     And the project has 1 tag
     And there is 1 project image
+    And the project image files are synced
     And I am assigned to the project
     When I visit the assigned projects page
     Then I should see the assigned project in the list
@@ -77,6 +79,7 @@ Feature: Crop
     And there is 1 project
     And the project has 1 tag
     And there is 1 project image
+    And the project image files are synced
     And I am assigned to the project
     When I visit the assigned projects page
     Then I should see the assigned project in the list

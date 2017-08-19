@@ -23,3 +23,27 @@ four:
   project_crop_image_id: 1
   x: 12
   y: 12
+
+five:
+  id: 5
+  project_crop_image_id: 2
+  x: 9
+  y: 9
+
+six:
+  id: 6
+  project_crop_image_id: 2
+  x: 10
+  y: 10
+
+seven:
+  id: 7
+  project_crop_image_id: 2
+  x: 11
+  y: 11
+
+eight:
+  id: 8
+  project_crop_image_id: 2
+  x: 12
+  y: 12

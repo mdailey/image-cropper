@@ -48,7 +48,7 @@ FactoryGirl.define do
   end
 
   factory :project_image do
-    image "doraemon1.jpg"
+    sequence(:image) { |i| "doraemon#{i}.jpg" }
     w 500
     h 500
   end

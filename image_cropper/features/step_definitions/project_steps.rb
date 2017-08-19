@@ -6,8 +6,13 @@ Given(/^there is 1 project$/) do
   @project.save
 end
 
-Given(/^there is 1 project image$/) do
-  @project_image = FactoryGirl.create :project_image, project_id: @project.id
+Given(/^there (is|are) (\d+) project image(s)?$/) do |verb, num, plural|
+  num = num.to_i
+  @project_images = []
+  num.times do
+    @project_image = FactoryGirl.create :project_image, project_id: @project.id
+    @project_images.push @project_image
+  end
 end
 
 Then(/^I should see a project form$/) do
@@ -108,14 +113,15 @@ When(/^I delete the tag from the project$/) do
   delete_token_input 'project_tag_tokens', with: @project.tags.first.name
 end
 
-Given(/^there are (\d+) crops for the project image$/) do |num|
+Given(/^there are (\d+) crops for (the )?project image( )?(\d+)?$/) do |num, the, space, index|
   num = num.to_i
-  #click_link @user.name
-  #click_link "Sign Out"
-  save_user = @user
-  #@user = @cropper
-  #visit '/users/sign_in'
-  #submit_login_form
+  if !index.blank?
+    @project_image = @project_images[index.to_i-1]
+  end
+  @cropper ||= FactoryGirl.create :cropper
+  if @project.users.size == 0
+    @project.users << @cropper
+  end
   @project_crop_images = []
   x = 0
   (0..num-1).each do |i|
@@ -128,11 +134,6 @@ Given(/^there are (\d+) crops for the project image$/) do |num|
     @project_crop_images.push pci
     x = x + 100
   end
-  #click_link @user.name
-  #click_link "Sign Out"
-  #@user = save_user
-  #visit '/users/sign_in'
-  #submit_login_form
 end
 
 Given(/^the project image files are synced$/) do
@@ -179,6 +180,8 @@ When(/^I open the downloaded ZIP file$/) do
   yaml_found = false
   expected = "#{@project.name}/CNN/#{@project_image.image.gsub(/\.jpg$/,'')}.txt"
   expected_yaml = "#{@project.name}/#{@project.name}.yml"
+  @project_images_in_zip = 0
+  @project_crop_images_in_zip = 0
   Zip::File.open(files[0]) do |zipfile|
     zipfile.each do |thisfile|
       if thisfile.to_s == expected
@@ -188,6 +191,12 @@ When(/^I open the downloaded ZIP file$/) do
       if thisfile.to_s == expected_yaml
         yaml_found = true
         @yaml_file_content = thisfile.get_input_stream.read
+      end
+      if thisfile.to_s =~ /\/original\//
+        @project_images_in_zip += 1
+      end
+      if thisfile.to_s =~ /\/crops\//
+        @project_crop_images_in_zip += 1
       end
     end
   end
@@ -202,4 +211,12 @@ end
 
 Then(/^I should see a YML file for the project$/) do
   expect(@yaml_file_content).not_to be(nil)
+end
+
+Then(/^I should see (\d+) project image in the ZIP file$/) do |num|
+  expect(@project_images_in_zip).to eql(num.to_i)
+end
+
+Then(/^I should see (\d+) crop images in the ZIP file$/) do |num|
+  expect(@project_crop_images_in_zip).to eql(num.to_i)
 end

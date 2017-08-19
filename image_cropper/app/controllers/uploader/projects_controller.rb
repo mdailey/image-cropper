@@ -12,28 +12,8 @@ class Uploader::ProjectsController < ApplicationController
   def show
     respond_to do |format|
       format.zip do
-        @project_path = File.join(Rails.application.config.projects_dir, @project.name)
-        tempfile = Tempfile.new("#{Time.now.strftime("%Y%m%d%H%M%S")}.zip")
-        Dir.exist?(@project_path) || Dir.mkdir(@project_path)
-        Dir.chdir(@project_path)
-        Zip::File.open(tempfile.path, Zip::File::CREATE) do |zip_file|
-          yml_file = make_yml_file(@project)
-          zip_file.add("#{@project.name}/#{@project_name}.yml", yml_file.path)
-          if File.directory?("#{@project_path}")
-            Dir.foreach("#{@project_path}") do |item|
-              zip_file.add("#{@project.name}/original/#{item}", "#{@project_path}/#{item}") if !File.directory?(item)
-            end
-            Dir.glob("*/*").each do |item|
-              zip_file.add("#{@project.name}/crops/#{item.split("/")[1]}", "#{@project_path}/#{item}")
-            end
-          end
-          @project.project_images.each do |pi|
-            cnn_file, cnn_filename = make_cnn_file(pi)
-            zip_file.add("#{@project.name}/CNN/#{cnn_filename}", cnn_file.path)
-          end
-        end
-        Dir.chdir(Rails.application.config.projects_dir)
-        send_file tempfile.path, filename: "#{@project.name}.zip"
+        zipfile = make_zip_file(@project)
+        send_file zipfile.path, filename: "#{@project.name}.zip"
       end
       format.html
     end
@@ -189,6 +169,27 @@ class Uploader::ProjectsController < ApplicationController
     outfile.write "endFrameNo: #{project.project_images.length-1}\n"
     outfile.close
     return outfile
+  end
+
+
+  def make_zip_file(project)
+    tempfile = Tempfile.new("zip")
+    Zip::File.open(tempfile.path, Zip::File::CREATE) do |zip_file|
+      yml_file = make_yml_file(project)
+      zip_file.add("#{project.name}/#{project.name}.yml", yml_file.path)
+      project.project_images.each do |pi|
+        next unless pi.project_crop_images.size > 0
+        path = File.join(Rails.application.config.projects_dir, project.name, pi.image)
+        zip_file.add("#{project.name}/original/#{pi.image}", path)
+        cnn_file, cnn_filename = make_cnn_file(pi)
+        zip_file.add("#{project.name}/CNN/#{cnn_filename}", cnn_file.path)
+        pi.project_crop_images.each do |pci|
+          path = File.join(Rails.application.config.projects_dir, project.name, pci.user_id.to_s, pci.image)
+          zip_file.add("#{project.name}/crops/#{pci.user_id}/#{pci.image}", path)
+        end
+      end
+    end
+    return tempfile
   end
 
 end

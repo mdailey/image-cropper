@@ -6,3 +6,10 @@ one:
   image: "20150922205514.jpg"
   user_id: 3
   tag_id: 1
+
+two:
+  id: 2
+  project_image_id: 3
+  image: "20150922205515.jpg"
+  user_id: 3
+  tag_id: 1

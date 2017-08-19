@@ -4,7 +4,7 @@ class ProjectCropImageTest < ActiveSupport::TestCase
 
   test "should be valid" do
     ProjectCropImage.all.each do |pci|
-      assert pci.valid?
+      assert pci.valid?, pci.errors.full_messages
     end
   end
 
