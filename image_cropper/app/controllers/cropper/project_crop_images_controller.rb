@@ -80,21 +80,13 @@ class Cropper::ProjectCropImagesController < ApplicationController
   end
 
   def crop_image
-    if File.file?("#{Rails.root.to_s}/public/system/projects/#{@project.name}/#{@project_image.image}")
-      @x_cords = ""
-      @y_cords = ""
-      @file_path = "#{Rails.root.to_s}/public/system/projects/#{@project.name}"
-      @output_path = "#{@file_path}/#{current_user.id.to_s}"
-      ProjectCropImageCord.where(project_crop_image_id: @project_crop_image.id).order(:id).each do |crop|
-        @x_cords+= @x_cords.empty?? crop.x.to_s : ",#{crop.x.to_s}"
-        @y_cords+= @y_cords.empty?? crop.y.to_s : ",#{crop.y.to_s}"
-      end
-      system("mkdir -p #{@output_path}")
-      Dir.chdir("#{Rails.root.to_s}/public")
-      #@filename = "#{Time.now.strftime("%Y%m%d%H%M%S")}.#{@project_crop_image.image.split("\.")[1]}"
-      filepath = "#{@output_path}/#{@project_crop_image.image}"
-      system("python image_cropper.py -i #{@file_path}/#{@project_image.image} -o #{filepath} -x #{@x_cords} -y #{@y_cords}")
-    end
+    x_coords, y_coords = @project_crop_image.bounding_box
+    input_path = File.join(Rails.application.config.projects_dir, @project.name, @project_image.image)
+    output_dir = File.join(Rails.application.config.projects_dir, @project.name, current_user.id.to_s)
+    Dir.mkdir output_dir unless Dir.exist? output_dir
+    output_path = File.join(output_dir, @project_crop_image.image)
+    python_path = File.join(Rails.root, 'lib', 'image_cropper.py')
+    system("python #{python_path} -i #{input_path} -o #{output_path} -x #{x_coords} -y #{y_coords}")
   end
 
   def project_crop_image_params

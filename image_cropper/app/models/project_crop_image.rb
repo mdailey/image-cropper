@@ -33,6 +33,17 @@ class ProjectCropImage < ActiveRecord::Base
     return cords
   end
 
+  def bounding_box
+    coords = self.project_crop_image_cords
+    min_x = coords.collect { |c| c.x }.min
+    max_x = coords.collect { |c| c.x }.max
+    min_y = coords.collect { |c| c.y }.min
+    max_y = coords.collect { |c| c.y }.max
+    x_coords = [min_x, max_x, max_x, min_x].join(',')
+    y_coords = [min_y, min_y, max_y, max_y].join(',')
+    return x_coords, y_coords
+  end
+
   def cnn_data
     coords = self.project_crop_image_cords
     w = self.project_image.w
