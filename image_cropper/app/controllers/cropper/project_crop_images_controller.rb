@@ -41,10 +41,10 @@ class Cropper::ProjectCropImagesController < ApplicationController
     respond_to do |format|
       @project_crop_images.each do |project_crop_image|
         @project_crop_image_cords = project_crop_image.project_crop_image_cords
-        @min_x = @project_crop_image_cords.minimum(:x)
-        @max_x = @project_crop_image_cords.maximum(:x)
-        @min_y = @project_crop_image_cords.minimum(:y)
-        @max_y = @project_crop_image_cords.maximum(:y)
+        @min_x = @project_crop_image_cords.minimum(:x)-5
+        @max_x = @project_crop_image_cords.maximum(:x)+5
+        @min_y = @project_crop_image_cords.minimum(:y)-5
+        @max_y = @project_crop_image_cords.maximum(:y)+5
         if @min_x and @max_x and @min_y and @max_y and (@min_x..@max_x).include?(params[:x].to_f) && (@min_y..@max_y).include?(params[:y].to_f)
           project_crop_image.destroy
           path = Rails.application.config.projects_dir
