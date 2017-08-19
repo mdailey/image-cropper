@@ -23,12 +23,4 @@ class Project < ActiveRecord::Base
     self.tags.collect(&:name).sort.to_sentence
   end
 
-  def w
-    self.project_images.size > 0 ? self.project_images.first.w : 0
-  end
-
-  def h
-    self.project_images.size > 0 ? self.project_images.first.h : 0
-  end
-
 end

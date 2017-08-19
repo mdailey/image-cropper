@@ -166,13 +166,13 @@ class Uploader::ProjectsController < ApplicationController
     outfile.write "%YAML:1.0\n"
     outfile.write "version: 3\n"
     outfile.write "project: #{project.name}\n"
-    outfile.write "vflip: 0\nhflip: 0\nwarp: 0\nimgwidth: #{project.w}\n"
-    outfile.write "imgheight: #{project.h}\n"
     outfile.write "startFrameNo: 0\n"
     project.project_images.each_with_index do |pi, i|
       pi.project_crop_images.each_with_index do |pci, j|
         outfile.write "frame#{i}region#{j}:\n"
-        outfile.write "  image: #{pi.image}\n"
+        outfile.write "  imageName: #{pi.image}\n"
+        outfile.write "  width: #{pi.w}"
+        outfile.write "  height: #{pi.h}"
         outfile.write "  numPts: #{pci.project_crop_image_cords.size}\n"
         outfile.write "  matPts: !!opencv-matrix\n"
         outfile.write "    rows: #{pci.project_crop_image_cords.size}\n"
