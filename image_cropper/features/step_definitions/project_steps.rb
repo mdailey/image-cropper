@@ -110,12 +110,12 @@ end
 
 Given(/^there are (\d+) crops for the project image$/) do |num|
   num = num.to_i
-  click_link @user.name
-  click_link "Sign Out"
+  #click_link @user.name
+  #click_link "Sign Out"
   save_user = @user
-  @user = @cropper
-  visit '/users/sign_in'
-  submit_login_form
+  #@user = @cropper
+  #visit '/users/sign_in'
+  #submit_login_form
   @project_crop_images = []
   x = 0
   (0..num-1).each do |i|
@@ -128,11 +128,11 @@ Given(/^there are (\d+) crops for the project image$/) do |num|
     @project_crop_images.push pci
     x = x + 100
   end
-  click_link @user.name
-  click_link "Sign Out"
-  @user = save_user
-  visit '/users/sign_in'
-  submit_login_form
+  #click_link @user.name
+  #click_link "Sign Out"
+  #@user = save_user
+  #visit '/users/sign_in'
+  #submit_login_form
 end
 
 Given(/^the project image files are synced$/) do
