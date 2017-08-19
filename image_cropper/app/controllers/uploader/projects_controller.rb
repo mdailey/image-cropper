@@ -171,8 +171,8 @@ class Uploader::ProjectsController < ApplicationController
       pi.project_crop_images.each_with_index do |pci, j|
         outfile.write "frame#{i}region#{j}:\n"
         outfile.write "  imageName: #{pi.image}\n"
-        outfile.write "  width: #{pi.w}"
-        outfile.write "  height: #{pi.h}"
+        outfile.write "  width: #{pi.w}\n"
+        outfile.write "  height: #{pi.h}\n"
         outfile.write "  numPts: #{pci.project_crop_image_cords.size}\n"
         outfile.write "  matPts: !!opencv-matrix\n"
         outfile.write "    rows: #{pci.project_crop_image_cords.size}\n"
