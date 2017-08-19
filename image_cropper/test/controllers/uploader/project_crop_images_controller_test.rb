@@ -31,7 +31,7 @@ class Uploader::ProjectCropImagesControllerTest < ActionController::TestCase
     @controller.stub :system, true do
       delete :destroy, project_id: @project.id, id: @crop_image.id
     end
-    assert_redirected_to uploader_projects_path
+    assert_redirected_to uploader_project_project_crop_images_path(@project)
   end
 
   private
