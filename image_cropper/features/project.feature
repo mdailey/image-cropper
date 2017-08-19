@@ -143,9 +143,3 @@ Feature: Project
     And I should see the download link in the project list
     When I open the downloaded ZIP file
     Then I should see a CNN text file for the project image
-    When I visit the project page
-    Then I should see a "current user" link
-    When I click the "current user" link
-    Then I should see a "Sign Out" link
-    When I click the "Sign Out" link
-    Then I should see a login form
