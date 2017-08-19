@@ -48,7 +48,7 @@ class Uploader::ProjectsControllerTest < ActionController::TestCase
     sign_in users(:uploader)
     get :show, id: @project.id, format: :zip
     assert_response :success
-    assert_equal 'application/octet-stream', @response.content_type
+    assert_equal 'application/zip', @response.content_type
   end
 
   test "should authorize get new" do

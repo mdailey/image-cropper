@@ -22,7 +22,7 @@ Capybara.register_driver :selenium do |app|
   profile['browser.download.dir'] = File.join(Rails.root, 'tmp/downloads')
   profile['browser.download.folderList'] = 2
   # Suppress "open with" dialog
-  profile['browser.helperApps.neverAsk.saveToDisk'] = 'application/octet-stream'
+  profile['browser.helperApps.neverAsk.saveToDisk'] = 'application/zip'
   #, browser: :firefox, profile: profile
   options.profile = profile
   Capybara::Selenium::Driver.new(app, options: options)

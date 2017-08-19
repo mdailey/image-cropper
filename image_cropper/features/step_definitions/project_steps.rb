@@ -65,7 +65,7 @@ When(/^I click the download link in the project list$/) do
 end
 
 Then(/^I should see a zip file$/) do
-  expect(page.response_headers['Content-Type']).to eq("application/octet-stream")
+  expect(page.response_headers['Content-Type']).to eq("application/zip")
 end
 
 Then(/^I should see a tag list for the project$/) do
@@ -164,7 +164,7 @@ Then(/^I should see the download link in the project list$/) do
 end
 
 When(/^I open the downloaded ZIP file$/) do
-  system("rm -f #{Rails.root}/tmp/downloads/*")
+  system("rm -rf #{Rails.root}/tmp/downloads/*")
   within('tr', text: /#{@project.name}/) do
     click_link('Download images')
   end
@@ -176,19 +176,30 @@ When(/^I open the downloaded ZIP file$/) do
   files = Dir.glob("#{Rails.root}/tmp/downloads/*")
   expect(files.size).to eql(1)
   found = false
+  yaml_found = false
   expected = "#{@project.name}/CNN/#{@project_image.image.gsub(/\.jpg$/,'')}.txt"
+  expected_yaml = "#{@project.name}/#{@project.name}.yml"
   Zip::File.open(files[0]) do |zipfile|
     zipfile.each do |thisfile|
       if thisfile.to_s == expected
         found = true
         @cnn_file_content = thisfile.get_input_stream.read
       end
+      if thisfile.to_s == expected_yaml
+        yaml_found = true
+        @yaml_file_content = thisfile.get_input_stream.read
+      end
     end
   end
   expect(found).to be(true)
+  expect(yaml_found).to be(true)
 end
 
 Then(/^I should see a CNN text file for the project image$/) do
   expect(@cnn_file_content).not_to be(nil)
   expect(@cnn_file_content.lines.count).to eql(@project_image.project_crop_images.size)
+end
+
+Then(/^I should see a YML file for the project$/) do
+  expect(@yaml_file_content).not_to be(nil)
 end

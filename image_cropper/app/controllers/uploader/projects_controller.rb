@@ -17,6 +17,8 @@ class Uploader::ProjectsController < ApplicationController
         Dir.exist?(@project_path) || Dir.mkdir(@project_path)
         Dir.chdir(@project_path)
         Zip::File.open(tempfile.path, Zip::File::CREATE) do |zip_file|
+          yml_file = make_yml_file(@project)
+          zip_file.add("#{@project.name}/#{@project_name}.yml", yml_file.path)
           if File.directory?("#{@project_path}")
             Dir.foreach("#{@project_path}") do |item|
               zip_file.add("#{@project.name}/original/#{item}", "#{@project_path}/#{item}") if !File.directory?(item)
@@ -31,7 +33,7 @@ class Uploader::ProjectsController < ApplicationController
           end
         end
         Dir.chdir(Rails.application.config.projects_dir)
-        send_file tempfile.path
+        send_file tempfile.path, filename: "#{@project.name}.zip"
       end
       format.html
     end
@@ -157,6 +159,36 @@ class Uploader::ProjectsController < ApplicationController
       filename = "#{filename}.txt"
     end
     return outfile, filename
+  end
+
+  def make_yml_file(project)
+    outfile = Tempfile.new('foo')
+    outfile.write "%YAML:1.0\n"
+    outfile.write "version: 3\n"
+    outfile.write "project: #{project.name}\n"
+    outfile.write "vflip: 0\nhflip: 0\nwarp: 0\nimgwidth: #{project.w}\n"
+    outfile.write "imgheight: #{project.h}\n"
+    outfile.write "startFrameNo: 0\n"
+    project.project_images.each_with_index do |pi, i|
+      pi.project_crop_images.each_with_index do |pci, j|
+        outfile.write "frame#{i}region#{j}:\n"
+        outfile.write "  image: #{pi.image}\n"
+        outfile.write "  numPts: #{pci.project_crop_image_cords.size}\n"
+        outfile.write "  matPts: !!opencv-matrix\n"
+        outfile.write "    rows: #{pci.project_crop_image_cords.size}\n"
+        outfile.write "    cols: 2\n"
+        outfile.write "    dt: f\n"
+        outfile.write "    data: ["
+        pci.project_crop_image_cords.each do |coord|
+          outfile.write " #{coord.x} #{coord.y}"
+        end
+        outfile.write " ]\n"
+        outfile.write "  attribute: #{pci.tag.name}\n"
+      end
+    end
+    outfile.write "endFrameNo: #{project.project_images.length-1}\n"
+    outfile.close
+    return outfile
   end
 
 end
