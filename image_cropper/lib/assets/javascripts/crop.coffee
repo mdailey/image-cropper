@@ -5,7 +5,7 @@ point_num = 1
 x_coords = []
 y_coords = []
 points = []
-click_point = []
+click_point = { }
 myPath = null
 myCircle = null
 project_id = $('#canvas-1').attr('data-project-id')
@@ -107,8 +107,6 @@ load_image = () ->
 load_image()
 
 # Click event handler. Left click extends the current path.
-# Right click sets click_point in case use then selects "Delete"
-# from the context menu.
 
 tool = new Tool
 tool.onMouseDown = (e) ->
@@ -130,9 +128,6 @@ tool.onMouseDown = (e) ->
         points.push
           x: e.point.x
           y: e.point.y
-      click_point.push
-        x: e.point.x
-        y: e.point.y
 
 # <Enter> key event handler. Close the current path and POST to server.
 
@@ -172,7 +167,7 @@ menuCallback = (key, options) ->
   if key == 'delete'
     $.ajax
       type: 'DELETE'
-      url: url + '/1?x=' + click_point[0].x + '&y=' + click_point[0].y
+      url: url + '/1?x=' + click_point.x + '&y=' + click_point.y
       dataType: 'json'
       contentType: 'application/json'
       success: (data) ->
@@ -185,6 +180,8 @@ $.contextMenu
   build: (trigger, e) ->
     x = e.pageX - $('#canvas-1').offset().left
     y = e.pageY - $('#canvas-1').offset().top
+    click_point.x = x
+    click_point.y = y
     found = false
     for r in menuRegion
       if x >= r.x and y >= r.y and x <= r.x + r.w and y <= r.y + r.h
