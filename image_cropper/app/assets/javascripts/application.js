@@ -15,7 +15,6 @@
 //= require jquery_ujs
 //= require bootstrap.min
 //= require paper-full.min
-//= require jquery.contextMenu
 //= require jquery.tokeninput
 //= require turbolinks
 //= require_tree .

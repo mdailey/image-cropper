@@ -1,3 +1,4 @@
+
 $ ->
   $('input.user').click (e) ->
     url = $(e.target).attr('data-remote')
@@ -15,4 +16,4 @@ $ ->
       window.location = window.location.pathname
   return
 
-  
+

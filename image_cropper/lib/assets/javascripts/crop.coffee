@@ -15,6 +15,7 @@ url = $('#canvas-1').attr('data-crop-url')
 limit = $('#canvas-1').attr('data-crop-limit')
 tags = eval($('#canvas-1').attr('data-tags'))
 defaultTag = tags[0].name
+menuRegion = []
 
 # Initialize myPath
 
@@ -52,6 +53,14 @@ label = (path, tag) ->
   border.needsUpdate = true
   view.update()
 
+
+addContextMenuRegion = (path) ->
+  x = path.bounds.x-5
+  y = path.bounds.y-5
+  w = path.bounds.width+10
+  h = path.bounds.height+10
+  menuRegion.push { x: x, y: y, w: w, h: h }
+
 # Get data from database and draw on image
 
 redraw = () ->
@@ -73,6 +82,7 @@ redraw = () ->
           ii++
         myPath.closed = true
         label(myPath, data[i]['tag'])
+        addContextMenuRegion(myPath)
         myPath.needsUpdate = true
         i++
       reset_path()
@@ -153,22 +163,45 @@ $('body').keyup (event) ->
         reset_path()
       success: ->
         label(myPath, defaultTag)
+        addContextMenuRegion(myPath)
         reset_path()
 
 # Context menu right click event
 
+menuCallback = (key, options) ->
+  if key == 'delete'
+    $.ajax
+      type: 'DELETE'
+      url: url + '/1?x=' + click_point[0].x + '&y=' + click_point[0].y
+      dataType: 'json'
+      contentType: 'application/json'
+      success: (data) ->
+        location.reload()
+  return true
+
 $.contextMenu
   selector: '#canvas-1'
-  callback: (key, options) ->
-    if key == 'delete'
-      $.ajax
-        type: 'DELETE'
-        url: url + '/1?x=' + click_point[0].x + '&y=' + click_point[0].y
-        dataType: 'json'
-        contentType: 'application/json'
-        success: (data) ->
-          location.reload()
-    return
-  items: 'delete':
-    name: 'Delete'
-    icon: 'delete'
+  reposition: false
+  build: (trigger, e) ->
+    x = e.pageX - $('#canvas-1').offset().left
+    y = e.pageY - $('#canvas-1').offset().top
+    found = false
+    for r in menuRegion
+      if x >= r.x and y >= r.y and x <= r.x + r.w and y <= r.y + r.h
+        found = true
+    if found
+      $('.context-menu-list').show()
+      return {
+        callback: menuCallback
+        items: {
+          'delete': {name: 'Delete', icon: 'delete'}
+        }
+      }
+    else
+      $('.context-menu-list').hide()
+      return {
+        callback: (key, options) ->
+          return true
+        #items: {'empty': {name: 'No object here', icon: 'close'}}
+        items: { }
+      }
