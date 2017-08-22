@@ -149,7 +149,8 @@ Given(/^cropper (\d+) has selected (\d+) objects$/) do |cropperi, num|
   @cropper = save_cropper
 end
 
-Then(/^I should see two crops$/) do
+Then(/^I should see (\d+) crops$/) do |num|
+  num = num.to_i
   sleep 1
   wait_for_ajax
   nl = page.evaluate_script("window.paper.project.layers.length")
@@ -162,7 +163,7 @@ Then(/^I should see two crops$/) do
       num_crops += 1 unless content.nil?
     end
   end
-  expect(num_crops).to eql(2)
+  expect(num_crops).to eql(num*2)
 end
 
 Given(/^the project image files are synced$/) do

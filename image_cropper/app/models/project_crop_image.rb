@@ -18,19 +18,21 @@ class ProjectCropImage < ActiveRecord::Base
     end
   end
 
-  def image_cords
-    cords = {}
-    cords[:id] = self.id
-    cords[:tag] = self.tag.name
-    image_cords = self.project_crop_image_cords
-    cords[:cords] = []
-    image_cords.each do |image_cord|
-      cords[:cords] << {
-        x: image_cord.x,
-        y: image_cord.y
+  def crop_descriptor(user)
+    coords = {}
+    coords[:id] = self.id
+    coords[:tag] = self.tag.name
+    coords[:owned] = self.user == user
+    coords[:owner] = self.user.initials
+    image_coords = self.project_crop_image_cords
+    coords[:coords] = []
+    image_coords.each do |image_coord|
+      coords[:coords] << {
+        x: image_coord.x,
+        y: image_coord.y
       }
     end
-    return cords
+    return coords
   end
 
   def bounding_box

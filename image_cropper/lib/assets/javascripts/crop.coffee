@@ -33,7 +33,7 @@ reset_path()
 
 # Label a selected region
 
-label = (path, tag) ->
+label = (path, tag, fillColor) ->
   border = new Path.Rectangle(path.bounds)
   border.strokeColor = 'black'
   border.opacity = 0.5
@@ -43,7 +43,7 @@ label = (path, tag) ->
     fontSize: 20
     font: 'Arial'
   rect = new Path.Rectangle(text.bounds)
-  rect.fillColor = "#ff0000"
+  rect.fillColor = fillColor
   rect.opacity = 0.5
   rect.strokeColor = 'black'
   text.fillColor = 'black'
@@ -53,6 +53,15 @@ label = (path, tag) ->
   border.needsUpdate = true
   view.update()
 
+initials = (path, tag) ->
+  text = new PointText(new Point(path.bounds.x+path.bounds.width, path.bounds.y + path.bounds.height))
+  text.content = tag
+  text.style =
+    fontSize: 10
+    font: 'Arial'
+    justification: 'right'
+  text.needsUpdate = true
+  view.update()
 
 addContextMenuRegion = (path) ->
   x = path.bounds.x-5
@@ -74,14 +83,19 @@ redraw = () ->
       while i < data.length
         myPath = new Path
         ii = 0
-        while ii < data[i]['cords'].length
-          myPath.fillColor = 'red'
+        fillColor = 'red'
+        if !data[i]['owned']
+          fillColor = 'yellow'
+        while ii < data[i]['coords'].length
+          myPath.fillColor = fillColor
           myPath.opacity = 0.5
           myPath.strokeColor = 'black'
-          myPath.add new Point(data[i]['cords'][ii].x, data[i]['cords'][ii].y)
+          myPath.add new Point(data[i]['coords'][ii].x, data[i]['coords'][ii].y)
           ii++
         myPath.closed = true
-        label(myPath, data[i]['tag'])
+        label(myPath, data[i]['tag'], fillColor)
+        if !data[i]['owned']
+          initials(myPath, data[i]['owner'])
         addContextMenuRegion(myPath)
         myPath.needsUpdate = true
         i++
@@ -157,7 +171,7 @@ $('body').keyup (event) ->
         view.update()
         reset_path()
       success: ->
-        label(myPath, defaultTag)
+        label(myPath, defaultTag, 'red')
         addContextMenuRegion(myPath)
         reset_path()
 

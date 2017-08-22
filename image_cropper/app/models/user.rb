@@ -7,4 +7,10 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable, :trackable, :recoverable, :validatable
   validates_uniqueness_of :email
   validates_presence_of :name
+
+  def initials
+    self.name.split(/[\s\.]+/).collect { |s| s[0] }.join
+  end
+
 end
+

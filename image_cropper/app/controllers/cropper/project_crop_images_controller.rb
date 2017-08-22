@@ -75,7 +75,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
     @project_crop_images = @project_image.project_crop_images.order(:id)
     @project_crop_image_cords = []
     @project_crop_images.all.each do |pci|
-      @project_crop_image_cords.push(pci.image_cords)
+      @project_crop_image_cords.push(pci.crop_descriptor(current_user))
     end
   end
 

@@ -110,7 +110,7 @@ Feature: Crop
     Then I should see the assigned project in the list
     When I click the crop images link in the assigned project list
     Then I should see an image from the assigned project
-    And I should see two crops
+    And I should see 2 crops
     And I should see a "current user" link
     When I click the "current user" link
     Then I should see a "Sign Out" link
