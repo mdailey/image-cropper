@@ -120,60 +120,67 @@ load_image = () ->
 
 load_image()
 
+# Function to close current path and submit to server
+
+submit_crop = () ->
+  if myCircle
+    myCircle.remove()
+    view.update()
+  $.ajax
+    type: 'POST'
+    url: url
+    data:
+      project_crop_image:
+        project_image_id: project_image_id
+        image: Date.now().toString() + '.png'
+      cords: points
+      format: 'json'
+    error: (xhr, status, error) ->
+      errors = xhr.responseJSON.error
+      $('div#errors').remove()
+      $('div.messages').append(
+        '<div id="errors" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>Error:</p><ul></ul></div>')
+      for message of errors
+        $('#errors ul').append '<li>' + errors[message] + '</li>'
+      myPath.needsUpdate = true
+      myPath.remove()
+      view.update()
+      reset_path()
+    success: ->
+      label(myPath, defaultTag, 'red')
+      addContextMenuRegion(myPath)
+      reset_path()
+
 # Click event handler. Left click extends the current path.
 
 tool = new Tool
 tool.onMouseDown = (e) ->
-    if point_num <= limit or limit == 99
-      click_point = []
-      point_num++
-      if e.event.buttons == 1
-        if myCircle
-          myCircle.remove()
-        myCircle = new (Path.Circle)(
-          center: e.point
-          radius: 3)
-        myCircle.strokeColor = 'black'
-        myCircle.fillColor = 'white'
-        myPath.strokeColor = 'black'
-        myPath.add new Point(e.point)
-        x_coords.push e.point.x
-        y_coords.push e.point.y
-        points.push
-          x: e.point.x
-          y: e.point.y
+  if point_num <= limit or limit == 99
+    click_point = []
+    point_num++
+    if e.event.buttons == 1
+      if myCircle
+        myCircle.remove()
+      myCircle = new (Path.Circle)(
+        center: e.point
+        radius: 3)
+      myCircle.strokeColor = 'black'
+      myCircle.fillColor = 'white'
+      myPath.strokeColor = 'black'
+      myPath.add new Point(e.point)
+      x_coords.push e.point.x
+      y_coords.push e.point.y
+      points.push
+        x: e.point.x
+        y: e.point.y
+      if point_num > limit
+        submit_crop()
 
 # <Enter> key event handler. Close the current path and POST to server.
 
 $('body').keyup (event) ->
   if event.which == 13
-    if myCircle
-      myCircle.remove()
-      view.update()
-    $.ajax
-      type: 'POST'
-      url: url
-      data:
-        project_crop_image:
-          project_image_id: project_image_id
-          image: Date.now().toString() + '.png'
-        cords: points
-        format: 'json'
-      error: (xhr, status, error) ->
-        errors = xhr.responseJSON.error
-        $('div#errors').remove()
-        $('div.messages').append(
-          '<div id="errors" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>Error:</p><ul></ul></div>')
-        for message of errors
-          $('#errors ul').append '<li>' + errors[message] + '</li>'
-        myPath.needsUpdate = true
-        myPath.remove()
-        view.update()
-        reset_path()
-      success: ->
-        label(myPath, defaultTag, 'red')
-        addContextMenuRegion(myPath)
-        reset_path()
+    submit_crop()
 
 # Context menu right click event
 

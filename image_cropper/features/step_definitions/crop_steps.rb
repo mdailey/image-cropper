@@ -19,10 +19,26 @@ When(/^I click the crop images link in the assigned project list$/) do
   find(:xpath, "//*[@id='assign_project_#{@project.id}']").click
 end
 
+def wait_for_image
+  found = false
+  Timeout.timeout(5) do
+    while !found do
+      sleep 0.1
+      nc = page.evaluate_script "window.paper.project.layers[0].children.length"
+      (0..nc-1).each do |i|
+        has_image = page.evaluate_script("window.paper.project.layers[0].children[#{i}]._image")
+        visible = page.evaluate_script("window.paper.project.layers[0].children[#{i}]._visible")
+        found = true if has_image and visible
+      end
+    end
+  end
+end
+
 Then(/^I should see an image from the assigned project$/) do
   expect(page).to have_css 'canvas#canvas-1'
   image_path = page.evaluate_script("$('canvas#canvas-1').attr('data-project-image')")
   expect(image_path.to_s).to eq "/system/projects/#{@project.name}/#{@project_image.image}"
+  wait_for_image
 end
 
 When(/^I select an object on the image to be cropped$/) do
@@ -34,18 +50,53 @@ When(/^I select an object on the image to be cropped$/) do
   wait_for_ajax
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{190}, y: #{431}}, event: {buttons: 1}  })"
   wait_for_ajax
+  #page.evaluate_script "$('body').trigger($.Event( 'keyup', { which: 13 } ))"
+  #wait_for_ajax
+end
+
+Given(/^the project allows arbitrary polygons$/) do
+  @project.crop_points = 99
+  @project.save
+end
+
+When(/^I select an object on the image to be cropped with a polygon$/) do
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{70}, y: #{433}}, event: {buttons: 1} })"
+  wait_for_ajax
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{71}, y: #{252}}, event: {buttons: 1}  })"
+  wait_for_ajax
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{182}, y: #{259}}, event: {buttons: 1}  })"
+  wait_for_ajax
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{190}, y: #{431}}, event: {buttons: 1}  })"
+  wait_for_ajax
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{130}, y: #{451}}, event: {buttons: 1}  })"
+  wait_for_ajax
   page.evaluate_script "$('body').trigger($.Event( 'keyup', { which: 13 } ))"
   wait_for_ajax
 end
 
-Then(/^I should see the object selected on the image$/) do
-  expect(ProjectCropImage.all.size).to eq(1)
-  expect(ProjectCropImageCord.all.size).to eq(4)
+Then(/^I should see (\d+) object(s)? selected on the image$/) do |num, plural|
+  save_screenshot("tmp.png")
+  num = num.to_i
+  num_found = 0
+  Timeout.timeout(5) do
+    while num_found != num do
+      sleep 1
+      nc = page.evaluate_script "window.paper.project.layers[0].children.length"
+      (0..nc-1).each do |i|
+        object = page.evaluate_script("window.paper.project.layers[0].children[#{i}]._content")
+        num_found += 1 if object == @project.tags.first.name
+      end
+    end
+  end
 end
 
 def wait_for_ajax
   Timeout.timeout(5) do
-    loop until page.evaluate_script('jQuery.active').zero?
+    active = true
+    while active
+      sleep 0.1
+      active = !page.evaluate_script('jQuery.active').zero?
+    end
   end
 end
 

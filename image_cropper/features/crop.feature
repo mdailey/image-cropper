@@ -62,7 +62,30 @@ Feature: Crop
     When I click the crop images link in the assigned project list
     Then I should see an image from the assigned project
     When I select an object on the image to be cropped
-    Then I should see the object selected on the image
+    Then I should see 1 object selected on the image
+    And I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form
+
+  @javascript
+  Scenario: Crop an image with an arbitrary polygon
+
+    Given I am a cropper
+    And I am signed in
+    And there is 1 project
+    And the project has 1 tag
+    And the project allows arbitrary polygons
+    And there is 1 project image
+    And the project image files are synced
+    And I am assigned to the project
+    When I visit the assigned projects page
+    Then I should see the assigned project in the list
+    When I click the crop images link in the assigned project list
+    Then I should see an image from the assigned project
+    When I select an object on the image to be cropped with a polygon
+    Then I should see 1 object selected on the image
     And I should see a "current user" link
     When I click the "current user" link
     Then I should see a "Sign Out" link
