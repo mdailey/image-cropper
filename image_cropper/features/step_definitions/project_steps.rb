@@ -1,7 +1,9 @@
 
 Given(/^there is 1 project$/) do
+  set_default_role
   @project = Project.find_by_name 'Doraemon'
-  @project ||= FactoryGirl.create :project, user_id: @user.id, isactive: true
+  owner = @user || FactoryGirl.create(:uploader)
+  @project ||= FactoryGirl.create :project, user_id: owner.id, isactive: true
   @project.isactive = true
   @project.save
 end
@@ -113,15 +115,7 @@ When(/^I delete the tag from the project$/) do
   delete_token_input 'project_tag_tokens', with: @project.tags.first.name
 end
 
-Given(/^there are (\d+) crops for (the )?project image( )?(\d+)?$/) do |num, the, space, index|
-  num = num.to_i
-  if !index.blank?
-    @project_image = @project_images[index.to_i-1]
-  end
-  @cropper ||= FactoryGirl.create :cropper
-  if @project.users.size == 0
-    @project.users << @cropper
-  end
+def create_project_crop_images(num)
   @project_crop_images = []
   x = 0
   (0..num-1).each do |i|
@@ -134,6 +128,41 @@ Given(/^there are (\d+) crops for (the )?project image( )?(\d+)?$/) do |num, the
     @project_crop_images.push pci
     x = x + 100
   end
+end
+
+Given(/^there are (\d+) crops for (the )?project image( )?(\d+)?$/) do |num, the, space, index|
+  num = num.to_i
+  if !index.blank?
+    @project_image = @project_images[index.to_i-1]
+  end
+  @cropper ||= FactoryGirl.create :cropper
+  if @project.users.size == 0
+    @project.users << @cropper
+  end
+  create_project_crop_images(num)
+end
+
+Given(/^cropper (\d+) has selected (\d+) objects$/) do |cropperi, num|
+  save_cropper = @cropper
+  @cropper = @croppers[cropperi.to_i-1]
+  create_project_crop_images(num.to_i)
+  @cropper = save_cropper
+end
+
+Then(/^I should see two crops$/) do
+  sleep 1
+  wait_for_ajax
+  nl = page.evaluate_script("window.paper.project.layers.length")
+  num_crops = 0
+  (0..nl-1).each do |li|
+    nc = page.evaluate_script("window.paper.project.layers[#{li}].children.length")
+    (0..nc-1).each do |ci|
+      # Tag objects have a _content attribute containing the tag string; paths and other objects don't
+      content = page.evaluate_script("window.paper.project.layers[#{li}].children[#{ci}]._content")
+      num_crops += 1 unless content.nil?
+    end
+  end
+  expect(num_crops).to eql(2)
 end
 
 Given(/^the project image files are synced$/) do

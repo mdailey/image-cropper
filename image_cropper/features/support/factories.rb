@@ -34,8 +34,8 @@ FactoryGirl.define do
   end
 
   factory :cropper, class: :user do
-    name 'Cropper'
-    email 'cropper@hotmail.com'
+    sequence(:name) { |i| "Cropper #{i}" }
+    sequence(:email) { |i| "cropper#{i}@hotmail.com" }
     password 'secret'
     is_active true
     role_id 3

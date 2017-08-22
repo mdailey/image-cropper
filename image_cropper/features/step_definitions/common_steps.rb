@@ -6,9 +6,9 @@ def submit_login_form
 end
 
 def set_default_role
-  FactoryGirl.create :role_admin unless Role.find_by_name('admin')
-  FactoryGirl.create :role_uploader unless Role.find_by_name('uploader')
-  FactoryGirl.create :role_cropper unless Role.find_by_name('cropper')
+  FactoryGirl.create :role_admin unless Role.find_by_name('Administrator')
+  FactoryGirl.create :role_uploader unless Role.find_by_name('Uploader')
+  FactoryGirl.create :role_cropper unless Role.find_by_name('Cropper')
 end
 
 Given(/^I am an admin$/) do

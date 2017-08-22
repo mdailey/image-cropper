@@ -93,3 +93,26 @@ Feature: Crop
     When I click the "Sign Out" link
     Then I should see a login form
 
+  @javascript
+  Scenario: Show crops from multiple users
+
+  A cropper should be able to see crops made by another cropper
+
+    Given there is 1 project
+    And the project has 1 tag
+    And there is 1 project image
+    And there are 2 users assigned to the project
+    And cropper 1 has selected 2 objects
+    And the project image files are synced
+    And I am cropper 2
+    And I am signed in
+    When I visit the assigned projects page
+    Then I should see the assigned project in the list
+    When I click the crop images link in the assigned project list
+    Then I should see an image from the assigned project
+    And I should see two crops
+    And I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form

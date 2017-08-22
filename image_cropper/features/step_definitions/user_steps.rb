@@ -1,10 +1,24 @@
 
 Given(/^there is 1 cropper$/) do
   @cropper = FactoryGirl.create :cropper
+  @croppers = [ @cropper ]
 end
 
-Given(/^there is 1 user assigned to the project$/) do
-  @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: (@cropper ? @cropper.id : @user.id)
+Given(/^there (is|are) (\d+) user(s)? assigned to the project$/) do |verb, num, plural|
+  num = num.to_i
+  @croppers ||= []
+  (num - @croppers.length).times do
+    @croppers.push FactoryGirl.create(:cropper)
+  end
+  (0..num-1).each do |i|
+    @project_user = FactoryGirl.create :project_user, project_id: @project.id, user_id: @croppers[i].id
+  end
+end
+
+Given(/^I am cropper (\d+)$/) do |num|
+  num = num.to_i
+  @user = @croppers[num-1]
+  @cropper = @user
 end
 
 Given(/^I am assigned to the project$/) do
@@ -19,10 +33,11 @@ Then(/^I should see a user form$/) do
 end
 
 When(/^I submit the user information$/) do
-  fill_in 'Name', with: 'Cropper'
-  fill_in 'Email', with: 'cropper@hotmail.com'
+  fill_in 'Name', with: 'New cropper name'
+  fill_in 'Email', with: 'newcropper@hotmail.com'
   select('Cropper', :from => 'Role')
   click_button 'Submit'
+  @cropper.name = 'New cropper name' if @cropper
 end
 
 Then(/^I should see the user( assigned| unassigned)? in the list$/) do |assigned|
