@@ -8,8 +8,8 @@ class Cropper::ProjectCropImagesController < ApplicationController
   def index
     respond_to do |format|
       format.html do
-        flash[:notice] = "Please select objects of type #{@project.pretty_tags} with a maximum of #{@project.crop_points == 99 ? "any number" : @project.crop_points} points. "
-        flash[:notice] += "Press ENTER after you're finished with an object. Right click and select Delete to remove a selection."
+        flash[:notice] = "Please select objects of type #{@project.pretty_tags} with a maximum of #{@project.crop_points == 99 ? "any number of" : @project.crop_points} points. "
+        flash[:notice] += @project.crop_points == 99 ? "Press ENTER after you're finished with an object. " : "" + "Right click and select Delete to remove a selection."
       end
       format.json { render json: @project_crop_image_cords }
     end

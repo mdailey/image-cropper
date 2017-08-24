@@ -8,14 +8,16 @@ points = []
 click_point = { }
 myPath = null
 myCircle = null
-project_id = $('#canvas-1').attr('data-project-id')
-project_image = $('#canvas-1').attr('data-project-image')
-project_image_id = $('#canvas-1').attr('data-project-image-id')
-url = $('#canvas-1').attr('data-crop-url')
-limit = $('#canvas-1').attr('data-crop-limit')
-tags = eval($('#canvas-1').attr('data-tags'))
-defaultTag = tags[0].name
+canvas_selector = '#canvas-1'
+project_id = $(canvas_selector).attr('data-project-id')
+project_image = $(canvas_selector).attr('data-project-image')
+project_image_id = $(canvas_selector).attr('data-project-image-id')
+url = $(canvas_selector).attr('data-crop-url')
+limit = $(canvas_selector).attr('data-crop-limit')
+tags = eval($(canvas_selector).attr('data-tags'))
+defaultTagIndex = 0
 menuRegion = []
+objectCompleted = false
 
 # Initialize myPath
 
@@ -28,6 +30,7 @@ reset_path = () ->
   y_coords = []
   points = []
   point_num = 1
+  objectCompleted = false
 
 reset_path()
 
@@ -53,6 +56,8 @@ label = (path, tag, fillColor) ->
   border.needsUpdate = true
   view.update()
 
+# Add cropper's initials to a selected region
+
 initials = (path, tag) ->
   text = new PointText(new Point(path.bounds.x+path.bounds.width, path.bounds.y + path.bounds.height))
   text.content = tag
@@ -63,6 +68,8 @@ initials = (path, tag) ->
   text.needsUpdate = true
   view.update()
 
+# Add a loaded or newly created region to the active region for the context menu
+
 addContextMenuRegion = (path) ->
   x = path.bounds.x-5
   y = path.bounds.y-5
@@ -70,7 +77,7 @@ addContextMenuRegion = (path) ->
   h = path.bounds.height+10
   menuRegion.push { x: x, y: y, w: w, h: h }
 
-# Get data from database and draw on image
+# Get tagged region data from database and draw on the image
 
 redraw = () ->
   $.ajax
@@ -102,7 +109,7 @@ redraw = () ->
       reset_path()
       view.update()
 
-# Load image
+# Load the current image onto the canvas
 
 raster = null
 
@@ -120,9 +127,13 @@ load_image = () ->
 
 load_image()
 
-# Function to close current path and submit to server
+# Close currently active path and submit to server
 
-submit_crop = () ->
+submit_crop = (tagId) ->
+  tag = null
+  tags.forEach (aTag, i) ->
+    if aTag.id.toString() == tagId.toString()
+      tag = aTag
   if myCircle
     myCircle.remove()
     view.update()
@@ -132,6 +143,7 @@ submit_crop = () ->
     data:
       project_crop_image:
         project_image_id: project_image_id
+        tag_id: tagId
         image: Date.now().toString() + '.png'
       cords: points
       format: 'json'
@@ -147,9 +159,25 @@ submit_crop = () ->
       view.update()
       reset_path()
     success: ->
-      label(myPath, defaultTag, 'red')
+      label(myPath, tag.name, 'red')
       addContextMenuRegion(myPath)
       reset_path()
+      $('.context-menu-list').hide()
+
+# Tag a crop then submit to server
+
+tag_and_submit_crop = (menuPos) ->
+  # Data are actually submitted to the server by the menu callback
+  $(canvas_selector).contextMenu(menuPos)
+
+# Function to complete a crop
+
+complete_crop = (e) ->
+  if tags.length > 1
+    menuPos = {x: $(canvas_selector).offset().left + e.point.x, y: $(canvas_selector).offset().top + e.point.y}
+    tag_and_submit_crop(menuPos)
+  else
+    submit_crop(tags[0].id)
 
 # Click event handler. Left click extends the current path.
 
@@ -174,15 +202,16 @@ tool.onMouseDown = (e) ->
         x: e.point.x
         y: e.point.y
       if point_num > limit
-        submit_crop()
+        objectCompleted = true
+        complete_crop(e)
 
 # <Enter> key event handler. Close the current path and POST to server.
 
 $('body').keyup (event) ->
   if event.which == 13
-    submit_crop()
+    complete_crop(event)
 
-# Context menu right click event
+# Context menu callback for right click on an existing region (DELETE option)
 
 menuCallback = (key, options) ->
   if key == 'delete'
@@ -195,31 +224,54 @@ menuCallback = (key, options) ->
         location.reload()
   return true
 
+# Context menu callback for selection of a tag from the radio button list
+
+tagCallback = (key, options) ->
+  submit_crop($('input[name="context-menu-input-radio"]:checked').val())
+
+# Create a dynamic context menu for the canvas
+
 $.contextMenu
-  selector: '#canvas-1'
+  selector: canvas_selector
   reposition: false
   build: (trigger, e) ->
-    x = e.pageX - $('#canvas-1').offset().left
-    y = e.pageY - $('#canvas-1').offset().top
-    click_point.x = x
-    click_point.y = y
-    found = false
-    for r in menuRegion
-      if x >= r.x and y >= r.y and x <= r.x + r.w and y <= r.y + r.h
-        found = true
-    if found
+    if e.isTrigger and objectCompleted
+      # We were triggered by completion of an object selection with multiple tags
       $('.context-menu-list').show()
+      items = {
+        'sep1': "---------"
+      }
+      tags.forEach (tag, i) ->
+        selected = i == defaultTagIndex
+        items['tag'+i] = { name: tag.name, type: 'radio', radio: 'radio', value: tag.id, selected: selected }
+      items['sep2'] = "---------"
+      items['button'] = { name: 'Submit', callback: tagCallback }
       return {
-        callback: menuCallback
-        items: {
-          'delete': {name: 'Delete', icon: 'delete'}
-        }
+        items: items
       }
     else
-      $('.context-menu-list').hide()
-      return {
-        callback: (key, options) ->
-          return true
-        #items: {'empty': {name: 'No object here', icon: 'close'}}
-        items: { }
-      }
+      # We were triggered by right click on an existing object region
+      x = e.pageX - $(canvas_selector).offset().left
+      y = e.pageY - $(canvas_selector).offset().top
+      click_point.x = x
+      click_point.y = y
+      found = false
+      for r in menuRegion
+        if x >= r.x and y >= r.y and x <= r.x + r.w and y <= r.y + r.h
+          found = true
+      if found
+        $('.context-menu-list').show()
+        return {
+          callback: menuCallback
+          items: {
+            'delete': {name: 'Delete', icon: 'delete'}
+          }
+        }
+      else
+        $('.context-menu-list').hide()
+        return {
+          callback: (key, options) ->
+            return true
+          #items: {'empty': {name: 'No object here', icon: 'close'}}
+          items: { }
+        }
