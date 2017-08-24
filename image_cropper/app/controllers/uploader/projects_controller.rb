@@ -174,6 +174,8 @@ class Uploader::ProjectsController < ApplicationController
 
   def make_zip_file(project)
     tempfile = Tempfile.new("zip")
+    # Add temp files to this list to prevent their garbage collection before the ZIP file is finished
+    tempfiles = []
     Zip::File.open(tempfile.path, Zip::File::CREATE) do |zip_file|
       yml_file = make_yml_file(project)
       zip_file.add("#{project.name}/#{project.name}.yml", yml_file.path)
@@ -182,6 +184,7 @@ class Uploader::ProjectsController < ApplicationController
         path = File.join(Rails.application.config.projects_dir, project.name, pi.image)
         zip_file.add("#{project.name}/original/#{pi.image}", path)
         cnn_file, cnn_filename = make_cnn_file(pi)
+        tempfiles << yml_file
         zip_file.add("#{project.name}/CNN/#{cnn_filename}", cnn_file.path)
         pi.project_crop_images.each do |pci|
           path = File.join(Rails.application.config.projects_dir, project.name, pci.user_id.to_s, pci.image)
