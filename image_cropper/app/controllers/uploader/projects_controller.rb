@@ -185,7 +185,7 @@ class Uploader::ProjectsController < ApplicationController
         path = File.join(Rails.application.config.projects_dir, project.name, pi.image)
         zip_file.add("#{project.name}/original/#{pi.image}", path)
         cnn_file, cnn_filename = make_cnn_file(pi)
-        tempfiles << yml_file
+        tempfiles << cnn_file
         zip_file.add("#{project.name}/CNN/#{cnn_filename}", cnn_file.path)
         pi.project_crop_images.each do |pci|
           path = File.join(Rails.application.config.projects_dir, project.name, pci.user_id.to_s, pci.image)
