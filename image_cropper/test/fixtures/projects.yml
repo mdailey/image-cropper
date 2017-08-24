@@ -7,3 +7,11 @@ one:
   crop_points: 4
   isactive: false
   user_id: 2
+
+two:
+  id: 2
+  name: 'MultiPoint'
+  description: ''
+  crop_points: nil
+  isactive: true
+  user_id: 2

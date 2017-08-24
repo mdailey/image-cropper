@@ -27,4 +27,15 @@ class ProjectCropImageTest < ActiveSupport::TestCase
     assert pci.valid?
   end
 
+  test "should validate coords for arbitrary polygon project" do
+    pci = ProjectCropImage.new
+    pci.project_image = project_images(:four)
+    pci.image = 'tmp.png'
+    pci.tag = pci.project.tags.first
+    assert !pci.valid?
+    assert_equal ["should be of size at least 1"], pci.errors[:project_crop_image_cords]
+    1.times { pci.project_crop_image_cords << ProjectCropImageCord.new(x: 10, y: 10) }
+    assert pci.valid?
+  end
+
 end

@@ -102,7 +102,7 @@ When(/^I select an object on the image to be cropped and give it a tag$/) do
 end
 
 Given(/^the project allows arbitrary polygons$/) do
-  @project.crop_points = 99
+  @project.crop_points = 0
   @project.save
 end
 

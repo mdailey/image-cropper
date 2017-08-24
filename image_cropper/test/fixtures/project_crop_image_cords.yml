@@ -47,3 +47,9 @@ eight:
   project_crop_image_id: 2
   x: 12
   y: 12
+
+nine:
+  id: 9
+  project_crop_image_id: 3
+  x: 12
+  y: 12

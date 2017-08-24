@@ -13,7 +13,7 @@ project_id = $(canvas_selector).attr('data-project-id')
 project_image = $(canvas_selector).attr('data-project-image')
 project_image_id = $(canvas_selector).attr('data-project-image-id')
 url = $(canvas_selector).attr('data-crop-url')
-limit = $(canvas_selector).attr('data-crop-limit')
+limit = Number($(canvas_selector).attr('data-crop-limit'))
 tags = eval($(canvas_selector).attr('data-tags'))
 defaultTagIndex = 0
 menuRegion = []
@@ -183,7 +183,7 @@ complete_crop = (e) ->
 
 tool = new Tool
 tool.onMouseDown = (e) ->
-  if point_num <= limit or limit == 99
+  if point_num <= limit or limit == 0 or limit == null
     click_point = []
     point_num++
     if e.event.buttons == 1
@@ -201,7 +201,7 @@ tool.onMouseDown = (e) ->
       points.push
         x: e.point.x
         y: e.point.y
-      if point_num > limit
+      if limit > 0 and point_num > limit
         objectCompleted = true
         complete_crop(e)
 

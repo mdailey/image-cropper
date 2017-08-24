@@ -9,7 +9,7 @@ class Project < ActiveRecord::Base
   attr_accessor :images
   attr_reader :tag_tokens
 
-  validates_presence_of :name, :crop_points
+  validates_presence_of :name
   validates_uniqueness_of :name
   validates :name, format: { with: /\A[a-zA-Z0-9]+\z/,
                                     message: "only allows letters and numbers" }
@@ -21,6 +21,17 @@ class Project < ActiveRecord::Base
 
   def pretty_tags
     self.tags.collect(&:name).sort.to_sentence
+  end
+
+  def fixed_num_crop_points
+    return self.crop_points > 0
+  end
+
+  def crop_instructions
+    "Please select objects of type #{self.pretty_tags} with " +
+      (self.fixed_num_crop_points ? "exactly #{self.crop_points} points. " : "any number of points. ") + "points. " +
+      (self.fixed_num_crop_points ? "Press ENTER after you're finished with an object. " : "") +
+      "Right click and select Delete to remove a selection."
   end
 
 end

@@ -3,3 +3,11 @@
 one:
   project_id: 1
   tag_id: 1
+
+two:
+  project_id: 2
+  tag_id: 1
+
+three:
+  project_id: 2
+  tag_id: 2
