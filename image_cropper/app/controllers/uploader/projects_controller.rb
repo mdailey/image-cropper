@@ -178,6 +178,7 @@ class Uploader::ProjectsController < ApplicationController
     tempfiles = []
     Zip::File.open(tempfile.path, Zip::File::CREATE) do |zip_file|
       yml_file = make_yml_file(project)
+      tempfiles << yml_file
       zip_file.add("#{project.name}/#{project.name}.yml", yml_file.path)
       project.project_images.each do |pi|
         next unless pi.project_crop_images.size > 0
