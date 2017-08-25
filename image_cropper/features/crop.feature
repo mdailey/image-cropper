@@ -165,3 +165,29 @@ Feature: Crop
     Then I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
+
+  @javascript
+  Scenario: Crop by dragging
+
+  A cropper should be able to crop an image in a project
+  with 2 points by dragging the mouse
+
+    Given I am a cropper
+    And I am signed in
+    And there is 1 project
+    And the project uses 2 points
+    And the project has 1 tag
+    And there is 1 project image
+    And the project image files are synced
+    And I am assigned to the project
+    When I visit the assigned projects page
+    Then I should see the assigned project in the list
+    When I click the crop images link in the assigned project list
+    Then I should see an image from the assigned project
+    When I select an object by dragging
+    Then I should see 1 object selected on the image
+    And I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form

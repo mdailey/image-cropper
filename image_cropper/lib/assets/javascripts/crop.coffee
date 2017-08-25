@@ -1,13 +1,13 @@
 
 # Declare variables for cropping
 
-point_num = 1
 x_coords = []
 y_coords = []
 points = []
-click_point = { }
+right_click_point = { }
 myPath = null
 myCircle = null
+myRect = null
 canvas_selector = '#canvas-1'
 project_id = $(canvas_selector).attr('data-project-id')
 project_image = $(canvas_selector).attr('data-project-image')
@@ -18,6 +18,7 @@ tags = eval($(canvas_selector).attr('data-tags'))
 defaultTagIndex = 0
 menuRegion = []
 objectCompleted = false
+dragging = false
 
 # Initialize myPath
 
@@ -29,7 +30,6 @@ reset_path = () ->
   x_coords = []
   y_coords = []
   points = []
-  point_num = 1
   objectCompleted = false
 
 reset_path()
@@ -183,10 +183,10 @@ complete_crop = (e) ->
 
 tool = new Tool
 tool.onMouseDown = (e) ->
-  if point_num <= limit or limit == 0 or limit == null
-    click_point = []
-    point_num++
-    if e.event.buttons == 1
+  if e.event.buttons == 1
+    right_click_point = { }
+    dragging = false
+    if points.length < limit or limit == 0 or limit == null
       if myCircle
         myCircle.remove()
       myCircle = new (Path.Circle)(
@@ -201,9 +201,58 @@ tool.onMouseDown = (e) ->
       points.push
         x: e.point.x
         y: e.point.y
-      if limit > 0 and point_num > limit
+      if limit > 0 and points.length >= limit
         objectCompleted = true
         complete_crop(e)
+
+replace_path_point = (e) ->
+  if myCircle
+    myCircle.remove()
+  myCircle = new (Path.Circle)(
+    center: e.point
+    radius: 3)
+  myCircle.strokeColor = 'black'
+  myCircle.fillColor = 'white'
+  myPath.strokeColor = 'black'
+  if myPath.segments.length >= 2
+    myPath.removeSegments(1)
+  if x_coords.length >= 2
+    x_coords = [x_coords[0]]
+    y_coords = [y_coords[0]]
+  if points.length >= 2
+    points = [points[0]]
+  myPath.add new Point(e.point)
+  x_coords.push e.point.x
+  y_coords.push e.point.y
+  points.push
+    x: e.point.x
+    y: e.point.y
+
+update_myrect = () ->
+  if myRect
+    myRect.remove()
+  myRect = new Path.Rectangle(myPath.bounds)
+  myRect.strokeColor = 'black'
+  myRect.opacity = 1.0
+  myRect.needsUpdate = true
+
+if limit == 2
+  tool.onMouseDrag = (e) ->
+    if e.event.buttons == 1
+      dragging = true
+      replace_path_point(e)
+      update_myrect()
+      view.update()
+
+tool.onMouseUp = (e) ->
+  # Not sure why, but we seem to get button 0 for mouseup regardless of button.
+  if limit == 2 and dragging and myPath.segments.length >= 2
+    dragging = false
+    replace_path_point(e)
+    objectCompleted = true
+    if myRect
+      myRect.remove()
+    complete_crop(e)
 
 # <Enter> key event handler. Close the current path and POST to server.
 
@@ -217,7 +266,7 @@ menuCallback = (key, options) ->
   if key == 'delete'
     $.ajax
       type: 'DELETE'
-      url: url + '/1?x=' + click_point.x + '&y=' + click_point.y
+      url: url + '/1?x=' + right_click_point.x + '&y=' + right_click_point.y
       dataType: 'json'
       contentType: 'application/json'
       success: (data) ->
@@ -253,8 +302,8 @@ $.contextMenu
       # We were triggered by right click on an existing object region
       x = e.pageX - $(canvas_selector).offset().left
       y = e.pageY - $(canvas_selector).offset().top
-      click_point.x = x
-      click_point.y = y
+      right_click_point.x = x
+      right_click_point.y = y
       found = false
       for r in menuRegion
         if x >= r.x and y >= r.y and x <= r.x + r.w and y <= r.y + r.h

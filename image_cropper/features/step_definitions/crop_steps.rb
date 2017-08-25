@@ -106,6 +106,20 @@ Given(/^the project allows arbitrary polygons$/) do
   @project.save
 end
 
+Given(/^the project uses (\d+) points$/) do |num|
+  @project.crop_points = num.to_i
+  @project.save
+end
+
+When(/^I select an object by dragging$/) do
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{70}, y: #{433}}, event: {buttons: 1} })"
+  wait_for_poly_point(0, 70, 433)
+  page.evaluate_script "paper.tool.emit('mousedrag', { point: {x: #{182}, y: #{259}}, event: {buttons: 1} })"
+  wait_for_poly_point(1, 182, 259)
+  page.evaluate_script "paper.tool.emit('mouseup', { point: {x: #{182}, y: #{259}}, event: {buttons: 1} })"
+  wait_for_ajax
+end
+
 When(/^I select an object on the image to be cropped with a polygon$/) do
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{70}, y: #{433}}, event: {buttons: 1} })"
   wait_for_ajax
