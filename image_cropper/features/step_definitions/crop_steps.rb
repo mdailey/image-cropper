@@ -201,3 +201,19 @@ end
 Then(/^the object should have the correct tag$/) do
   expect(@object_tag).to eq(@tag_given)
 end
+
+Then(/^the rectangle thickness should be (\d+)$/) do |num|
+  num = num.to_i
+  nc = page.evaluate_script "window.paper.project.layers[0].children.length"
+  found = false
+  (0..nc-1).each do |i|
+    if page.evaluate_script("window.paper.project.layers[0].children[#{i}].segments")
+      if page.evaluate_script("window.paper.project.layers[0].children[#{i}].segments.length") == 4
+        if page.evaluate_script("window.paper.project.layers[0].children[#{i}].strokeWidth") == num
+          found = true
+        end
+      end
+    end
+  end
+  expect(found).to be(true)
+end

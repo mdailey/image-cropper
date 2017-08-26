@@ -15,6 +15,7 @@ project_image_id = $(canvas_selector).attr('data-project-image-id')
 url = $(canvas_selector).attr('data-crop-url')
 limit = Number($(canvas_selector).attr('data-crop-limit'))
 tags = eval($(canvas_selector).attr('data-tags'))
+thickness = eval($(canvas_selector).attr('data-thickness'))
 defaultTagIndex = 0
 menuRegion = []
 objectCompleted = false
@@ -39,6 +40,7 @@ reset_path()
 label = (path, tag, fillColor) ->
   border = new Path.Rectangle(path.bounds)
   border.strokeColor = 'black'
+  border.strokeWidth = thickness
   border.opacity = 0.5
   text = new PointText(new Point(path.bounds.x, path.bounds.y-6))
   text.content = tag

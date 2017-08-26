@@ -35,7 +35,7 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :crop_points %>&nbsp;&nbsp;<em>Please specify crop points around 1-10</em><br>
+    <%= f.label :crop_points %>&nbsp;&nbsp;<em>(The number of points needed to specify a crop)</em><br>
     <% @options = [["1", "1"], ["2", "2"], ["4", "4"], ["N", "0"]] %>
     <%= f.select :crop_points, [["1 Point", "1"], ["2 Points", "2"], ["4 Points", "4"], ["N Points", "0"]], {}, {:class => "form-control width-200"} %>
   </div>
@@ -43,6 +43,11 @@
   <div class="form-group">
     <%= f.label :isactive %>
     <%= f.check_box :isactive %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :rectangle_thickness %> <em>(The thickness of the bounding rectangles shown in the crop display)</em><br>
+    <%= f.text_field :rectangle_thickness %>
   </div>
 
   <div class="actions">

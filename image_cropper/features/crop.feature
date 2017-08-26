@@ -191,3 +191,30 @@ Feature: Crop
     Then I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
+
+  @javascript
+  Scenario: Thick rectangles
+
+  A cropper should be able to see thicker rectangles
+  if selected for the project
+
+    Given I am a cropper
+    And I am signed in
+    And there is 1 project
+    And I am assigned to the project
+    And the project has rectangle thickness 3
+    And the project has 1 tag
+    And there is 1 project image
+    And there is 1 crop for the project image
+    And the project image files are synced
+    When I visit the assigned projects page
+    Then I should see the assigned project in the list
+    When I click the crop images link in the assigned project list
+    Then I should see an image from the assigned project
+    And I should see 1 object selected on the image
+    And the rectangle thickness should be 3
+    And I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form

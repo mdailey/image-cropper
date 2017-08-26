@@ -123,7 +123,7 @@ class Uploader::ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:name, :description, :images, :crop_points, :isactive, :tag_tokens)
+    params.require(:project).permit(:name, :description, :images, :crop_points, :isactive, :rectangle_thickness, :tag_tokens)
   end
 
   def make_cnn_file(project_image)

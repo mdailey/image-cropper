@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170816220717) do
+ActiveRecord::Schema.define(version: 20170825230914) do
 
   create_table "project_crop_image_cords", force: :cascade do |t|
     t.integer "project_crop_image_id", limit: 4
@@ -61,13 +61,14 @@ ActiveRecord::Schema.define(version: 20170816220717) do
   add_index "project_users", ["user_id"], name: "index_project_users_on_user_id", using: :btree
 
   create_table "projects", force: :cascade do |t|
-    t.string   "name",        limit: 255
-    t.text     "description", limit: 65535
-    t.integer  "crop_points", limit: 4
-    t.boolean  "isactive",    limit: 1,     default: false
-    t.integer  "user_id",     limit: 4
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.string   "name",                limit: 255
+    t.text     "description",         limit: 65535
+    t.integer  "crop_points",         limit: 4
+    t.boolean  "isactive",            limit: 1,     default: false
+    t.integer  "user_id",             limit: 4
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
+    t.integer  "rectangle_thickness", limit: 4,     default: 1
   end
 
   create_table "roles", force: :cascade do |t|

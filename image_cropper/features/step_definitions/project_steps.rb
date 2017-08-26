@@ -43,10 +43,7 @@ Then(/^I should see the project information$/) do
 end
 
 Then(/^I should see the project in the list$/) do
-  rows = find("table").all('tr')
-  rows.map { |r| r.all('td.project_name').map { |c|
-    expect(c.text.strip).to eq(@project.name)
-  } }
+  expect(page).to have_css('table tr td', text: /#{@project_name}/)
 end
 
 When(/^I click the edit link in the project list$/) do
@@ -130,7 +127,7 @@ def create_project_crop_images(num)
   end
 end
 
-Given(/^there are (\d+) crops for (the )?project image( )?(\d+)?$/) do |num, the, space, index|
+Given(/^there (is|are) (\d+) crop(s)? for (the )?project image( )?(\d+)?$/) do |verb, num, plural, the, space, index|
   num = num.to_i
   if !index.blank?
     @project_image = @project_images[index.to_i-1]
@@ -186,6 +183,12 @@ Given(/^the project image files are synced$/) do
     end
   end
   Dir.chdir Rails.root
+end
+
+Given(/^the project has rectangle thickness (\d+)$/) do |num|
+  num = num.to_i
+  @project.rectangle_thickness = num
+  @project.save
 end
 
 Then(/^I should see the download link in the project list$/) do
@@ -249,4 +252,14 @@ end
 
 Then(/^I should see (\d+) crop images in the ZIP file$/) do |num|
   expect(@project_crop_images_in_zip).to eql(num.to_i)
+end
+
+When(/^I change the rectangle thickness for the project$/) do
+  @thickness = 3
+  fill_in('Rectangle thickness', with: @thickness)
+  click_button('Submit')
+end
+
+Then(/^the rectangle thickness should be changed$/) do
+  expect(page).to have_css('div#thickness', text: @thickness.to_s)
 end

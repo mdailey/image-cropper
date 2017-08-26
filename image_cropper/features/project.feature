@@ -162,3 +162,22 @@ Feature: Project
     When I open the downloaded ZIP file
     Then I should see 1 project image in the ZIP file
     And I should see 2 crop images in the ZIP file
+
+  Scenario: Change rectangle thickness
+
+    Given I am an uploader
+    And there is 1 project
+    And the project has 1 tag
+    And I am signed in
+    When I visit the project page
+    Then I should see the project in the list
+    When I click the edit link in the project list
+    Then I should see a project form
+    When I change the rectangle thickness for the project
+    Then I should see the project information
+    And the rectangle thickness should be changed
+    And I should see a "current user" link
+    When I click the "current user" link
+    And I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form

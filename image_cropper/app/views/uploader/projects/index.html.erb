@@ -13,6 +13,7 @@
       <th class="text-center">Points per crop</th>
       <th class="text-center">Active?</th>
       <th class="text-center">Owner</th>
+      <th class="text-center">Thickness</th>
       <th colspan="6"></th>
     </tr>
   </thead>
@@ -29,6 +30,7 @@
           <% end%>
         </td>
         <td class="text-center"><%= project.user.name %></td>
+        <td class="text-center"><%= project.rectangle_thickness %></td>
         <td><%= link_to 'Show details', [:uploader,project] %></td>
         <td><%= link_to 'Assign users', [:uploader,project,'project_users'], id: "assign_project_#{project.id}", target: "_top" %></td>
         <td><%= link_to 'Show cropped images', [:uploader,project,'project_crop_images'], id: "project_crop_images_#{project.id}", target: "_top" %></td>
