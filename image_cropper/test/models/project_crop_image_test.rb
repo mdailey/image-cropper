@@ -38,4 +38,10 @@ class ProjectCropImageTest < ActiveSupport::TestCase
     assert pci.valid?
   end
 
+  test "should return upper left" do
+    ul = project_crop_images(:one).upper_left
+    assert_equal 9, ul[:x]
+    assert_equal 9, ul[:y]
+  end
+
 end

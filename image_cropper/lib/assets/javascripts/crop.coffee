@@ -1,13 +1,6 @@
 
-# Declare variables for cropping
+# Extract data from view
 
-x_coords = []
-y_coords = []
-points = []
-right_click_point = { }
-myPath = null
-myCircle = null
-myRect = null
 canvas_selector = '#canvas-1'
 project_id = $(canvas_selector).attr('data-project-id')
 project_image = $(canvas_selector).attr('data-project-image')
@@ -16,20 +9,35 @@ url = $(canvas_selector).attr('data-crop-url')
 limit = Number($(canvas_selector).attr('data-crop-limit'))
 tags = eval($(canvas_selector).attr('data-tags'))
 thickness = eval($(canvas_selector).attr('data-thickness'))
+
+# Current region being specified
+
+points = []
+pointRightClick = { }
+pathPolygon = null
+circleCurPoint = null
+rectCurBB = null
+objectCompleted = false
+
+# Context menu variables
+
 defaultTagIndex = 0
 menuRegion = []
-objectCompleted = false
-dragging = false
 
-# Initialize myPath
+# Drag and drop interactions
+
+dragging = false
+selectedObjects = []
+selectedObjectIndex = null
+draggingRegionStartPoint = null
+
+# Initialize pathPolygon
 
 reset_path = () ->
-  myPath = new Path
-  myPath.opacity = 0.5
-  myPath.fillColor = 'red'
-  myPath.closed = true
-  x_coords = []
-  y_coords = []
+  pathPolygon = new Path
+  pathPolygon.opacity = 0.5
+  pathPolygon.fillColor = 'red'
+  pathPolygon.closed = true
   points = []
   objectCompleted = false
 
@@ -37,18 +45,18 @@ reset_path()
 
 # Label a selected region
 
-label = (path, tag, fillColor) ->
-  border = new Path.Rectangle(path.bounds)
+label = (object) ->
+  border = new Path.Rectangle(object.polygon.bounds)
   border.strokeColor = 'black'
   border.strokeWidth = thickness
   border.opacity = 0.5
-  text = new PointText(new Point(path.bounds.x, path.bounds.y-6))
-  text.content = tag
+  text = new PointText(new Point(object.polygon.bounds.x, object.polygon.bounds.y-6))
+  text.content = object.tag
   text.characterStyle =
     fontSize: 20
     font: 'Arial'
   rect = new Path.Rectangle(text.bounds)
-  rect.fillColor = fillColor
+  rect.fillColor = object.fillColor
   rect.opacity = 0.5
   rect.strokeColor = 'black'
   text.fillColor = 'black'
@@ -56,28 +64,66 @@ label = (path, tag, fillColor) ->
   text.needsUpdate = true
   rect.needsUpdate = true
   border.needsUpdate = true
-  view.update()
+  object.text = text
+  object.border = border
+  object.labelBorder = rect
 
 # Add cropper's initials to a selected region
 
-initials = (path, tag) ->
-  text = new PointText(new Point(path.bounds.x+path.bounds.width, path.bounds.y + path.bounds.height))
-  text.content = tag
-  text.style =
-    fontSize: 10
-    font: 'Arial'
-    justification: 'right'
-  text.needsUpdate = true
-  view.update()
+addInitials = (object) ->
+  if object.owned
+    object.initials = null
+  else
+    x = object.polygon.bounds.x+object.polygon.bounds.width
+    y = object.polygon.bounds.y + object.polygon.bounds.height
+    text = new PointText(new Point(x, y))
+    text.content = object.tag
+    text.style =
+      fontSize: 10
+      font: 'Arial'
+      justification: 'right'
+    text.needsUpdate = true
+    object.initials = text
 
 # Add a loaded or newly created region to the active region for the context menu
 
-addContextMenuRegion = (path) ->
-  x = path.bounds.x-5
-  y = path.bounds.y-5
-  w = path.bounds.width+10
-  h = path.bounds.height+10
+addContextMenuRegion = (object) ->
+  x = object.polygon.bounds.x-5
+  y = object.polygon.bounds.y-5
+  w = object.polygon.bounds.width+10
+  h = object.polygon.bounds.height+10
   menuRegion.push { x: x, y: y, w: w, h: h }
+
+# Draw polygon for selected object
+
+drawPolygon = (object, coords) ->
+  object.polygon = new Path
+  object.points = []
+  coords.forEach (coord) ->
+    object.polygon.fillColor = object.fillColor
+    object.polygon.opacity = 0.5
+    object.polygon.strokeColor = 'black'
+    object.polygon.add new Point(coord.x, coord.y)
+    object.points.push({ x: coord.x, y: coord.y })
+  object.polygon.closed = true
+  object.polygon.needsUpdate = true
+
+# Draw a selected object
+
+drawSelectedObject = (objectAttrs) ->
+  object = { }
+  object.owned = objectAttrs['owned']
+  object.tag = objectAttrs['tag']
+  object.id = objectAttrs['id']
+  object.owner = objectAttrs['owner']
+  object.fillColor = 'red'
+  if !object.owned
+    object.fillColor = 'yellow'
+  drawPolygon(object, objectAttrs['coords'])
+  label(object)
+  addInitials(object)
+  addContextMenuRegion(object)
+  selectedObjects.push(object)
 
 # Get tagged region data from database and draw on the image
 
@@ -89,24 +135,9 @@ redraw = () ->
     contentType: 'application/json'
     success: (data) ->
       i = 0
+      selectedObjects = []
       while i < data.length
-        myPath = new Path
-        ii = 0
-        fillColor = 'red'
-        if !data[i]['owned']
-          fillColor = 'yellow'
-        while ii < data[i]['coords'].length
-          myPath.fillColor = fillColor
-          myPath.opacity = 0.5
-          myPath.strokeColor = 'black'
-          myPath.add new Point(data[i]['coords'][ii].x, data[i]['coords'][ii].y)
-          ii++
-        myPath.closed = true
-        label(myPath, data[i]['tag'], fillColor)
-        if !data[i]['owned']
-          initials(myPath, data[i]['owner'])
-        addContextMenuRegion(myPath)
-        myPath.needsUpdate = true
+        drawSelectedObject(data[i])
         i++
       reset_path()
       view.update()
@@ -129,15 +160,23 @@ load_image = () ->
 
 load_image()
 
+displayError = (xhr) ->
+  errors = xhr.responseJSON.error
+  $('div#errors').remove()
+  $('div.messages').append(
+    '<div id="errors" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>Error:</p><ul></ul></div>')
+  for message of errors
+    $('#errors ul').append '<li>' + errors[message] + '</li>'
+
 # Close currently active path and submit to server
 
-submit_crop = (tagId) ->
+postNewCrop = (tagId) ->
   tag = null
   tags.forEach (aTag, i) ->
     if aTag.id.toString() == tagId.toString()
       tag = aTag
-  if myCircle
-    myCircle.remove()
+  if circleCurPoint
+    circleCurPoint.remove()
     view.update()
   $.ajax
     type: 'POST'
@@ -150,21 +189,42 @@ submit_crop = (tagId) ->
       cords: points
       format: 'json'
     error: (xhr, status, error) ->
-      errors = xhr.responseJSON.error
-      $('div#errors').remove()
-      $('div.messages').append(
-        '<div id="errors" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>Error:</p><ul></ul></div>')
-      for message of errors
-        $('#errors ul').append '<li>' + errors[message] + '</li>'
-      myPath.needsUpdate = true
-      myPath.remove()
+      displayError(xhr)
+      pathPolygon.needsUpdate = true
+      pathPolygon.remove()
       view.update()
       reset_path()
-    success: ->
-      label(myPath, tag.name, 'red')
-      addContextMenuRegion(myPath)
+    success: (data) ->
+      drawSelectedObject(data)
       reset_path()
       $('.context-menu-list').hide()
+      view.update()
+
+# Translate selected crop by (dx, dy) and submit to server
+
+translateSelectedCrop = (dx, dy) ->
+  object = selectedObjects[selectedObjectIndex]
+  newPoints = []
+  object.points.forEach (point) ->
+    newPoints.push({x: point.x + dx, y: point.y + dy})
+  $.ajax
+    type: 'PATCH'
+    url: url + '/' + object.id
+    data:
+      project_crop_image:
+        cords: newPoints
+      format: 'json'
+    error: (xhr, status, error) ->
+      displayError(xhr)
+    success: (data) ->
+      object.border.remove()
+      object.text.remove()
+      object.labelBorder.remove()
+      object.initials.remove() if object.initials
+      object.polygon.remove()
+      selectedObjects.splice(selectedObjectIndex, 1)
+      selectedObjectIndex = null
+      drawSelectedObject(data)
 
 # Tag a crop then submit to server
 
@@ -179,82 +239,114 @@ complete_crop = (e) ->
     menuPos = {x: $(canvas_selector).offset().left + e.point.x, y: $(canvas_selector).offset().top + e.point.y}
     tag_and_submit_crop(menuPos)
   else
-    submit_crop(tags[0].id)
+    postNewCrop(tags[0].id)
 
-# Click event handler. Left click extends the current path.
+# Add a point to current path
 
-tool = new Tool
-tool.onMouseDown = (e) ->
-  if e.event.buttons == 1
-    right_click_point = { }
-    dragging = false
-    if points.length < limit or limit == 0 or limit == null
-      if myCircle
-        myCircle.remove()
-      myCircle = new (Path.Circle)(
-        center: e.point
-        radius: 3)
-      myCircle.strokeColor = 'black'
-      myCircle.fillColor = 'white'
-      myPath.strokeColor = 'black'
-      myPath.add new Point(e.point)
-      x_coords.push e.point.x
-      y_coords.push e.point.y
-      points.push
-        x: e.point.x
-        y: e.point.y
-      if limit > 0 and points.length >= limit
-        objectCompleted = true
-        complete_crop(e)
+addPoint = (e) ->
+  if points.length < limit or limit == 0 or limit == null
+    if circleCurPoint
+      circleCurPoint.remove()
+    circleCurPoint = new (Path.Circle)(
+      center: e.point
+      radius: 3)
+    circleCurPoint.strokeColor = 'black'
+    circleCurPoint.fillColor = 'white'
+    pathPolygon.strokeColor = 'black'
+    pathPolygon.add new Point(e.point)
+    points.push
+      x: e.point.x
+      y: e.point.y
+    if limit > 0 and points.length >= limit
+      objectCompleted = true
+      complete_crop(e)
+
+# Check if this is the beginning of a region move operation
+
+startMove = (e) ->
+  found = false
+  selectedObjects.forEach (object, i) ->
+    if object.text.bounds.contains(e.point)
+      selectedObjectIndex = i
+      draggingRegionStartPoint = e.point
+      found = true
+  return found
+
+# Replace second path point during a drag-to-define action
 
 replace_path_point = (e) ->
-  if myCircle
-    myCircle.remove()
-  myCircle = new (Path.Circle)(
+  if circleCurPoint
+    circleCurPoint.remove()
+  circleCurPoint = new (Path.Circle)(
     center: e.point
     radius: 3)
-  myCircle.strokeColor = 'black'
-  myCircle.fillColor = 'white'
-  myPath.strokeColor = 'black'
-  if myPath.segments.length >= 2
-    myPath.removeSegments(1)
-  if x_coords.length >= 2
-    x_coords = [x_coords[0]]
-    y_coords = [y_coords[0]]
+  circleCurPoint.strokeColor = 'black'
+  circleCurPoint.fillColor = 'white'
+  pathPolygon.strokeColor = 'black'
+  if pathPolygon.segments.length >= 2
+    pathPolygon.removeSegments(1)
   if points.length >= 2
     points = [points[0]]
-  myPath.add new Point(e.point)
-  x_coords.push e.point.x
-  y_coords.push e.point.y
+  pathPolygon.add new Point(e.point)
   points.push
     x: e.point.x
     y: e.point.y
 
-update_myrect = () ->
-  if myRect
-    myRect.remove()
-  myRect = new Path.Rectangle(myPath.bounds)
-  myRect.strokeColor = 'black'
-  myRect.opacity = 1.0
-  myRect.needsUpdate = true
+# Move current bounding box rectangle to indicated bounds
 
-if limit == 2
-  tool.onMouseDrag = (e) ->
-    if e.event.buttons == 1
+updateRectCurBB = (bounds) ->
+  if rectCurBB
+    rectCurBB.remove()
+  rectCurBB = new Path.Rectangle(bounds)
+  rectCurBB.strokeColor = 'black'
+  rectCurBB.opacity = 1.0
+  rectCurBB.needsUpdate = true
+
+moveSelectedObject = (e) ->
+  dx = e.point.x - draggingRegionStartPoint.x
+  dy = e.point.y - draggingRegionStartPoint.y
+  draggingRegionStartPoint = null
+  translateSelectedCrop(dx, dy)
+
+# Mouse event handlers:
+#  - left click extends the current path
+#  - left click and drag on existing region label starts a region move action
+#  - left click and drag for a 2-point crop allows specifying object in one drag action
+#  - right click within existing region pops up context menu for that region
+
+tool = new Tool
+tool.onMouseDown = (e) ->
+  if e.event.buttons == 1
+    pointRightClick = { }
+    dragging = false
+    if !startMove(e)
+      addPoint(e)
+
+tool.onMouseDrag = (e) ->
+  if e.event.buttons == 1
+    if selectedObjectIndex != null
+      bounds = selectedObjects[selectedObjectIndex].polygon.bounds
+      x = bounds.x + e.point.x - draggingRegionStartPoint.x
+      y = bounds.y + e.point.y - draggingRegionStartPoint.y
+      updateRectCurBB({ x: x, y: y, width: bounds.width, height: bounds.height })
+    else if limit == 2
       dragging = true
       replace_path_point(e)
-      update_myrect()
-      view.update()
+      updateRectCurBB(pathPolygon.bounds)
+    view.update()
 
 tool.onMouseUp = (e) ->
   # Not sure why, but we seem to get button 0 for mouseup regardless of button.
-  if limit == 2 and dragging and myPath.segments.length >= 2
+  if selectedObjectIndex != null
+    moveSelectedObject(e)
+  else if limit == 2 and dragging and pathPolygon.segments.length >= 2
     dragging = false
     replace_path_point(e)
     objectCompleted = true
-    if myRect
-      myRect.remove()
     complete_crop(e)
+  if rectCurBB
+    rectCurBB.needsUpdate = true
+    rectCurBB.remove()
 
 # <Enter> key event handler. Close the current path and POST to server.
 
@@ -268,7 +360,7 @@ menuCallback = (key, options) ->
   if key == 'delete'
     $.ajax
       type: 'DELETE'
-      url: url + '/1?x=' + right_click_point.x + '&y=' + right_click_point.y
+      url: url + '/1?x=' + pointRightClick.x + '&y=' + pointRightClick.y
       dataType: 'json'
       contentType: 'application/json'
       success: (data) ->
@@ -278,7 +370,9 @@ menuCallback = (key, options) ->
 # Context menu callback for selection of a tag from the radio button list
 
 tagCallback = (key, options) ->
-  submit_crop($('input[name="context-menu-input-radio"]:checked').val())
+  val = $('input[name="context-menu-input-radio"]:checked').val()
+  defaultTagIndex = val
+  postNewCrop(val)
 
 # Create a dynamic context menu for the canvas
 
@@ -304,8 +398,8 @@ $.contextMenu
       # We were triggered by right click on an existing object region
       x = e.pageX - $(canvas_selector).offset().left
       y = e.pageY - $(canvas_selector).offset().top
-      right_click_point.x = x
-      right_click_point.y = y
+      pointRightClick.x = x
+      pointRightClick.y = y
       found = false
       for r in menuRegion
         if x >= r.x and y >= r.y and x <= r.x + r.w and y <= r.y + r.h

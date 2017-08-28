@@ -9,8 +9,15 @@ class User < ActiveRecord::Base
   validates_presence_of :name
 
   def initials
-    self.name.split(/[\s\.]+/).collect { |s| s[0] }.join
+    name.split(/[\s\.]+/).collect { |s| s[0] }.join
+  end
+
+  def is_admin?
+    role.name.downcase == 'admin'
+  end
+
+  def is_uploader?
+    role.name.downcase == 'uploader'
   end
 
 end
-

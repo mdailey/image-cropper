@@ -39,3 +39,12 @@ cropper1:
   encrypted_password: "$2a$10$ZU0x7nDXA1EKbUAjwKTCwegV/yfddZkvfKWEa9/arb5pBQuy/1oFu"
   role_id: 3
   is_active: true
+
+uploader2:
+  id: 5
+  name: 'Uploader 2'
+  email: uploader2@hotmail.com
+  # "secret"
+  encrypted_password: "$2a$10$ZU0x7nDXA1EKbUAjwKTCwegV/yfddZkvfKWEa9/arb5pBQuy/1oFu"
+  role_id: 2
+  is_active: true

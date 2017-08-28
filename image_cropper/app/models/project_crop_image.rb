@@ -10,11 +10,8 @@ class ProjectCropImage < ActiveRecord::Base
   validate :number_of_coords_must_be_consistent
 
   def number_of_coords_must_be_consistent
-    Rails.logger.info "Checking pci #{self.inspect}"
     return unless self.project
-    Rails.logger.info "Got project"
     num_expected = self.project.crop_points
-    Rails.logger.info "num expected: #{num_expected}"
     if (num_expected == 0 or num_expected.nil?) and self.project_crop_image_cords.size < 1
       self.errors.add(:project_crop_image_cords, "should be of size at least 1")
     elsif num_expected > 0 and num_expected != self.project_crop_image_cords.size
@@ -48,6 +45,11 @@ class ProjectCropImage < ActiveRecord::Base
     x_coords = [min_x, max_x, max_x, min_x].join(',')
     y_coords = [min_y, min_y, max_y, max_y].join(',')
     return x_coords, y_coords
+  end
+
+  def upper_left
+    coords = self.project_crop_image_cords
+    { x: coords.collect { |c| c.x }.min, y: coords.collect { |c| c.y }.min }
   end
 
   def cnn_data

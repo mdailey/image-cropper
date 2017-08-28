@@ -115,9 +115,10 @@ end
 def create_project_crop_images(num)
   @project_crop_images = []
   x = 0
+  y = 50
   (0..num-1).each do |i|
     pci = ProjectCropImage.new project_image_id: @project_image.id, user_id: @cropper.id, image: "#{i}.jpg", tag_id: @project.tags.first.id
-    coords = [{x: x, y: 0}, {x: x+300, y: 0}, {x: x+300, y: 300}, {x: x, y: 300}]
+    coords = [{x: x, y: y}, {x: x+300, y: y}, {x: x+300, y: y+300}, {x: x, y: y+300}]
     coords.each do |coord|
       pci.project_crop_image_cords.push(ProjectCropImageCord.new x: coord[:x], y: coord[:y])
     end

@@ -30,7 +30,27 @@ def wait_for_poly_point(index, x, y)
       end
     end
   end
+end
 
+def wait_for_rect(point)
+  found = false
+  Timeout.timeout(5) do
+    while !found do
+      sleep 0.1
+      nc = page.evaluate_script "window.paper.project.layers[0].children.length"
+      (0..nc-1).each do |j|
+        segments = page.evaluate_script "window.paper.project.layers[0].children[#{j}].segments"
+        if segments
+          if page.evaluate_script("window.paper.project.layers[0].children[#{j}].segments.length") == 4
+            bounds = page.evaluate_script("window.paper.project.layers[0].children[#{j}].bounds")
+            if (point[:x] - bounds[1].to_f).abs < 5 and (point[:y] - bounds[2].to_f).abs < 5
+              found = true
+            end
+          end
+        end
+      end
+    end
+  end
 end
 
 def wait_for_image
@@ -112,6 +132,7 @@ Given(/^the project uses (\d+) points$/) do |num|
 end
 
 When(/^I select an object by dragging$/) do
+  wait_for_ajax
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{70}, y: #{433}}, event: {buttons: 1} })"
   wait_for_poly_point(0, 70, 433)
   page.evaluate_script "paper.tool.emit('mousedrag', { point: {x: #{182}, y: #{259}}, event: {buttons: 1} })"
@@ -210,6 +231,37 @@ Then(/^the rectangle thickness should be (\d+)$/) do |num|
     if page.evaluate_script("window.paper.project.layers[0].children[#{i}].segments")
       if page.evaluate_script("window.paper.project.layers[0].children[#{i}].segments.length") == 4
         if page.evaluate_script("window.paper.project.layers[0].children[#{i}].strokeWidth") == num
+          found = true
+        end
+      end
+    end
+  end
+  expect(found).to be(true)
+end
+
+When(/^I move the selected region$/) do
+  expect(ProjectCropImage.count).to eq(1)
+  pci = ProjectCropImage.first
+  @ul = pci.upper_left
+  click = { x: @ul[:x] + 5, y: @ul[:y] - 5 }
+  drag = { x: click[:x] + 20, y: click[:y] }
+  page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{click[:x]}, y: #{click[:y]}}, event: {buttons: 1} })"
+  wait_for_ajax
+  page.evaluate_script "paper.tool.emit('mousedrag', { point: {x: #{drag[:x]}, y: #{drag[:y]}}, event: {buttons: 1} })"
+  wait_for_rect(x: @ul[:x]+20, y: @ul[:y])
+  page.evaluate_script "paper.tool.emit('mouseup', { point: {x: #{drag[:x]}, y: #{drag[:y]}}, event: {buttons: 1} })"
+  wait_for_ajax
+  @ul[:x] += 20
+end
+
+Then(/^the region should be moved$/) do
+  nc = page.evaluate_script "window.paper.project.layers[0].children.length"
+  found = false
+  (0..nc-1).each do |i|
+    if page.evaluate_script("window.paper.project.layers[0].children[#{i}].segments")
+      if page.evaluate_script("window.paper.project.layers[0].children[#{i}].segments.length") == 4
+        bounds = page.evaluate_script("window.paper.project.layers[0].children[#{i}].bounds")
+        if (@ul[:x]-bounds[1]).abs < 2 and (@ul[:y]-bounds[2]) < 2
           found = true
         end
       end

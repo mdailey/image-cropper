@@ -6,3 +6,11 @@ one:
 two:
   project_id: 2
   user_id: 3
+
+three:
+  project_id: 3
+  user_id: 3
+
+four:
+  project_id: 3
+  user_id: 4

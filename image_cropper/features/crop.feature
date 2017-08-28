@@ -218,3 +218,29 @@ Feature: Crop
     Then I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
+
+  @javascript
+  Scenario: Move region
+
+  A cropper should be able to move an already-defined region
+
+    Given I am a cropper
+    And I am signed in
+    And there is 1 project
+    And I am assigned to the project
+    And the project has 1 tag
+    And there is 1 project image
+    And there is 1 crop for the project image
+    And the project image files are synced
+    When I visit the assigned projects page
+    Then I should see the assigned project in the list
+    When I click the crop images link in the assigned project list
+    Then I should see an image from the assigned project
+    And I should see 1 object selected on the image
+    When I move the selected region
+    Then the region should be moved
+    And I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form

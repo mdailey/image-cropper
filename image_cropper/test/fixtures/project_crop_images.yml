@@ -19,3 +19,10 @@ three:
   image: "20150922205516.jpg"
   user_id: 3
   tag_id: 1
+
+four:
+  id: 4
+  project_image_id: 5
+  image: "20150922205517.jpg"
+  user_id: 4
+  tag_id: 1

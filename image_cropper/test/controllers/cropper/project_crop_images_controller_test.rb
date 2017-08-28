@@ -45,7 +45,69 @@ class Cropper::ProjectCropImagesControllerTest < ActionController::TestCase
                   project_crop_image: { project_image_id: @project_image.id, image: "20150922205514.jpg",
                                         tag_id: Tag.first.id },
                   cords: {"0"=>{"x"=>"78.51666259765625", "y"=>"339"}, "1"=>{"x"=>"78.51666259765625", "y"=>"271"}, "2"=>{"x"=>"183.51666259765625", "y"=>"268"}, "3"=>{"x"=>"186.51666259765625", "y"=>"340"}}, format: :json
-    assert_response :accepted
+    assert_response :created
+  end
+
+  test "should authenticate update" do
+    pci = project_crop_images(:one)
+    patch :update, project_id: pci.project, project_image_id: pci.project_image, format: :json, id: pci,
+          project_crop_image:
+              { id: pci.id, cords: {"0"=>{"x"=>"90", "y"=>"339"}, "1"=>{"x"=>"90", "y"=>"271"}, "2"=>{"x"=>"160", "y"=>"268"}, "3"=>{"x"=>"160", "y"=>"340"}}}
+    assert_response :unauthorized
+  end
+
+  test "should authorize update" do
+    sign_in users(:cropper)
+    pci = project_crop_images(:four)
+    patch :update, project_id: pci.project, project_image_id: pci.project_image, id: pci, format: :json,
+          project_crop_image:
+              { id: pci.id, cords: {"0"=>{"x"=>"90", "y"=>"339"}, "1"=>{"x"=>"90", "y"=>"271"}, "2"=>{"x"=>"160", "y"=>"268"}, "3"=>{"x"=>"160", "y"=>"340"}}}
+    assert_response :unauthorized
+  end
+
+  test "should authorize update uploader" do
+    sign_in users(:uploader2)
+    pci = project_crop_images(:four)
+    patch :update, project_id: pci.project, project_image_id: pci.project_image, id: pci, format: :json,
+          project_crop_image:
+              { id: pci.id, cords: {"0"=>{"x"=>"90", "y"=>"339"}, "1"=>{"x"=>"90", "y"=>"271"}, "2"=>{"x"=>"160", "y"=>"268"}, "3"=>{"x"=>"160", "y"=>"340"}}}
+    assert_response :unauthorized
+  end
+
+  test "should update uploader" do
+    sign_in users(:uploader)
+    pci = project_crop_images(:four)
+    patch :update, project_id: pci.project, project_image_id: pci.project_image, id: pci, format: :json,
+          project_crop_image:
+              { id: pci.id, cords: {"0"=>{"x"=>"90", "y"=>"339"}, "1"=>{"x"=>"90", "y"=>"271"}, "2"=>{"x"=>"160", "y"=>"268"}, "3"=>{"x"=>"160", "y"=>"340"}}}
+    assert_response :ok
+  end
+
+  test "should update cropper" do
+    sign_in users(:cropper1)
+    pci = project_crop_images(:four)
+    patch :update, project_id: pci.project, project_image_id: pci.project_image, id: pci, format: :json,
+          project_crop_image:
+              { id: pci.id, cords: {"0"=>{"x"=>"90", "y"=>"339"}, "1"=>{"x"=>"90", "y"=>"271"}, "2"=>{"x"=>"160", "y"=>"268"}, "3"=>{"x"=>"160", "y"=>"340"}}}
+    assert_response :ok
+  end
+
+  test "should update admin" do
+    sign_in users(:admin)
+    pci = project_crop_images(:four)
+    patch :update, project_id: pci.project, project_image_id: pci.project_image, id: pci, format: :json,
+          project_crop_image:
+              { id: pci.id, cords: {"0"=>{"x"=>"90", "y"=>"339"}, "1"=>{"x"=>"90", "y"=>"271"}, "2"=>{"x"=>"160", "y"=>"268"}, "3"=>{"x"=>"160", "y"=>"340"}}}
+    assert_response :ok
+  end
+
+  test "should validate on update" do
+    sign_in users(:admin)
+    pci = project_crop_images(:four)
+    patch :update, project_id: pci.project, project_image_id: pci.project_image, id: pci, format: :json,
+          project_crop_image:
+              { id: pci.id, cords: {"0"=>{"x"=>"90", "y"=>"339"}, "1"=>{"x"=>"90", "y"=>"271"}, "2"=>{"x"=>"160", "y"=>"268"}}}
+    assert_response :unprocessable_entity
   end
 
   test "should validate on create" do

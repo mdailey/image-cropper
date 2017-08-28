@@ -76,14 +76,14 @@ class Uploader::ProjectsControllerTest < ActionController::TestCase
   test "should create" do
     dummy_image = File.join(Rails.root.to_s, 'public', 'doraemon1.jpg')
     sign_in users(:uploader)
-    post :create, project: {name: "Doraemon2", isactive: false, crop_points: 4, images: fixture_file_upload('doraemon1.jpg')}
+    post :create, project: {name: "Doraemon3", isactive: false, crop_points: 4, images: fixture_file_upload('doraemon1.jpg')}
     assert_redirected_to uploader_project_path(assigns(:project))
   end
 
   test "should create zip" do
     dummy_image = File.join(Rails.root.to_s, 'public', 'doraemon1.jpg')
     sign_in users(:uploader)
-    post :create, project: {name: "Doraemon2", isactive: false, crop_points: 4, images: fixture_file_upload('doraemon.zip')}
+    post :create, project: {name: "Doraemon3", isactive: false, crop_points: 4, images: fixture_file_upload('doraemon.zip')}
     assert_redirected_to uploader_project_path(assigns(:project))
   end
 

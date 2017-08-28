@@ -3,7 +3,9 @@ class Cropper::ProjectCropImagesController < ApplicationController
   before_action :set_project
   before_action :set_project_user
   before_action :set_project_image
+  before_action :set_project_crop_image, only: :update
   before_action :set_project_crop_images
+  before_action :authorize_action
 
   def index
     respond_to do |format|
@@ -26,7 +28,34 @@ class Cropper::ProjectCropImagesController < ApplicationController
       if @project_crop_image.save
         crop_image
         format.html { redirect_to cropper_project_project_image_project_crop_images_path(@project, @project_image) }
-        format.json { render json: { success: true }, status: :accepted, location:  cropper_project_project_image_project_crop_images_path(@project, @project_image) }
+        format.json do
+          render json: @project_crop_image.crop_descriptor(current_user),
+                 status: :created,
+                 location:  cropper_project_project_image_project_crop_images_path(@project, @project_image)
+        end
+      else
+        format.html { render :index }
+        format.json { render json: { error: @project_crop_image.errors.full_messages }, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def update
+    if params[:project_crop_image][:cords]
+      @project_crop_image.project_crop_image_cords = []
+      params[:project_crop_image][:cords].to_a.each_with_index do |cord|
+        @project_crop_image.project_crop_image_cords.push(ProjectCropImageCord.new x: cord[1]["x"].to_f, y: cord[1]["y"].to_f)
+      end
+    end
+    respond_to do |format|
+      if @project_crop_image.save
+        crop_image
+        format.html { redirect_to cropper_project_project_image_project_crop_images_path(@project, @project_image) }
+        format.json do
+          render json: @project_crop_image.crop_descriptor(current_user),
+                 status: :ok,
+                 location:  cropper_project_project_image_project_crop_images_path(@project, @project_image)
+        end
       else
         format.html { render :index }
         format.json { render json: { error: @project_crop_image.errors.full_messages }, status: :unprocessable_entity }
@@ -39,6 +68,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
     @project_crop_images = ProjectCropImage.where("project_image_id=? and user_id=?", @project_image.id, current_user.id)
     respond_to do |format|
       @project_crop_images.each do |project_crop_image|
+        next unless update_authorized?(project_crop_image)
         @project_crop_image_cords = project_crop_image.project_crop_image_cords
         @min_x = @project_crop_image_cords.minimum(:x)-5
         @max_x = @project_crop_image_cords.maximum(:x)+5
@@ -70,6 +100,10 @@ class Cropper::ProjectCropImagesController < ApplicationController
     @project_image = ProjectImage.find(params[:project_image_id])
   end
 
+  def set_project_crop_image
+    @project_crop_image = ProjectCropImage.find(params[:id])
+  end
+
   def set_project_crop_images
     @project_crop_images = @project_image.project_crop_images.order(:id)
     @project_crop_image_cords = []
@@ -90,6 +124,24 @@ class Cropper::ProjectCropImagesController < ApplicationController
 
   def project_crop_image_params
     params.require(:project_crop_image).permit(:project_image_id, :image, :tag_id)
+  end
+
+  def authorize_action
+    if current_user.is_admin?
+      true
+    elsif current_user.is_uploader? and @project.user.id == current_user.id
+      true
+    elsif !@project.users.include? current_user
+      head :unauthorized
+    elsif action_name == 'update' and @project_crop_image.user != current_user
+      head :unauthorized
+    else
+      true
+    end
+  end
+
+  def update_authorized?(pci)
+    return (current_user.is_admin? or (current_user.is_uploader? and @project.user == current_user) or (pci.user == current_user))
   end
 
 end

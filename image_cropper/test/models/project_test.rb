@@ -3,7 +3,7 @@ require 'test_helper'
 class ProjectTest < ActiveSupport::TestCase
   test "should be valid" do
     Project.all.each do |p|
-      assert p.valid?
+      assert p.valid?, p.errors.full_messages
     end
   end
 
