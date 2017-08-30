@@ -9,6 +9,9 @@ url = $(canvas_selector).attr('data-crop-url')
 limit = Number($(canvas_selector).attr('data-crop-limit'))
 tags = eval($(canvas_selector).attr('data-tags'))
 thickness = eval($(canvas_selector).attr('data-thickness'))
+defaultFillColor = 'green'
+otherOwnerFillColor = 'yellow'
+defaultStrokeColor = 'green'
 
 # Current region being specified
 
@@ -34,9 +37,11 @@ draggingRegionStartPoint = null
 # Initialize pathPolygon
 
 reset_path = () ->
+  if pathPolygon
+    pathPolygon.remove()
   pathPolygon = new Path
   pathPolygon.opacity = 0.5
-  pathPolygon.fillColor = 'red'
+  pathPolygon.fillColor = defaultFillColor
   pathPolygon.closed = true
   points = []
   objectCompleted = false
@@ -47,7 +52,7 @@ reset_path()
 
 label = (object) ->
   border = new Path.Rectangle(object.polygon.bounds)
-  border.strokeColor = 'black'
+  border.strokeColor = defaultStrokeColor
   border.strokeWidth = thickness
   border.opacity = 0.5
   text = new PointText(new Point(object.polygon.bounds.x, object.polygon.bounds.y-6))
@@ -58,7 +63,7 @@ label = (object) ->
   rect = new Path.Rectangle(text.bounds)
   rect.fillColor = object.fillColor
   rect.opacity = 0.5
-  rect.strokeColor = 'black'
+  rect.strokeColor = defaultStrokeColor
   text.fillColor = 'black'
   text.insertAbove(rect)
   text.needsUpdate = true
@@ -77,7 +82,7 @@ addInitials = (object) ->
     x = object.polygon.bounds.x+object.polygon.bounds.width
     y = object.polygon.bounds.y + object.polygon.bounds.height
     text = new PointText(new Point(x, y))
-    text.content = object.tag
+    text.content = object.owner
     text.style =
       fontSize: 10
       font: 'Arial'
@@ -102,11 +107,16 @@ drawPolygon = (object, coords) ->
   coords.forEach (coord) ->
     object.polygon.fillColor = object.fillColor
     object.polygon.opacity = 0.5
-    object.polygon.strokeColor = 'black'
+    object.polygon.strokeColor = defaultStrokeColor
     object.polygon.add new Point(coord.x, coord.y)
     object.points.push({ x: coord.x, y: coord.y })
   object.polygon.closed = true
   object.polygon.needsUpdate = true
+  if limit == 2
+    object.rect = new Path.Rectangle(object.polygon.bounds)
+    object.rect.fillColor = object.fillColor
+    object.rect.opacity = 0.5
+    object.rect.strokeColor = defaultStrokeColor
 
 # Draw a selected object
 
@@ -116,9 +126,9 @@ drawSelectedObject = (objectAttrs) ->
   object.tag = objectAttrs['tag']
   object.id = objectAttrs['id']
   object.owner = objectAttrs['owner']
-  object.fillColor = 'red'
+  object.fillColor = defaultFillColor
   if !object.owned
-    object.fillColor = 'yellow'
+    object.fillColor = otherOwnerFillColor
   drawPolygon(object, objectAttrs['coords'])
   label(object)
   addInitials(object)
@@ -222,9 +232,11 @@ translateSelectedCrop = (dx, dy) ->
       object.labelBorder.remove()
       object.initials.remove() if object.initials
       object.polygon.remove()
+      object.rect.remove() if object.rect
       selectedObjects.splice(selectedObjectIndex, 1)
       selectedObjectIndex = null
       drawSelectedObject(data)
+      view.update()
 
 # Tag a crop then submit to server
 
@@ -250,9 +262,9 @@ addPoint = (e) ->
     circleCurPoint = new (Path.Circle)(
       center: e.point
       radius: 3)
-    circleCurPoint.strokeColor = 'black'
+    circleCurPoint.strokeColor = defaultStrokeColor
     circleCurPoint.fillColor = 'white'
-    pathPolygon.strokeColor = 'black'
+    pathPolygon.strokeColor = defaultStrokeColor
     pathPolygon.add new Point(e.point)
     points.push
       x: e.point.x
@@ -280,9 +292,9 @@ replace_path_point = (e) ->
   circleCurPoint = new (Path.Circle)(
     center: e.point
     radius: 3)
-  circleCurPoint.strokeColor = 'black'
+  circleCurPoint.strokeColor = defaultStrokeColor
   circleCurPoint.fillColor = 'white'
-  pathPolygon.strokeColor = 'black'
+  pathPolygon.strokeColor = defaultStrokeColor
   if pathPolygon.segments.length >= 2
     pathPolygon.removeSegments(1)
   if points.length >= 2
@@ -298,7 +310,7 @@ updateRectCurBB = (bounds) ->
   if rectCurBB
     rectCurBB.remove()
   rectCurBB = new Path.Rectangle(bounds)
-  rectCurBB.strokeColor = 'black'
+  rectCurBB.strokeColor = defaultStrokeColor
   rectCurBB.opacity = 1.0
   rectCurBB.needsUpdate = true
 
