@@ -40,16 +40,6 @@ When(/^I submit the user information$/) do
   @cropper.name = 'New cropper name' if @cropper
 end
 
-Then(/^I should see the user( assigned| unassigned)? in the list$/) do |assigned|
-  @cropper ||= User.last
-  row = find('tr', text: /#{@cropper.name}/)
-  if assigned.blank? or assigned == ' unassigned'
-    expect(row).not_to have_css('input[type="checkbox"][checked="checked"]')
-  else
-    expect(row).to have_css('input[type="checkbox"][checked="checked"]')
-  end
-end
-
 When(/^I click the edit link in the user list$/) do
   find(:xpath, "//*[@id='edit_user_#{@cropper.id}']").click
 end
@@ -83,7 +73,8 @@ And(/^I should see a user "(.*)"$/) do |text|
 end
 
 When(/^I click the assign link in the user list$/) do
-  find(:xpath, "//*[@id='assign_user_#{@cropper.id}']").click
+  click_link "assign_user_#{@cropper.id}"
+  #find(:xpath, "//*[@id='assign_user_#{@cropper.id}']").click
 end
 
 Then(/^I should see the user information$/) do
@@ -96,11 +87,15 @@ And(/^I should see the project list$/) do
 end
 
 When(/^I click the checkbox to (.*) the user (to|from) the project$/) do |text, tofrom|
-  row = find('tr', text: /#{@cropper.name}/)
+  expect(page).to have_css("input#user-#{@cropper.id}")
   if (text == "assign")
-    page.evaluate_script("$(\"#user-#{@cropper.id}\").attr('checked', true)")
+    expect(page).not_to have_css("input#user-#{@cropper.id}[checked=\"checked\"]")
+    check("user-#{@cropper.id}")
+    wait_for_ajax
   elsif (text == "unassign")
-    page.evaluate_script("$(\"#user-#{@cropper.id}\").attr('checked', false)")
+    expect(page).to have_css("input#user-#{@cropper.id}[checked=\"checked\"]")
+    uncheck("user-#{@cropper.id}")
+    wait_for_ajax
   end
 end
 

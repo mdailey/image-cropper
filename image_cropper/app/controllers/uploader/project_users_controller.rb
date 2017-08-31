@@ -13,7 +13,7 @@ class Uploader::ProjectUsersController < ApplicationController
     respond_to do |format|
       if @project_user.save
         format.html { redirect_to uploader_project_project_users_path(params[:project_id]), notice: 'User was successfully assigned to the project.' }
-        format.json { render json: { success: true }, status: :accepted, location: uploader_project_project_users_path(params[:project_id]) }
+        format.json { render json: { delete_path: uploader_project_project_user_path(project_id: @project.id, id: @project_user.id, format: :json) }, status: :created }
       else
         format.html { render :new }
         format.json { render json: @project_user.errors, status: :unprocessable_entity }
@@ -25,7 +25,7 @@ class Uploader::ProjectUsersController < ApplicationController
     respond_to do |format|
       if @project_user.update(project_user_params)
         format.html { redirect_to uploader_project_project_users_path(params[:project_id]), notice: 'User was successfully updated for the project' }
-        format.json { render json: { success: true }, status: :accepted, location: uploader_project_project_users_path(params[:project_id]) }
+        format.json { render json: { success: true }, status: :ok }
       else
         format.html { render :edit }
         format.json { render json: @project_user.errors, status: :unprocessable_entity }
@@ -34,10 +34,11 @@ class Uploader::ProjectUsersController < ApplicationController
   end
 
   def destroy
+    user = @project_user.user
     @project_user.destroy
     respond_to do |format|
       format.html { redirect_to uploader_project_project_users_path(params[:project_id]), notice: 'User was successfully unassigned to the project.' }
-      format.json { render json: { success: true }, status: :accepted, location: uploader_project_project_users_path(params[:project_id]) }
+      format.json { render json: { create_path: uploader_project_project_users_path(project_id: @project.id, project_user: {user_id: user.id, project_id: @project.id}, format: :json) }, status: :ok }
     end
   end
 

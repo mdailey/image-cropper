@@ -51,7 +51,22 @@ When(/^I click the edit link in the project list$/) do
 end
 
 When(/^I click the assign link in the project list$/) do
-  find(:xpath, "//*[@id='assign_project_#{@project.id}']").click
+  click_link "assign_project_#{@project.id}"
+end
+
+Then(/^I should not see the user in the assigned cropper list$/) do
+  expect(page).not_to have_css("input#user-#{@cropper.id}[checked=\"checked\"]")
+end
+
+Then(/^I should see the user( assigned| unassigned)? in the list$/) do |assigned|
+  @cropper ||= User.last
+  expect(page).to have_css('tr', text: /#{@cropper.name}/)
+  row = find('tr', text: /#{@cropper.name}/)
+  if assigned.blank? or assigned == ' unassigned'
+    expect(row).not_to have_css('input[type="checkbox"][checked="checked"]')
+  else
+    expect(row).to have_css('input[type="checkbox"][checked="checked"]')
+  end
 end
 
 When(/^I click the delete link in the project list$/) do

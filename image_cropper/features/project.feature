@@ -56,7 +56,10 @@ Feature: Project
     When I click the assign link in the project list
     Then I should see the user in the list
     When I click the checkbox to assign the user to the project
-    Then the project should be assigned
+    And I visit the project page
+    Then I should see the project in the list
+    When I click the assign link in the project list
+    Then I should see the user assigned in the list
     And I should see a "current user" link
     When I click the "current user" link
     And I should see a "Sign Out" link
@@ -80,6 +83,9 @@ Feature: Project
     When I click the assign link in the project list
     Then I should see the user assigned in the list
     When I click the checkbox to unassign the user from the project
+    And I visit the project page
+    Then I should see the project in the list
+    When I click the assign link in the project list
     Then I should see the user unassigned in the list
     And I should see a "current user" link
     When I click the "current user" link

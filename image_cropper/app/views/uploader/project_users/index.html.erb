@@ -1,4 +1,4 @@
-<h2>Assign Project to users</h2>
+<h2>Assign Users to Project</h2>
 <hr/>
 <div class="row">
   <div class="col-md-2">
@@ -28,7 +28,14 @@
     <% @users.each do |user| %>
       <tr>
         <% @project_user = @project.project_users.find_by_user_id(user.id) %>
-        <td class="width-90"><%= check_box_tag "user-#{user.id}", user.id, @project_user, class: "user", id: "user-#{user.id}", data: {remote: !@project_user.nil?? uploader_project_project_user_path(@project.id, @project_user.id, format: :json) : uploader_project_project_users_path(@project.id, project_user: {user_id: user.id, project_id: @project.id}, format: :json)} %></td>
+        <td class="width-90">
+          <% remote_url = if @project_user.nil? %>
+            <% uploader_project_project_users_path(@project.id, project_user: {user_id: user.id, project_id: @project.id}, format: :json) %>
+          <% else %>
+            <% uploader_project_project_user_path(@project.id, @project_user.id, format: :json) %>
+          <% end %>
+          <%= check_box_tag "user-#{user.id}", user.id, @project_user, class: "user", id: "user-#{user.id}", data: {remote: remote_url} %>
+        </td>
         <td class="user_name"><%= user.name %></td>
       </tr>
     <% end %>

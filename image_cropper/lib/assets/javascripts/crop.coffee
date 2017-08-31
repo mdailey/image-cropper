@@ -170,14 +170,6 @@ load_image = () ->
 
 load_image()
 
-displayError = (xhr) ->
-  errors = xhr.responseJSON.error
-  $('div#errors').remove()
-  $('div.messages').append(
-    '<div id="errors" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>Error:</p><ul></ul></div>')
-  for message of errors
-    $('#errors ul').append '<li>' + errors[message] + '</li>'
-
 # Close currently active path and submit to server
 
 postNewCrop = (tagId) ->
@@ -199,7 +191,7 @@ postNewCrop = (tagId) ->
       cords: points
       format: 'json'
     error: (xhr, status, error) ->
-      displayError(xhr)
+      window.displayError(xhr)
       pathPolygon.needsUpdate = true
       pathPolygon.remove()
       view.update()
@@ -225,7 +217,7 @@ translateSelectedCrop = (dx, dy) ->
         cords: newPoints
       format: 'json'
     error: (xhr, status, error) ->
-      displayError(xhr)
+      window.displayError(xhr)
     success: (data) ->
       object.border.remove()
       object.text.remove()
