@@ -159,8 +159,9 @@ class Uploader::ProjectsController < ApplicationController
         outfile.write "    cols: 2\n"
         outfile.write "    dt: f\n"
         outfile.write "    data: ["
-        pci.project_crop_image_cords.each do |coord|
-          outfile.write " #{coord.x} #{coord.y}"
+        n = pci.project_crop_image_cords.size
+        pci.project_crop_image_cords.each_with_index do |coord, k|
+          outfile.write " #{coord.x}, #{coord.y}#{k == n-1 ? "" : "," }"
         end
         outfile.write " ]\n"
         outfile.write "  attribute: #{pci.tag.name}\n"

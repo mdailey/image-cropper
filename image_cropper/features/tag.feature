@@ -85,3 +85,22 @@ Feature: Tag
     And I should see a "Sign Out" link
     When I click the "Sign Out" link
     Then I should see a login form
+
+  Scenario: Create a Thai language tag
+
+  An uploader should be able to add tags using Thai characters
+
+    Given I am an uploader
+    And I am signed in
+    And I want to add a tag with Thai characters
+    When I visit the tag page
+    Then I should see a "New Tag" link
+    When I click the "New Tag" link
+    Then I should see a tag form
+    When I submit the tag information
+    Then I should see the tag in the list
+    And I should see a "current user" link
+    When I click the "current user" link
+    Then I should see a "Sign Out" link
+    When I click the "Sign Out" link
+    Then I should see a login form
