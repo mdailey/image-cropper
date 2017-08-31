@@ -38,10 +38,12 @@ class ProjectCropImage < ActiveRecord::Base
 
   def bounding_box
     coords = self.project_crop_image_cords
-    min_x = coords.collect { |c| c.x }.min
-    max_x = coords.collect { |c| c.x }.max
-    min_y = coords.collect { |c| c.y }.min
-    max_y = coords.collect { |c| c.y }.max
+    w = self.project_image.w
+    h = self.project_image.h
+    min_x = [0, coords.collect { |c| c.x }.min].max
+    max_x = [w-1, coords.collect { |c| c.x }.max].min
+    min_y = [0, coords.collect { |c| c.y }.min].max
+    max_y = [h-1, coords.collect { |c| c.y }.max].min
     x_coords = [min_x, max_x, max_x, min_x].join(',')
     y_coords = [min_y, min_y, max_y, max_y].join(',')
     return x_coords, y_coords

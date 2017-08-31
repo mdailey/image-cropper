@@ -44,4 +44,19 @@ class ProjectCropImageTest < ActiveSupport::TestCase
     assert_equal 9, ul[:y]
   end
 
+  test "should normalize out of bounds points" do
+    pi = project_images(:one)
+    pci = ProjectCropImage.new project_image_id: pi.id, user_id: pi.project.project_users.first.id, image: 'tmp12.png', tag_id: pi.project.tags.first.id
+    assert !pci.valid?
+    assert_equal ["should be of size 4"], pci.errors[:project_crop_image_cords]
+    pci.project_crop_image_cords << ProjectCropImageCord.new(x: -0.5, y: -0.5)
+    pci.project_crop_image_cords << ProjectCropImageCord.new(x: pi.w, y: -0.5)
+    pci.project_crop_image_cords << ProjectCropImageCord.new(x: pi.w, y: pi.h)
+    pci.project_crop_image_cords << ProjectCropImageCord.new(x: -0.5, y: pi.h)
+    assert pci.valid?
+    x_coords, y_coords = pci.bounding_box
+    assert_equal "0,#{pi.w-1},#{pi.w-1},0", x_coords
+    assert_equal "0,0,#{pi.h-1},#{pi.h-1}", y_coords
+  end
+
 end
