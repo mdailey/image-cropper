@@ -1,0 +1,58 @@
+<%= form_for([:uploader, @project], class: "form-inline") do |f| %>
+
+  <div class="form-group">
+    <%= f.label :name %><br>
+    <%= f.text_field :name, :class => "form-control width-300", :placeholder => "Project name", :pattern => "[a-zA-Z0-9]+", :title => "Not allow to use space or any special characters", :required => true, :autofocus => true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description %><br>
+    <%= f.text_area :description, :class => "form-control width-600", :placeholder => "Description" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :tag_tokens, 'Tags' %>
+    <%= f.text_field :tag_tokens, data: {load: @project.tags} %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :images %>&nbsp;&nbsp;<em>Please upload with .zip or any image file</em><br>
+    <%= f.file_field :images %>
+    <% if params[:id] %>
+      <br/>
+      <table class="table table-striped">
+        <tbody>
+          <% @project.project_images.all.each do |project_image| %>
+            <tr>
+              <td class="width-100"><%= image_tag "/system/projects/#{@project.name}/#{project_image.image}", :height => 50 %></td>
+              <td  class="width-200"><%= project_image.image %></td>
+              <td><%= link_to 'Destroy', uploader_project_project_image_path(@project, project_image), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :crop_points %>&nbsp;&nbsp;<em>(The number of points needed to specify a crop)</em><br>
+    <% @options = [["1", "1"], ["2", "2"], ["4", "4"], ["N", "0"]] %>
+    <%= f.select :crop_points, [["1 Point", "1"], ["2 Points", "2"], ["4 Points", "4"], ["N Points", "0"]], {}, {:class => "form-control width-200"} %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :isactive %>
+    <%= f.check_box :isactive %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :rectangle_thickness %> <em>(The thickness of the bounding rectangles shown in the crop display)</em><br>
+    <%= f.text_field :rectangle_thickness %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Submit", :class => "btn btn-primary" %>&nbsp;&nbsp;
+    <%= link_to 'Cancel', uploader_projects_path, :class => "btn btn-primary", :type => "button" %>
+  </div>
+
+<% end %>

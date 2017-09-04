@@ -1,0 +1,2 @@
+module Uploader::ProjectCropImagesHelper
+end

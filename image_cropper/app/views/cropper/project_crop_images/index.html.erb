@@ -1,0 +1,38 @@
+
+<%= javascript_include_tag "crop", type: 'text/paperscript', canvas: 'canvas-1', style: 'border:10px solid black' %>
+
+<div class="row">
+  <div class="col-md-12">
+    <h2>Project <%= @project.name %>, Image <%= @project_image.image %></h2>
+  </div>
+</div>
+
+<div class="row">
+  <% prev_url = previous_image_link(@project_image) %>
+  <% next_url = next_image_link(@project_image) %>
+  <div class="col-md-1 text-center">
+      <%= link_to ' << ', prev_url, :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => prev_url.nil? %>
+  </div>
+  <div class="col-md-1 text-center">
+      <%= link_to ' >> ', next_url, :class => "btn btn-primary", :type => "button", :target => "_top", :disabled => next_url.nil? %>
+  </div>
+  <div class="col-md-2 text-center">
+    <%= link_to 'Back to project page', cropper_projects_path, :class => "btn btn-primary", :type => "button" %>
+  </div>
+</div>
+
+<div class="row"><div class="col-md-1 text-center">&nbsp;</div></div>
+<div class="row">
+  <div class="col-md-12 text-center">
+    <canvas id="canvas-1"
+      data-project-id="<%= @project.id %>"
+      data-project-image-id="<%= @project_image.id %>"
+      data-project-image="<%= "/system/projects/#{@project.name}/#{@project_image.image}" %>"
+      data-crop-url="<%= cropper_project_project_image_project_crop_images_path(@project.id, @project_image.id) %>"
+      data-crop-limit="<%= @project.crop_points %>"
+      data-tags="<%= @project.tags.to_json %>"
+      data-thickness="<%= @project.rectangle_thickness %>"
+      style="border: 0px">
+    </canvas>
+  </div>
+</div>

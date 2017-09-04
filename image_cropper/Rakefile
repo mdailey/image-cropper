@@ -1,0 +1,13 @@
+# Add your own tasks in files placed in lib/tasks ending in .rake,
+# for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
+
+require File.expand_path('../config/application', __FILE__)
+
+Rails.application.load_tasks
+
+if ENV['RAILS_ENV'] != 'production' and ENV['RAILS_ENV'] != 'staging'
+  require 'ci/reporter/rake/minitest'
+  require 'ci/reporter/rake/cucumber'
+  task :test => 'ci:setup:minitest'
+  task :cucumber => 'ci:setup:cucumber'
+end

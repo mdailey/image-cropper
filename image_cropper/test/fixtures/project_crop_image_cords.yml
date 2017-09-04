@@ -1,0 +1,79 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 1
+  project_crop_image_id: 1
+  x: 9
+  y: 9
+
+two:
+  id: 2
+  project_crop_image_id: 1
+  x: 10
+  y: 10
+
+three:
+  id: 3
+  project_crop_image_id: 1
+  x: 11
+  y: 11
+
+four:
+  id: 4
+  project_crop_image_id: 1
+  x: 12
+  y: 12
+
+five:
+  id: 5
+  project_crop_image_id: 2
+  x: 9
+  y: 9
+
+six:
+  id: 6
+  project_crop_image_id: 2
+  x: 10
+  y: 10
+
+seven:
+  id: 7
+  project_crop_image_id: 2
+  x: 11
+  y: 11
+
+eight:
+  id: 8
+  project_crop_image_id: 2
+  x: 12
+  y: 12
+
+nine:
+  id: 9
+  project_crop_image_id: 3
+  x: 12
+  y: 12
+
+ten:
+  id: 10
+  project_crop_image_id: 4
+  x: 20
+  y: 20
+
+eleven:
+  id: 11
+  project_crop_image_id: 4
+  x: 30
+  y: 20
+
+twelve:
+  id: 12
+  project_crop_image_id: 4
+  x: 30
+  y: 30
+
+thirteen:
+  id: 13
+  project_crop_image_id: 4
+  x: 20
+  y: 30

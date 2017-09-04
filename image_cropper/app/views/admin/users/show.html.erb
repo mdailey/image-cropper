@@ -1,0 +1,19 @@
+<h2>Assign Project to user</h2>
+<hr/>
+<div class="row">
+  <div class="col-md-1">
+    <strong>Name: </strong>
+  </div>
+  <div id="divName" class="col-md-11">
+    <%= @user.name %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-1">
+    <strong>Email: </strong>
+  </div>
+  <div id="divEmail" class="col-md-11">
+    <%= @user.email %>
+  </div>
+</div>
+<%= link_to 'Back', :back, :class => "btn btn-primary", :type => "button" %>

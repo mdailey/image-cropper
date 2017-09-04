@@ -1,0 +1,29 @@
+
+<h2>Projects for <%= current_user.name %></h2>
+
+<% if @projects.size == 0 %>
+  <div class="text-center">
+    <em>No projects assigned.</em>
+  </div>
+<% else %>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th class="width-200">Name</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @projects.each do |project| %>
+        <% if project.isactive and project.project_images.length > 0 %>
+          <tr>
+            <td class="project_name"><%= "Project id #{project.id}: #{project.name}" %></td>
+            <td class="text-right">
+              <%= link_to 'Crop images', cropper_project_project_image_project_crop_images_path(project, project.project_images.first), :class => "btn btn-primary width-120", :type => "button" , :target => "_top",  id: "assign_project_#{project.id}" %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

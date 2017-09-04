@@ -1,0 +1,50 @@
+<h2>Project List</h2>
+<hr/>
+<% if @projects.size == 0 %>
+  <div class="text-center">
+    <em>No project data</em>
+  </div>
+  <br/>
+<% else %>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th class="text-center">Points per crop</th>
+      <th class="text-center">Active?</th>
+      <th class="text-center">Owner</th>
+      <th class="text-center">Thickness</th>
+      <th colspan="6"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @projects.each do |project| %>
+      <tr>
+        <td class="project_name"><%= project.name %></td>
+        <td class="text-center"><%= project.crop_points %></td>
+        <td class="text-center">
+          <% if project.isactive %>
+            <i class="fa fa-check"></i>
+          <% else %>
+            <i class="fa fa-times"></i>
+          <% end%>
+        </td>
+        <td class="text-center"><%= project.user.name %></td>
+        <td class="text-center"><%= project.rectangle_thickness %></td>
+        <td><%= link_to 'Show details', [:uploader,project] %></td>
+        <td><%= link_to 'Assign users', [:uploader,project,'project_users'], id: "assign_project_#{project.id}", target: "_top" %></td>
+        <td><%= link_to 'Show cropped images', [:uploader,project,'project_crop_images'], id: "project_crop_images_#{project.id}", target: "_top" %></td>
+        <td><%= link_to 'Download images', uploader_project_path(id: project.id, format: :zip) %></td>
+        <% if current_user.id == project.user_id || current_user.role_id == 1 %>
+          <td><%= link_to 'Edit', edit_uploader_project_path(project), :id => "edit_project_#{project.id}" %></td>
+          <td><%= link_to 'Destroy', [:uploader,project], method: :delete, data: { confirm: 'Are you sure?' }, :id => "delete_project_#{project.id}" %></td>
+        <% else %>
+          <td></td>
+          <td></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>
+<%= link_to 'New Project', new_uploader_project_path, :class => "btn btn-primary", :type => "button" %>

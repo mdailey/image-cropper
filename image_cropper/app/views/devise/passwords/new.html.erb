@@ -1,0 +1,12 @@
+<h2>Reset Password</h2>
+<hr/>
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+  <%= devise_error_messages! %>
+  <div class="form-group">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, :class => "form-control width-400", autofocus: true, :required => true %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Reset Password", :class => "btn btn-primary" %>
+  </div>
+<% end %>

@@ -1,0 +1,25 @@
+
+<% if @tag.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@tag.errors.count, "error") %> prohibited this tag from being saved:</h2>
+    <ul>
+      <% @tag.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_for([:uploader, @tag]) do |f| %>
+  <div class="form-group">
+    <%= f.label :name %><br>
+    <%= f.text_field :name, :class => "form-control width-300", :placeholder => "Tag name",
+                     :pattern => "[A-Za-z0-9\u0E00-\u0E7F]+", :title => "No spaces or special characters allowed",
+                     :required => true, :autofocus => true %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Submit", :class => "btn btn-primary" %>
+    &nbsp;&nbsp;
+    <%= link_to 'Cancel', uploader_tags_path, :class => "btn btn-primary", :type => "button" %>
+  </div>
+<% end %>

@@ -1,0 +1,23 @@
+<%= form_for([:admin, @user]) do |f| %>
+  <div class="form-group">
+    <%= f.label :name %><br />
+    <%= f.text_field :name, :class => "form-control width-400", :placeholder => "Firstname Lastname", autofocus: true, :required => true %>
+  </div>
+  <div class="form-group">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, :class => "form-control width-400", :placeholder => "Email", :required => true %>
+  </div>
+  <div class="form-group">
+    <%= f.label :role_id, "Role" %><br>
+    <%= f.collection_select :role_id, Role.order(:id), :id, :name, {}, {:class => "form-control width-200"} %>
+  </div>
+  <div class="form-group">
+    <%= f.label :is_active, "Isactive" %><br>
+    <%= f.check_box :is_active %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Submit", :class => "btn btn-primary" %>
+    &nbsp;&nbsp;
+    <%= link_to "Back", :back, :class => "btn btn-primary", :type => "button" %>
+  </div>
+<% end %>

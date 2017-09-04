@@ -1,0 +1,45 @@
+<h2>Assign Users to Project</h2>
+<hr/>
+<div class="row">
+  <div class="col-md-2">
+    <strong> Project Name: </strong>
+  </div>
+  <div id="divName" class="col-md-10">
+    <%= @project.name %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <strong>Description: </strong>
+  </div>
+  <div id="divDescription" class="col-md-10">
+    <%= @project.description %>
+  </div>
+</div>
+<br/>
+<% if @users.size == 0 %>
+  <div class="text-center">
+    <em>No user in role "cropper"</em>
+  </div>
+  <br/>
+<% else %>
+<table id ="tblUser" class="table table-striped">
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <% @project_user = @project.project_users.find_by_user_id(user.id) %>
+        <td class="width-90">
+          <% remote_url = if @project_user.nil? %>
+            <% uploader_project_project_users_path(@project.id, project_user: {user_id: user.id, project_id: @project.id}, format: :json) %>
+          <% else %>
+            <% uploader_project_project_user_path(@project.id, @project_user.id, format: :json) %>
+          <% end %>
+          <%= check_box_tag "user-#{user.id}", user.id, @project_user, class: "user", id: "user-#{user.id}", data: {remote: remote_url} %>
+        </td>
+        <td class="user_name"><%= user.name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>
+<%= link_to 'Back', uploader_projects_path, :class => "btn btn-primary", :type => "button" %>

@@ -1,0 +1,28 @@
+
+one:
+  id: 1
+  project_image_id: 1
+  image: "20150922205514.jpg"
+  user_id: 3
+  tag_id: 1
+
+two:
+  id: 2
+  project_image_id: 3
+  image: "20150922205515.jpg"
+  user_id: 3
+  tag_id: 1
+
+three:
+  id: 3
+  project_image_id: 4
+  image: "20150922205516.jpg"
+  user_id: 3
+  tag_id: 1
+
+four:
+  id: 4
+  project_image_id: 5
+  image: "20150922205517.jpg"
+  user_id: 4
+  tag_id: 1

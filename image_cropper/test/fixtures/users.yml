@@ -1,0 +1,50 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined.  If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+admin:
+  id: 1
+  name: 'Administrator'
+  email: admin@hotmail.com
+  # "secret"
+  encrypted_password: "$2a$10$ZU0x7nDXA1EKbUAjwKTCwegV/yfddZkvfKWEa9/arb5pBQuy/1oFu"
+  role_id: 1
+  is_active: true
+
+uploader:
+  id: 2
+  name: 'Uploader'
+  email: uploader@hotmail.com
+  # "secret"
+  encrypted_password: "$2a$10$ZU0x7nDXA1EKbUAjwKTCwegV/yfddZkvfKWEa9/arb5pBQuy/1oFu"
+  role_id: 2
+  is_active: true
+
+cropper:
+  id: 3
+  name: 'Cropper1'
+  email: cropper1@hotmail.com
+  # "secret"
+  encrypted_password: "$2a$10$ZU0x7nDXA1EKbUAjwKTCwegV/yfddZkvfKWEa9/arb5pBQuy/1oFu"
+  role_id: 3
+  is_active: true
+
+cropper1:
+  id: 4
+  name: 'Cropper2'
+  email: cropper2@hotmail.com
+  # "secret"
+  encrypted_password: "$2a$10$ZU0x7nDXA1EKbUAjwKTCwegV/yfddZkvfKWEa9/arb5pBQuy/1oFu"
+  role_id: 3
+  is_active: true
+
+uploader2:
+  id: 5
+  name: 'Uploader 2'
+  email: uploader2@hotmail.com
+  # "secret"
+  encrypted_password: "$2a$10$ZU0x7nDXA1EKbUAjwKTCwegV/yfddZkvfKWEa9/arb5pBQuy/1oFu"
+  role_id: 2
+  is_active: true
