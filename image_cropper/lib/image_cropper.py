@@ -45,9 +45,9 @@ newImArray[:,:,3] = mask*255 # transparency (4th column)
 
 # back to image by numpy
 newIm = Image.fromarray(newImArray, "RGBA")
-newIm.save(args["output"])
+newIm.save(args["output"], "png")
 
 # resize to fit cropped areas
 cropImg = Image.open(args["output"]).convert("RGBA")
 img = cropImg.crop((left, top, width, height))
-img.save(args["output"])
+img.save(args["output"], "png")
