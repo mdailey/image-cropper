@@ -13,6 +13,15 @@ defaultFillColor = 'green'
 otherOwnerFillColor = 'yellow'
 defaultStrokeColor = 'green'
 
+if window.outerWidth > 500
+  canvasWidth = window.outerWidth * 6 / 10
+else
+  canvasWidth = 300
+canvasHeight = canvasWidth * 3 / 4
+paper.view.viewSize.width = canvasWidth
+paper.view.viewSize.height = canvasHeight
+window.rasterScale = null
+
 # Current region being specified
 
 points = []
@@ -108,8 +117,8 @@ drawPolygon = (object, coords) ->
     object.polygon.fillColor = object.fillColor
     object.polygon.opacity = 0.5
     object.polygon.strokeColor = defaultStrokeColor
-    object.polygon.add new Point(coord.x, coord.y)
-    object.points.push({ x: coord.x, y: coord.y })
+    object.polygon.add new Point(coord.x * window.rasterScale, coord.y * window.rasterScale)
+    object.points.push({ x: coord.x * window.rasterScale, y: coord.y * window.rasterScale })
   object.polygon.closed = true
   object.polygon.needsUpdate = true
   if limit == 2
@@ -158,15 +167,26 @@ raster = null
 
 load_image = () ->
     if raster
-        raster.remove()
+      raster.remove()
     raster = new Raster $("#canvas-1").attr("data-project-image")
     raster.on 'load', () ->
-        canvas = $("#canvas-1")
-        canvas.width(raster.width)
-        canvas.height(raster.height)
-        raster.position = [raster.width/2, raster.height/2]
-        view.setViewSize(canvas.width(), canvas.height())
-        redraw()
+      canvas = $("#canvas-1")
+      w = raster.width
+      h = raster.height
+      scaleX = canvasWidth/w
+      scaleY = canvasHeight/h
+      window.rasterScale = Math.min(scaleX, scaleY)
+      raster.fitBounds([0, 0, canvasWidth, canvasHeight])
+      raster.bounds.x = 0
+      raster.bounds.y = 0
+      raster.needsUpdate = true
+
+      #canvas.width(raster.width)
+      #canvas.height(raster.height)
+      #raster.position = [raster.width/2, raster.height/2]
+      #view.setViewSize(canvas.width(), canvas.height())
+
+      redraw()
 
 load_image()
 
@@ -180,6 +200,9 @@ postNewCrop = (tagId) ->
   if circleCurPoint
     circleCurPoint.remove()
     view.update()
+  newPoints = []
+  points.forEach (point) ->
+    newPoints.push({ x: point.x / window.rasterScale, y: point.y / window.rasterScale })
   $.ajax
     type: 'POST'
     url: url
@@ -188,7 +211,7 @@ postNewCrop = (tagId) ->
         project_image_id: project_image_id
         tag_id: tagId
         image: Date.now().toString() + '.png'
-      cords: points
+      cords: newPoints
       format: 'json'
     error: (xhr, status, error) ->
       window.displayError(xhr)
@@ -208,7 +231,7 @@ translateSelectedCrop = (dx, dy) ->
   object = selectedObjects[selectedObjectIndex]
   newPoints = []
   object.points.forEach (point) ->
-    newPoints.push({x: point.x + dx, y: point.y + dy})
+    newPoints.push({ x: (point.x + dx) / window.rasterScale, y: (point.y + dy) / window.rasterScale })
   $.ajax
     type: 'PATCH'
     url: url + '/' + object.id
@@ -364,7 +387,7 @@ menuCallback = (key, options) ->
   if key == 'delete'
     $.ajax
       type: 'DELETE'
-      url: url + '/1?x=' + pointRightClick.x + '&y=' + pointRightClick.y
+      url: url + '/1?x=' + (pointRightClick.x / window.rasterScale) + '&y=' + (pointRightClick.y / window.rasterScale)
       dataType: 'json'
       contentType: 'application/json'
       success: (data) ->

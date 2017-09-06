@@ -49,5 +49,6 @@ newIm.save(args["output"], "png")
 
 # resize to fit cropped areas
 cropImg = Image.open(args["output"]).convert("RGBA")
+print("bounds " + repr(left) + "," + repr(top) + "," + repr(width) + "," + repr(height))
 img = cropImg.crop((left, top, width, height))
 img.save(args["output"], "png")

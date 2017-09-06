@@ -125,6 +125,7 @@ class Cropper::ProjectCropImagesController < ApplicationController
     python_path = File.join(Rails.root, 'lib', 'image_cropper.py')
     cmd = "python #{python_path} -i #{input_path} -o #{output_path} -x #{x_coords} -y #{y_coords}"
     logger.info "Running command: #{cmd}"
+    puts "Running command: #{cmd}"
     system(cmd)
     if $? != 0
       raise "Could not crop image"
