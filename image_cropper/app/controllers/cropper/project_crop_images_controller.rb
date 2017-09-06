@@ -23,13 +23,11 @@ class Cropper::ProjectCropImagesController < ApplicationController
     end
     @project_crop_image.image.sub! /.jpg$/i, ".png"
     @project_crop_image.image.sub! /.jpeg$/i, ".png"
-    logger.info "image: #{@project_crop_image.image}"
     params[:cords].to_a.each_with_index do |cord|
       @project_crop_image.project_crop_image_cords.push(ProjectCropImageCord.new x: cord[1]["x"].to_f, y: cord[1]["y"].to_f)
     end
     respond_to do |format|
       if @project_crop_image.save
-        logger.info "image after: #{@project_crop_image.image}"
         crop_image
         format.html { redirect_to cropper_project_project_image_project_crop_images_path(@project, @project_image) }
         format.json do
@@ -124,8 +122,6 @@ class Cropper::ProjectCropImagesController < ApplicationController
     output_path = File.join(output_dir, @project_crop_image.image)
     python_path = File.join(Rails.root, 'lib', 'image_cropper.py')
     cmd = "python #{python_path} -i #{input_path} -o #{output_path} -x #{x_coords} -y #{y_coords}"
-    logger.info "Running command: #{cmd}"
-    puts "Running command: #{cmd}"
     system(cmd)
     if $? != 0
       raise "Could not crop image"
