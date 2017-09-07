@@ -21,6 +21,8 @@ class Cropper::ProjectCropImagesController < ApplicationController
     if @project_crop_image.tag_id.nil? and @project.tags.length == 1
       @project_crop_image.tag = @project.tags.first
     end
+    @project_crop_image.image.sub! /.jpg$/i, ".png"
+    @project_crop_image.image.sub! /.jpeg$/i, ".png"
     params[:cords].to_a.each_with_index do |cord|
       @project_crop_image.project_crop_image_cords.push(ProjectCropImageCord.new x: cord[1]["x"].to_f, y: cord[1]["y"].to_f)
     end
@@ -119,7 +121,11 @@ class Cropper::ProjectCropImagesController < ApplicationController
     Dir.mkdir output_dir unless Dir.exist? output_dir
     output_path = File.join(output_dir, @project_crop_image.image)
     python_path = File.join(Rails.root, 'lib', 'image_cropper.py')
-    system("python #{python_path} -i #{input_path} -o #{output_path} -x #{x_coords} -y #{y_coords}")
+    cmd = "python #{python_path} -i #{input_path} -o #{output_path} -x #{x_coords} -y #{y_coords}"
+    system(cmd)
+    if $? != 0
+      raise "Could not crop image"
+    end
   end
 
   def project_crop_image_params

@@ -144,34 +144,36 @@ class Uploader::ProjectsController < ApplicationController
   def make_yml_file(project)
     outfile = Tempfile.new('foo')
     outfile.write "%YAML:1.0\n"
-    outfile.write "version: 3\n"
+    outfile.write "version: 4\n"
     outfile.write "project: #{project.name}\n"
+    outfile.write "hasVaryingImageSizes: 1\n"
     outfile.write "startFrameNo: 0\n"
     project.project_images.each_with_index do |pi, i|
+      outfile.write "frame#{i}:\n"
+      outfile.write "  width: #{pi.w}\n"
+      outfile.write "  height: #{pi.h}\n"
+      outfile.write "  imageName: #{pi.image}\n"
       pi.project_crop_images.each_with_index do |pci, j|
-        outfile.write "frame#{i}region#{j}:\n"
-        outfile.write "  imageName: #{pi.image}\n"
-        outfile.write "  width: #{pi.w}\n"
-        outfile.write "  height: #{pi.h}\n"
-        outfile.write "  numPts: #{pci.project_crop_image_cords.size}\n"
-        outfile.write "  matPts: !!opencv-matrix\n"
-        outfile.write "    rows: #{pci.project_crop_image_cords.size}\n"
-        outfile.write "    cols: 2\n"
-        outfile.write "    dt: f\n"
-        outfile.write "    data: ["
+        outfile.write "  region#{j}:\n"
+        outfile.write "    numPts: #{pci.project_crop_image_cords.size}\n"
+        outfile.write "    matPts: !!opencv-matrix\n"
+        outfile.write "      rows: #{pci.project_crop_image_cords.size}\n"
+        outfile.write "      cols: 2\n"
+        outfile.write "      dt: f\n"
+        outfile.write "      data: ["
         n = pci.project_crop_image_cords.size
         pci.project_crop_image_cords.each_with_index do |coord, k|
           outfile.write " #{coord.x}, #{coord.y}#{k == n-1 ? "" : "," }"
         end
         outfile.write " ]\n"
-        outfile.write "  attribute: #{pci.tag.name}\n"
+        outfile.write "    attribute: #{pci.tag.name}\n"
       end
+      outfile.write "  numValidRegions: #{pi.project_crop_images.size}\n"
     end
     outfile.write "endFrameNo: #{project.project_images.length-1}\n"
     outfile.close
     return outfile
   end
-
 
   def make_zip_file(project)
     tempfile = Tempfile.new("zip")

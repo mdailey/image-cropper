@@ -188,18 +188,21 @@ When(/^I crop (\d+) patches then delete (\d+) patch$/) do |num_crop, num_delete|
   y = 50
   w = 50
   h = 50
+  scale = page.evaluate_script("window.rasterScale")
   num_crop.times do
-    page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{x}, y: #{y}}, event: {buttons: 1} })"
+    page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{x*scale}, y: #{y*scale}}, event: {buttons: 1} })"
+    wait_for_poly_point(0, x*scale, y*scale)
+    page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{(x+w)*scale}, y: #{y*scale}}, event: {buttons: 1}  })"
     wait_for_ajax
-    page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{x+w}, y: #{y}}, event: {buttons: 1}  })"
+    page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{(x+w)*scale}, y: #{(y+h)*scale}}, event: {buttons: 1}  })"
     wait_for_ajax
-    page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{x+w}, y: #{y+h}}, event: {buttons: 1}  })"
-    wait_for_ajax
-    page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{x}, y: #{y+h}}, event: {buttons: 1}  })"
+    page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{x*scale}, y: #{(y+h)*scale}}, event: {buttons: 1}  })"
     wait_for_ajax
     page.evaluate_script "$('body').trigger($.Event( 'keyup', { which: 13 } ))"
-    wait_for_ajax
+    wait_for_rect(x: x*scale, y: y*scale )
+    wait_for_rect(x: x*scale, y: y*scale-24)
     x = x + 2 * w
+    y = y + 5
   end
   expect(ProjectCropImage.all.size).to eql(num_crop)
   expect(ProjectCropImageCord.all.size).to eql(num_crop * 4)
@@ -243,25 +246,27 @@ When(/^I move the selected region$/) do
   expect(ProjectCropImage.count).to eq(1)
   pci = ProjectCropImage.first
   @ul = pci.upper_left
-  click = { x: @ul[:x] + 5, y: @ul[:y] - 5 }
+  scale = page.evaluate_script("window.rasterScale")
+  click = { x: @ul[:x]*scale + 5, y: @ul[:y]*scale - 5 }
   drag = { x: click[:x] + 20, y: click[:y] }
   page.evaluate_script "paper.tool.emit('mousedown', { point: {x: #{click[:x]}, y: #{click[:y]}}, event: {buttons: 1} })"
   wait_for_ajax
   page.evaluate_script "paper.tool.emit('mousedrag', { point: {x: #{drag[:x]}, y: #{drag[:y]}}, event: {buttons: 1} })"
-  wait_for_rect(x: @ul[:x]+20, y: @ul[:y])
+  wait_for_rect(x: @ul[:x]*scale+20, y: @ul[:y]*scale)
   page.evaluate_script "paper.tool.emit('mouseup', { point: {x: #{drag[:x]}, y: #{drag[:y]}}, event: {buttons: 1} })"
   wait_for_ajax
-  @ul[:x] += 20
+  @ul[:x] += 20/scale
 end
 
 Then(/^the region should be moved$/) do
   nc = page.evaluate_script "window.paper.project.layers[0].children.length"
+  scale = page.evaluate_script("window.rasterScale")
   found = false
   (0..nc-1).each do |i|
     if page.evaluate_script("window.paper.project.layers[0].children[#{i}].segments")
       if page.evaluate_script("window.paper.project.layers[0].children[#{i}].segments.length") == 4
         bounds = page.evaluate_script("window.paper.project.layers[0].children[#{i}].bounds")
-        if (@ul[:x]-bounds[1]).abs < 2 and (@ul[:y]-bounds[2]) < 2
+        if (@ul[:x]*scale-bounds[1]).abs < 2 and (@ul[:y]*scale-bounds[2]) < 2
           found = true
         end
       end
