@@ -48,6 +48,25 @@ class Cropper::ProjectCropImagesControllerTest < ActionController::TestCase
     assert_response :created
   end
 
+  test "should raise crop error on create" do
+    setup_project_crop_image_files
+    sign_in users(:cropper)
+    class TestClass
+      def call(foo)
+        `false`
+        false
+      end
+    end
+    assert_raise "Could not crop image" do
+      @controller.stub :system, TestClass.new do
+        post :create, project_id: @project, project_image_id: @project_image,
+                      project_crop_image: { project_image_id: @project_image.id, image: "20150922205514.jpg",
+                                            tag_id: Tag.first.id },
+                      cords: {"0"=>{"x"=>"78.51666259765625", "y"=>"339"}, "1"=>{"x"=>"78.51666259765625", "y"=>"271"}, "2"=>{"x"=>"183.51666259765625", "y"=>"268"}, "3"=>{"x"=>"186.51666259765625", "y"=>"340"}}, format: :json
+      end
+    end
+  end
+
   test "should authenticate update" do
     pci = project_crop_images(:one)
     patch :update, project_id: pci.project, project_image_id: pci.project_image, format: :json, id: pci,
