@@ -13,7 +13,7 @@
 /tmp
 coverage
 .idea
-public/system
+public/system/projects
 test/reports
 test-log
 test-pid
